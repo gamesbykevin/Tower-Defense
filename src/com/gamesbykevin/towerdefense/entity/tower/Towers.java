@@ -43,6 +43,22 @@ public final class Towers extends Sprite implements Disposable, IElement
         towers = null;
     }
     
+    /**
+     * Add tower
+     */
+    public void add(final Tower.Type type, final double col, final double row)
+    {
+        //create a new tower
+        Tower tower = new Tower(type);
+        
+        //set position
+        tower.setCol(col);
+        tower.setRow(row);
+        
+        //add tower to list
+        towers.add(tower);
+    }
+    
     @Override
     public void update(final Engine engine)
     {
@@ -71,5 +87,14 @@ public final class Towers extends Sprite implements Disposable, IElement
     {
         if (super.getImage() == null)
             return;
+        
+        for (int i = 0; i < towers.size(); i++)
+        {
+            //update the current tower
+            Tower tower = towers.get(i);
+            
+            //draw tower
+            tower.render(graphics, getImage());
+        }
     }
 }

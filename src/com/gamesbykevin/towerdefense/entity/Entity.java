@@ -55,8 +55,17 @@ public abstract class Entity extends LevelObject
         return this.directionDefault;
     }
     
-    protected void render(final Graphics2D graphics, final Image image)
+    /**
+     * Here we render the entity applying the direction the entity should be facing
+     * @param graphics Object used to draw image
+     * @param image Image containing animation
+     */
+    public void render(final Graphics graphics, final Image image)
     {
-        super.draw(graphics, image);
+        //cast to Graphics2D so we can apply rotation
+        Graphics2D g2d = (Graphics2D)graphics;
+        
+        //draw image
+        super.draw(g2d, image);
     }
 }
