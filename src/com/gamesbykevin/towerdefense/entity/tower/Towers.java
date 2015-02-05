@@ -66,11 +66,8 @@ public final class Towers extends Sprite implements Disposable, IElement
     }
     
     @Override
-    public void update(final Engine engine)
+    public void update(final Engine engine) throws Exception
     {
-        if (super.getImage() == null)
-            super.setImage(engine.getResources().getGameImage(GameImages.Keys.Towers));
-        
         for (int i = 0; i < towers.size(); i++)
         {
             //update the current tower
@@ -96,7 +93,7 @@ public final class Towers extends Sprite implements Disposable, IElement
         
         for (int i = 0; i < towers.size(); i++)
         {
-            //update the current tower
+            //render the current tower
             Tower tower = towers.get(i);
             
             //draw tower

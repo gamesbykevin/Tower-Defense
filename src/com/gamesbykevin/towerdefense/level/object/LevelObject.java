@@ -78,6 +78,16 @@ public abstract class LevelObject extends Sprite implements Disposable
     /**
      * Add animation to level object
      * @param animation Animation we want to add
+     * @throws Exception If there is a problem setting default animation
+     */
+    protected void addAnimation(final Animation animation) throws Exception
+    {
+        addAnimation(animation, NO_KEY);
+    }
+    
+    /**
+     * Add animation to level object
+     * @param animation Animation we want to add
      * @param key Unique key identifying this animation
      * @throws Exception If there is a problem setting default animation
      */

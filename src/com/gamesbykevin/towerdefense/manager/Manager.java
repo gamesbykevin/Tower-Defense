@@ -7,6 +7,8 @@ import com.gamesbykevin.framework.util.*;
 import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
+import com.gamesbykevin.towerdefense.entity.enemy.Enemies;
+import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.entity.tower.Towers;
 import com.gamesbykevin.towerdefense.menu.CustomMenu;
 import com.gamesbykevin.towerdefense.menu.CustomMenu.*;
@@ -37,6 +39,9 @@ public final class Manager implements IManager
     //the object containing the towers in play
     private Towers towers;
     
+    //the object containing the enemies in the game
+    private Enemies enemies;
+    
     /**
      * Constructor for Manager, this is the point where we load any menu option configurations
      * @param engine Engine for our game that contains all objects needed
@@ -59,13 +64,29 @@ public final class Manager implements IManager
             map = new Map(engine.getResources().getGameImage(GameImages.Keys.Road));
         }
         
+        if (enemies == null)
+        {
+            enemies = new Enemies(engine.getResources().getGameImage(GameImages.Keys.Enemies));
+        }
+        
+        enemies.add(Enemy.Type.Boss1, 5, 5);
+        
         if (towers == null)
         {
             towers = new Towers(engine.getResources().getGameImage(GameImages.Keys.Towers));
         }
         
         //add default tower for testing
+        towers.add(Tower.Type.Tower1, 0.5, 0.5);
+        
+        /*
         towers.add(Tower.Type.Tower2, 0.5, 0.5);
+        towers.add(Tower.Type.Tower3, 4.5, 0.5);
+        towers.add(Tower.Type.Tower4, 2.5, 5.5);
+        towers.add(Tower.Type.Tower5, 8.5, 6.5);
+        towers.add(Tower.Type.Tower6, 5.65, 07.5);
+        towers.add(Tower.Type.Tower7, 5.5, 3.5);
+        */
     }
     
     @Override
@@ -101,6 +122,12 @@ public final class Manager implements IManager
             towers = null;
         }
         
+        if (enemies != null)
+        {
+            enemies.dispose();
+            enemies = null;
+        }
+        
         try
         {
             //recycle objects
@@ -129,6 +156,11 @@ public final class Manager implements IManager
         {
             towers.update(engine);
         }
+        
+        if (enemies != null)
+        {
+            enemies.update(engine);
+        }
     }
     
     /**
@@ -146,6 +178,11 @@ public final class Manager implements IManager
         if (towers != null)
         {
             towers.render(graphics);
+        }
+        
+        if (enemies != null)
+        {
+            enemies.render(graphics);
         }
     }
 }

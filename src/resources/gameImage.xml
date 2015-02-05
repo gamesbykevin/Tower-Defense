@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <images>
     <image id="Towers">resources/images/game/towers/towers.png</image>
-    
     <image id="Road">resources/images/game/map/road.png</image>
+    <image id="Enemies">resources/images/game/enemies/enemies.png</image>
 </images>
