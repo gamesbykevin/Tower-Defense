@@ -10,6 +10,15 @@ import com.gamesbykevin.towerdefense.entity.Entity;
  */
 public final class Tower extends Entity
 {
+    //the pixel dimensions of the tower
+    public static final double WIDTH = 40.0;
+    public static final double HEIGHT = 40.0;
+    
+    public enum Upgrade
+    {
+        Default, Upgrade1, Upgrade2;
+    }
+    
     /**
      * There are 8 different towers to choose from.<br>
      * The type will also determine the attributes set
@@ -53,7 +62,7 @@ public final class Tower extends Entity
     /**
      * The maximum number of upgrades that can be performed on this tower
      */
-    private static final int UPGRADE_COUNT_LIMIT = 2;
+    private static final int UPGRADE_COUNT_LIMIT = Upgrade.values().length;
     
     /**
      * The highest level an upgrade can get to 
@@ -61,7 +70,7 @@ public final class Tower extends Entity
     private static final int UPGRADE_MAXIMUM_LEVEL = 5;
     
     //upgrade count
-    private int upgrade = 0;
+    private int indexUpgrade = 0;
     
     /**
      * The levels of damage the tower can cause
@@ -153,7 +162,7 @@ public final class Tower extends Entity
      * @param levelDamage
      * @param levelRate 
      */
-    protected Tower(final Type type)
+    protected Tower(final Type type) throws Exception
     {
         //all tower animations in our sprite sheet face north by default
         super(Direction.North);
@@ -168,6 +177,61 @@ public final class Tower extends Entity
         this.setLevelDamage(type.getLevelDamage());
         this.setLevelRange(type.getLevelRange());
         this.setLevelRate(type.getLevelRate());
+        
+        switch (type)
+        {
+            case Tower1:
+                super.addAnimation(0.0,  0.0, WIDTH, HEIGHT, Upgrade.Default);
+                super.addAnimation(40.0, 0.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
+                super.addAnimation(80.0, 0.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
+                break;
+                
+            case Tower2:
+                super.addAnimation(0.0,  40.0, WIDTH, HEIGHT, Upgrade.Default);
+                super.addAnimation(40.0, 40.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
+                super.addAnimation(80.0, 40.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
+                break;
+                
+            case Tower3:
+                super.addAnimation(0.0,  80.0, WIDTH, HEIGHT, Upgrade.Default);
+                super.addAnimation(40.0, 80.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
+                super.addAnimation(80.0, 80.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
+                break;
+                
+            case Tower4:
+                super.addAnimation(0.0,  120.0, WIDTH, HEIGHT, Upgrade.Default);
+                super.addAnimation(40.0, 120.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
+                super.addAnimation(80.0, 120.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
+                break;
+                
+            case Tower5:
+                super.addAnimation(0.0,  160.0, WIDTH, HEIGHT, Upgrade.Default);
+                super.addAnimation(40.0, 160.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
+                super.addAnimation(80.0, 160.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
+                break;
+                
+            case Tower6:
+                super.addAnimation(0.0,  200.0, WIDTH, HEIGHT, Upgrade.Default);
+                super.addAnimation(40.0, 200.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
+                super.addAnimation(80.0, 200.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
+                break;
+                
+            case Tower7:
+                super.addAnimation(0.0,  240.0, WIDTH, HEIGHT, Upgrade.Default);
+                super.addAnimation(40.0, 240.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
+                super.addAnimation(80.0, 240.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
+                break;
+                
+            case Tower8:
+                super.addAnimation(0.0, 280.0, WIDTH, HEIGHT, Upgrade.Default);
+                break;
+                
+            default:
+                throw new Exception("Tower type not setup here " + type.toString());
+        }
+        
+        //set default animation
+        super.setAnimation(Upgrade.Default);
     }
     
     public double getRange()
@@ -252,16 +316,24 @@ public final class Tower extends Entity
     }
     
     /**
-     * Upgrade the tower
+     * Upgrade the tower.<br>
+     * Tower8 is the only tower that cannot be upgraded
      */
     public void upgrade()
     {
+        //this is the only tower that can't be upgraded
+        if (getType() == Tower.Type.Tower8)
+            return;
+        
         //if we have already reached the limit, don't continue
-        if(upgrade >= UPGRADE_COUNT_LIMIT)
+        if(indexUpgrade >= UPGRADE_COUNT_LIMIT - 1)
             return;
         
         //increase upgrade count
-        this.upgrade++;
+        this.indexUpgrade++;
+        
+        //set the correct animation for the tower
+        super.setAnimation(Upgrade.values()[indexUpgrade]);
         
         //increase the level of each attribute
         indexRange++;

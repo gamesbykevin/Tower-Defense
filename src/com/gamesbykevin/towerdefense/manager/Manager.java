@@ -5,6 +5,9 @@ import com.gamesbykevin.framework.menu.Menu;
 import com.gamesbykevin.framework.util.*;
 
 import com.gamesbykevin.towerdefense.engine.Engine;
+import com.gamesbykevin.towerdefense.entity.tower.Tower;
+import com.gamesbykevin.towerdefense.level.map.Map;
+import com.gamesbykevin.towerdefense.entity.tower.Towers;
 import com.gamesbykevin.towerdefense.menu.CustomMenu;
 import com.gamesbykevin.towerdefense.menu.CustomMenu.*;
 import com.gamesbykevin.towerdefense.resources.GameAudio;
@@ -28,6 +31,12 @@ public final class Manager implements IManager
     //where gameplay occurs
     private Rectangle window;
     
+    //map of level
+    private Map map;
+    
+    //the object containing the towers in play
+    private Towers towers;
+    
     /**
      * Constructor for Manager, this is the point where we load any menu option configurations
      * @param engine Engine for our game that contains all objects needed
@@ -45,7 +54,18 @@ public final class Manager implements IManager
     @Override
     public void reset(final Engine engine) throws Exception
     {
+        if (map == null)
+        {
+            map = new Map(engine.getResources().getGameImage(GameImages.Keys.Road));
+        }
         
+        if (towers == null)
+        {
+            towers = new Towers(engine.getResources().getGameImage(GameImages.Keys.Towers));
+        }
+        
+        //add default tower for testing
+        towers.add(Tower.Type.Tower2, 0.5, 0.5);
     }
     
     @Override
@@ -69,6 +89,18 @@ public final class Manager implements IManager
         if (window != null)
             window = null;
         
+        if (map != null)
+        {
+            map.dispose();
+            map = null;
+        }
+        
+        if (towers != null)
+        {
+            towers.dispose();
+            towers = null;
+        }
+        
         try
         {
             //recycle objects
@@ -88,6 +120,15 @@ public final class Manager implements IManager
     @Override
     public void update(final Engine engine) throws Exception
     {
+        if (map != null)
+        {
+            map.update(engine);
+        }
+        
+        if (towers != null)
+        {
+            towers.update(engine);
+        }
     }
     
     /**
@@ -97,5 +138,14 @@ public final class Manager implements IManager
     @Override
     public void render(final Graphics graphics)
     {
+        if (map != null)
+        {
+            map.render(graphics);
+        }
+        
+        if (towers != null)
+        {
+            towers.render(graphics);
+        }
     }
 }

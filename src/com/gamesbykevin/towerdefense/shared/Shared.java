@@ -20,11 +20,11 @@ public final class Shared
      * NOTE: If these dimensions do not match the original then the mouse input will be off.
      */
     public static final int CONTAINER_WIDTH  = 768;
-    public static final int CONTAINER_HEIGHT = 512;
+    public static final int CONTAINER_HEIGHT = 640;
     
     //the game is originally programmed for these dimensions
     public static final int ORIGINAL_WIDTH  = 768;
-    public static final int ORIGINAL_HEIGHT = 512;
+    public static final int ORIGINAL_HEIGHT = 640;
     
     //do we hide mouse when the menu is not visible and actual gameplay has started
     public static boolean HIDE_MOUSE = true;

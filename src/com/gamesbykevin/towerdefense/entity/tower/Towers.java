@@ -4,11 +4,13 @@ import com.gamesbykevin.framework.base.Sprite;
 import com.gamesbykevin.framework.resources.Disposable;
 
 import com.gamesbykevin.towerdefense.engine.Engine;
+import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.resources.GameImages;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +48,7 @@ public final class Towers extends Sprite implements Disposable, IElement
     /**
      * Add tower
      */
-    public void add(final Tower.Type type, final double col, final double row)
+    public void add(final Tower.Type type, final double col, final double row) throws Exception
     {
         //create a new tower
         Tower tower = new Tower(type);
@@ -54,6 +56,10 @@ public final class Towers extends Sprite implements Disposable, IElement
         //set position
         tower.setCol(col);
         tower.setRow(row);
+        
+        //set the coordinates
+        tower.setX(Map.START_X + (col * Map.WIDTH));
+        tower.setY(Map.START_Y + (row * Map.HEIGHT));
         
         //add tower to list
         towers.add(tower);
