@@ -41,7 +41,7 @@ public final class Map extends Sprite implements Disposable, IElement
     private static final int DEAD_END_WALL_COUNT = 3;
     
     //chance to correct a dead end, example 1 in 4
-    private static final int FIX_DEAD_END_PROBABILITY = 3;
+    private static final int FIX_DEAD_END_PROBABILITY = 2;
     
     public Map(final Image road)
     {
@@ -120,13 +120,32 @@ public final class Map extends Sprite implements Disposable, IElement
                         
                         //add our options to the list
                         if (current.hasWall(Wall.West) && col > 0)
-                            options.add(Wall.West);
+                        {
+                            //only join the neighbor if the cost is greater
+                            if (maze.getLocation(col - 1, row).getCost() > current.getCost())
+                                options.add(Wall.West);
+                        }
+                        
                         if (current.hasWall(Wall.East) && col < tiles[0].length - 1)
-                            options.add(Wall.East);
+                        {
+                            //only join the neighbor if the cost is greater
+                            if (maze.getLocation(col + 1, row).getCost() > current.getCost())
+                                options.add(Wall.East);
+                        }
+                        
                         if (current.hasWall(Wall.North) && row > 0)
-                            options.add(Wall.North);
+                        {
+                            //only join the neighbor if the cost is greater
+                            if (maze.getLocation(col, row - 1).getCost() > current.getCost())
+                                options.add(Wall.North);
+                        }
+                        
                         if (current.hasWall(Wall.South) && row < tiles.length - 1)
-                            options.add(Wall.South);
+                        {
+                            //only join the neighbor if the cost is greater
+                            if (maze.getLocation(col, row + 1).getCost() > current.getCost())
+                                options.add(Wall.South);
+                        }
                         
                         //make sure options are available
                         if (!options.isEmpty())
