@@ -69,7 +69,7 @@ public final class Manager implements IManager
             enemies = new Enemies(engine.getResources().getGameImage(GameImages.Keys.Enemies));
         }
         
-        enemies.add(Enemy.Type.Boss1, 5, 5);
+        //enemies.add(Enemy.Type.Boss1, 5, 5);
         
         if (towers == null)
         {
@@ -77,7 +77,7 @@ public final class Manager implements IManager
         }
         
         //add default tower for testing
-        towers.add(Tower.Type.Tower1, 0.5, 0.5);
+        //towers.add(Tower.Type.Tower1, 0.5, 0.5);
         
         /*
         towers.add(Tower.Type.Tower2, 0.5, 0.5);

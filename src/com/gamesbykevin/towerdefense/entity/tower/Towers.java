@@ -20,6 +20,7 @@ import java.util.List;
  */
 public final class Towers extends Sprite implements Disposable, IElement
 {
+    //list containing all towers in play
     private List<Tower> towers;
     
     public Towers(final Image image)

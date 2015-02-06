@@ -8,6 +8,9 @@ import com.gamesbykevin.towerdefense.level.object.LevelObject;
  */
 public final class Tile extends LevelObject
 {
+    //the cost from the start
+    private final int cost;
+    
     public enum Type
     {
         ES,
@@ -26,10 +29,13 @@ public final class Tile extends LevelObject
     
     private final Type type;
     
-    protected Tile(final Type type) throws Exception
+    protected Tile(final Type type, final int cost) throws Exception
     {
         //assign tile type
         this.type = type;
+        
+        //assign the cost
+        this.cost = cost;
         
         switch (type)
         {
@@ -87,6 +93,16 @@ public final class Tile extends LevelObject
     }
     
     /**
+     * Get the cost.<br>
+     * The farther away from the start location, the higher the cost
+     * @return The total number of moves from the start location
+     */
+    public int getCost()
+    {
+        return this.cost;
+    }
+    
+    /**
      * Get the type
      * @return The tile type
      */
@@ -98,6 +114,6 @@ public final class Tile extends LevelObject
     @Override
     public void dispose()
     {
-        dispose();
+        //clean up performed here
     }
 }
