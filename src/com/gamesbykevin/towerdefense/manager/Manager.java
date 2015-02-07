@@ -77,7 +77,7 @@ public final class Manager implements IManager
         }
         
         //add default tower for testing
-        //towers.add(Tower.Type.Tower1, 0.5, 0.5);
+        towers.add(Tower.Type.Tower1, 5.5, 5.5);
         
         /*
         towers.add(Tower.Type.Tower2, 0.5, 0.5);
@@ -168,7 +168,7 @@ public final class Manager implements IManager
      * @param graphics Graphics object used for drawing
      */
     @Override
-    public void render(final Graphics graphics)
+    public void render(final Graphics graphics) throws Exception
     {
         if (map != null)
         {

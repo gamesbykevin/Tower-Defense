@@ -361,8 +361,6 @@ public final class Tower extends Entity
     @Override
     public void dispose()
     {
-        dispose();
-        
         this.timer.dispose();
         this.timer = null;
     }

@@ -13,16 +13,18 @@ import java.awt.Rectangle;
 public interface IManager extends Disposable
 {
     /**
-     * Update our game element accordingly
-     * @param engine The Engine containing resources etc... if needed
-     * @throws Exception 
+     * Update the game elements accordingly
+     * @param engine Object containing all game resources
+     * @throws Exception If there is an issue updating game elements
      */
     public void update(final Engine engine) throws Exception;
     
     /**
      * Draw our game element(s) accordingly
+     * @param graphics Object used to draw our final image
+     * @throws Exception If there is an issue rendering image
      */
-    public void render(final Graphics graphics);
+    public void render(final Graphics graphics) throws Exception;
     
     /**
      * Provide a way to reset the game elements

@@ -1,17 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.gamesbykevin.towerdefense.entity.enemy;
+package com.gamesbykevin.towerdefense.entity.projectile;
 
 import com.gamesbykevin.framework.base.Sprite;
 import com.gamesbykevin.framework.resources.Disposable;
+
 import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.Entities;
 import com.gamesbykevin.towerdefense.entity.Entity;
-import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
-import com.gamesbykevin.towerdefense.entity.tower.Tower;
-import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Graphics;
@@ -20,30 +14,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This object contains all the enemies in play
+ * This class will contain all projectiles in play
  * @author GOD
  */
-public final class Enemies extends Entities implements Disposable, IElement
+public final class Projectiles extends Entities  implements Disposable, IElement
 {
-    public Enemies(final Image image)
+    public Projectiles(final Image image)
     {
         super.setImage(image);
     }
     
     /**
-     * Add enemy
+     * Add projectile
      */
-    public void add(final Enemy.Type type, final double col, final double row) throws Exception
+    public void add(final Projectile.Type type, final double col, final double row) throws Exception
     {
         //create a new tower
-        Enemy enemy = new Enemy(type);
+        Projectile projectile = new Projectile(type);
         
         //set position
-        enemy.setCol(col);
-        enemy.setRow(row);
+        projectile.setCol(col);
+        projectile.setRow(row);
         
-        //add to list
-        getEntities().add(enemy);
+        //add tower to list
+        getEntities().add(projectile);
     }
     
     @Override
@@ -55,8 +49,8 @@ public final class Enemies extends Entities implements Disposable, IElement
         //additional update logic here
         for (int i = 0; i < getEntities().size(); i++)
         {
-            //update the current enemy
-            Enemy enemy = (Enemy)getEntities().get(i);
+            //update the current projectile
+            Projectile projectile = (Projectile)getEntities().get(i);
             
         }
     }

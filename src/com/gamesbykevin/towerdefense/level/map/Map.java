@@ -34,18 +34,38 @@ public final class Map extends Sprite implements Disposable, IElement
     public static final double HEIGHT = 64.0;
     
     //the start location
-    public static final double START_X = 0.0;
-    public static final double START_Y = 0.0;
+    private static final double START_X = 0.0;
+    private static final double START_Y = 0.0;
     
     //how many walls determine a dead end
     private static final int DEAD_END_WALL_COUNT = 3;
     
-    //chance to correct a dead end, example 1 in 4
-    private static final int FIX_DEAD_END_PROBABILITY = 2;
+    //chance to correct a dead end, example 1 in 3
+    private static final int FIX_DEAD_END_PROBABILITY = 3;
     
     public Map(final Image road)
     {
         super.setImage(road);
+    }
+    
+    /**
+     * Get the start y-coordinate
+     * @param row The column location
+     * @return The starting y-coordinate on the map for this location
+     */
+    public static double getStartY(double row)
+    {
+        return (Map.START_Y + (row * Map.HEIGHT));
+    }
+    
+    /**
+     * Get the start x-coordinate
+     * @param column The column location
+     * @return The starting x-coordinate on the map for this location
+     */
+    public static double getStartX(double column)
+    {
+        return (Map.START_X + (column * Map.WIDTH));
     }
     
     @Override
@@ -75,6 +95,7 @@ public final class Map extends Sprite implements Disposable, IElement
      */
     private void createMap(final Random random) throws Exception
     {
+        //create a labyrinth of the specified size, and using the specified algorithm
         Labyrinth maze = new Labyrinth(tiles[0].length, tiles.length, Labyrinth.Algorithm.DepthFirstSearch);
         
         //set random start on right side
@@ -95,7 +116,7 @@ public final class Map extends Sprite implements Disposable, IElement
             }
         }
 
-        //connect random locations that are a dead end
+        //connect some random locations that are a dead end
         for (int row = 0; row < tiles.length; row++)
         {
             for (int col = 0; col < tiles[0].length; col++)
@@ -116,7 +137,7 @@ public final class Map extends Sprite implements Disposable, IElement
                     if (random.nextInt(FIX_DEAD_END_PROBABILITY) == 0)
                     {
                         //our options that we can remove
-                        List<Wall> options = new ArrayList();
+                        List<Wall> options = new ArrayList<>();
                         
                         //add our options to the list
                         if (current.hasWall(Wall.West) && col > 0)
@@ -228,7 +249,7 @@ public final class Map extends Sprite implements Disposable, IElement
                     //count the number of bordering valid locations
                     int count = 0;
                     
-                    //if the current location does not have a wall here
+                    //if the current location does not have a wall in this location
                     if (!current.hasWall(Wall.East))
                     {
                         //get location
@@ -239,7 +260,7 @@ public final class Map extends Sprite implements Disposable, IElement
                             count++;
                     }
                     
-                    //if the current location does not have a wall here
+                    //if the current location does not have a wall in this location
                     if (!current.hasWall(Wall.West))
                     {
                         //get location
@@ -250,7 +271,7 @@ public final class Map extends Sprite implements Disposable, IElement
                             count++;
                     }
                     
-                    //if the current location does not have a wall here
+                    //if the current location does not have a wall in this location
                     if (!current.hasWall(Wall.North))
                     {
                         //get location
@@ -261,7 +282,7 @@ public final class Map extends Sprite implements Disposable, IElement
                             count++;
                     }
                     
-                    //if the current location does not have a wall here
+                    //if the current location does not have a wall in this location
                     if (!current.hasWall(Wall.South))
                     {
                         //get location
@@ -272,7 +293,7 @@ public final class Map extends Sprite implements Disposable, IElement
                             count++;
                     }
                     
-                    //if we have less than 2 valid neighbors
+                    //if we have less than 2 valid neighbors this is a dead end
                     if (count < 2)
                     {
                         //mark current location as invalid
@@ -447,8 +468,8 @@ public final class Map extends Sprite implements Disposable, IElement
                 this.tiles[row][col] = new Tile(type, current.getCost());
                 
                 //assign x,y coordinates
-                this.tiles[row][col].setX(START_X + (col * WIDTH));
-                this.tiles[row][col].setY(START_Y + (row * HEIGHT));
+                this.tiles[row][col].setX(getStartX(col));
+                this.tiles[row][col].setY(getStartY(row));
             }
         }
     }

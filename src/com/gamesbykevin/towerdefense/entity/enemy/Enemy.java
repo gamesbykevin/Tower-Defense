@@ -4,6 +4,7 @@ import com.gamesbykevin.framework.base.Animation;
 import com.gamesbykevin.framework.util.Timers;
 
 import com.gamesbykevin.towerdefense.entity.Entity;
+import com.gamesbykevin.towerdefense.level.map.Map;
 
 /**
  * This class represents the enemy
@@ -163,6 +164,23 @@ public final class Enemy extends Entity
         
         //add animation
         super.addAnimation(animation);
+    }
+    
+    /**
+     * Update the enemy's location based on the velocity
+     */
+    @Override
+    public final void update()
+    {
+        //update the column location based on x-velocity
+        setCol(getCol() + getVelocityX());
+        
+        //update the row location based on y-velocity
+        setRow(getRow() + getVelocityY());
+        
+        //now assigned the x,y coordinates based on the column, row location
+        setX(Map.getStartX(getCol()));
+        setY(Map.getStartY(getRow()));
     }
     
     /**
