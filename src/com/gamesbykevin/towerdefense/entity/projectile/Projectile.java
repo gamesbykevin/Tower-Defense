@@ -18,13 +18,64 @@ public final class Projectile extends Entity
     //the type of projectile this is
     private final Type type;
     
-    protected Projectile(final Type type)
+    protected Projectile(final Type type) throws Exception
     {
         //all projectiles are vertical facing north
         super(Direction.North);
         
         //assign type
         this.type = type;
+        
+        switch (type)
+        {
+            case Blue1:
+                super.addAnimation(0, 0, 13, 37);
+                break;
+                
+            case Blue2:
+                super.addAnimation(13, 0, 13, 37);
+                break;
+                
+            case Blue3:
+                super.addAnimation(26, 0, 9, 37);
+                break;
+                
+            case Blue4:
+                super.addAnimation(35, 0, 9, 37);
+                break;
+                
+            case Green1:
+                super.addAnimation(0, 37, 13, 37);
+                break;
+                
+            case Green2:
+                super.addAnimation(13, 37, 13, 37);
+                break;
+                
+            case Green3:
+                super.addAnimation(26, 37, 9, 37);
+                break;
+                
+            case Green4:
+                super.addAnimation(35, 37, 9, 37);
+                break;
+                
+            case Red1:
+                super.addAnimation(0, 74, 13, 37);
+                break;
+                
+            case Red2:
+                super.addAnimation(13, 74, 13, 37);
+                break;
+                
+            case Red3:
+                super.addAnimation(26, 74, 9, 37);
+                break;
+                
+            case Red4:
+                super.addAnimation(35, 74, 9, 37);
+                break;
+        }
     }
     
     public Type getType()

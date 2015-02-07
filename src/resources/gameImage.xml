@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <images>
-    <image id="Towers">resources/images/game/towers/towers.png</image>
-    <image id="Road">resources/images/game/map/road.png</image>
-    <image id="Enemies">resources/images/game/enemies/enemies.png</image>
+    <image id="Towers">resources/images/game/towers.png</image>
+    <image id="Road">resources/images/game/road.png</image>
+    <image id="Enemies">resources/images/game/enemies.png</image>
+    <image id="Projectiles">resources/images/game/projectiles.png</image>
+    <image id="Effects">resources/images/game/explosions.png</image>
 </images>

@@ -35,7 +35,7 @@ public final class Enemies extends Entities implements Disposable, IElement
      */
     public void add(final Enemy.Type type, final double col, final double row) throws Exception
     {
-        //create a new tower
+        //create a new enemy
         Enemy enemy = new Enemy(type);
         
         //set position

@@ -13,9 +13,6 @@ import java.awt.Image;
  */
 public abstract class Entity extends LevelObject
 {
-    //our object used to apply rotation to this entity
-    private AffineTransform at;
-    
     /**
      * The different directions
      */
@@ -37,9 +34,6 @@ public abstract class Entity extends LevelObject
     {
         //assign the default directions
         this.directionDefault = directionDefault;
-        
-        //create new instance
-        this.at = new AffineTransform();
     }
     
     /**
@@ -88,40 +82,39 @@ public abstract class Entity extends LevelObject
     }
     
     /**
+     * Offset the entity so the current location will be in the center of the entity
+     */
+    protected void positionCenter()
+    {
+        //position entity in center
+        setX(getX() - (getWidth()  / 2));
+        setY(getY() - (getHeight() / 2));
+    }
+    
+    /**
+     * Reset the entity back before positionCenter() was called
+     */
+    protected void positionReset()
+    {
+        //move entity back
+        setX(getX() + (getWidth()  / 2));
+        setY(getY() + (getHeight() / 2));
+    }
+    
+    /**
      * Here we render the entity applying the direction the entity should be facing
      * @param graphics Object used to draw image
      * @param image Image containing animation
      */
     public void render(final Graphics graphics, final Image image)
     {
-        //cast to Graphics2D so we can apply rotation
-        Graphics2D g2d = (Graphics2D)graphics;
+        //cetner location
+        this.positionCenter();
         
-        //rotate 90 degrees at this anchor position
-        at.rotate(getAngle(), getX(), getY());
+        //draw entity
+        super.draw(graphics, image);
         
-        //get the location
-        final double x = getX();
-        final double y = getY();
-        
-        //place in center
-        super.setX(x - (getWidth() / 2));
-        super.setY(y - (getHeight() / 2));
-        
-        //assign transformation
-        g2d.setTransform(at);
-        
-        //draw image
-        super.draw(g2d, image);
-        
-        //reset rotation
-        at.setToIdentity();
-        
-        //apply reset back
-        g2d.setTransform(at);
-        
-        //restore the location
-        super.setX(x);
-        super.setY(y);
+        //restore location
+        this.positionReset();
     }
 }

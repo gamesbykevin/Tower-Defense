@@ -10,11 +10,15 @@ import com.gamesbykevin.framework.resources.Disposable;
  */
 public abstract class LevelObject extends Sprite implements Disposable
 {
-    //no key value
-    private static final Object NO_KEY = "";
+    /**
+     * no unique key value
+     */
+    public static final Object NO_KEY = "";
     
-    //no time delay default value
-    private static final long NO_DELAY = 0;
+    /**
+     * no time delay default value
+     */
+    public static final long NO_DELAY = 0;
     
     /**
      * Add single animation, that will not loop or have a unique key for identification.
@@ -116,7 +120,4 @@ public abstract class LevelObject extends Sprite implements Disposable
         //set this as the current animation
         super.getSpriteSheet().setCurrent(key.toString());
     }
-    
-    @Override
-    public abstract void dispose();
 }

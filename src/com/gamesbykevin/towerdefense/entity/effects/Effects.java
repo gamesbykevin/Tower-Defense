@@ -1,38 +1,36 @@
-package com.gamesbykevin.towerdefense.entity.projectile;
+package com.gamesbykevin.towerdefense.entity.effects;
 
 import com.gamesbykevin.framework.resources.Disposable;
-
 import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.Entities;
 import com.gamesbykevin.towerdefense.shared.IElement;
-
 import java.awt.Image;
 
 /**
- * This class will contain all projectiles in play
+ * Object containing all of the Effects in the game
  * @author GOD
  */
-public final class Projectiles extends Entities  implements Disposable, IElement
+public final class Effects extends Entities implements Disposable, IElement
 {
-    public Projectiles(final Image image)
+    public Effects(final Image image)
     {
         super.setImage(image);
     }
     
     /**
-     * Add projectile
+     * Add enemy
      */
-    public void add(final Projectile.Type type, final double col, final double row) throws Exception
+    public void add(final Effect.Type type, final double col, final double row) throws Exception
     {
-        //create a new tower
-        Projectile projectile = new Projectile(type);
+        //create a new effect
+        Effect effect = new Effect(type);
         
         //set position
-        projectile.setCol(col);
-        projectile.setRow(row);
+        effect.setCol(col);
+        effect.setRow(row);
         
-        //add tower to list
-        getEntities().add(projectile);
+        //add to list
+        getEntities().add(effect);
     }
     
     @Override
@@ -44,8 +42,8 @@ public final class Projectiles extends Entities  implements Disposable, IElement
         //additional update logic here
         for (int i = 0; i < getEntities().size(); i++)
         {
-            //update the current projectile
-            Projectile projectile = (Projectile)getEntities().get(i);
+            //update the current enemy
+            Effect effect = (Effect)getEntities().get(i);
             
         }
     }

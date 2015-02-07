@@ -7,6 +7,8 @@ import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,11 +18,19 @@ import java.util.List;
  */
 public abstract class Entities extends Sprite implements Disposable, IElement
 {
+    //our object used to apply rotation to entities
+    private AffineTransform at;
+    
+    //list of entites in this collection
     private List<Entity> entities;
     
     protected Entities()
     {
+        //create new list of entites
         this.entities = new ArrayList<>();
+        
+        //create new instance
+        this.at = new AffineTransform();
     }
     
     @Override
@@ -30,13 +40,17 @@ public abstract class Entities extends Sprite implements Disposable, IElement
         
         for (int i = 0; i < entities.size(); i++)
         {
-            entities.get(i).dispose();
-            
-            entities.set(i, null);
+            if (entities.get(i) != null)
+            {
+                entities.get(i).dispose();
+                entities.set(i, null);
+            }
         }
         
         entities.clear();
         entities = null;
+        
+        at = null;
     }
     
     /**
@@ -109,10 +123,28 @@ public abstract class Entities extends Sprite implements Disposable, IElement
         if (super.getImage() == null)
             throw new Exception("Image does not exist so nothing can be drawn here");
         
+        //cast to Graphics2D so we can apply rotation
+        Graphics2D g2d = (Graphics2D)graphics;
+        
         for (int i = 0; i < getEntities().size(); i++)
         {
-            //draw entity
-            getEntities().get(i).render(graphics, getImage());
+            //get current entity
+            Entity entity = getEntities().get(i);
+            
+            //rotate at this anchor position
+            at.rotate(entity.getAngle(), entity.getX(), entity.getY());
+        
+            //assign transform
+            g2d.setTransform(at);
+        
+            //draw entty
+            entity.render(graphics, getImage());
+            
+            //reset rotation
+            at.setToIdentity();
+        
+            //restore original transform
+            g2d.setTransform(at);
         }
     }
 }

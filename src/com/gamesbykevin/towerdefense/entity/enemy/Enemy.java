@@ -195,6 +195,6 @@ public final class Enemy extends Entity
     @Override
     public void dispose()
     {
-        dispose();
+        super.dispose();
     }
 }
