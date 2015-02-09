@@ -25,7 +25,7 @@ public final class Tower extends Entity
      */
     public enum Type
     {
-        Tower1(0, 0, 0), 
+        Tower1(4, 1, 3), 
         Tower2(0, 0, 0), 
         Tower3(0, 0, 0), 
         Tower4(0, 0, 0), 
@@ -62,12 +62,12 @@ public final class Tower extends Entity
     /**
      * The maximum number of upgrades that can be performed on this tower
      */
-    private static final int UPGRADE_COUNT_LIMIT = Upgrade.values().length;
+    public static final int UPGRADE_COUNT_LIMIT = Upgrade.values().length;
     
     /**
      * The highest level an upgrade can get to 
      */
-    private static final int UPGRADE_MAXIMUM_LEVEL = 5;
+    public static final int UPGRADE_MAXIMUM_LEVEL = 5;
     
     //upgrade count
     private int indexUpgrade = 0;
@@ -313,6 +313,42 @@ public final class Tower extends Entity
     public Timer getTimer()
     {
         return this.timer;
+    }
+    
+    /**
+     * Get the index range of tower
+     * @return The index representing the level for this attribute
+     */
+    public int getIndexRange()
+    {
+        return this.indexRange;
+    }
+    
+    /**
+     * Get the index tower damage
+     * @return The index representing the level for this attribute
+     */
+    public int getIndexDamage()
+    {
+        return this.indexDamage;
+    }
+    
+    /**
+     * Get the index rate of fire
+     * @return The index representing the level for this attribute
+     */
+    public int getIndexRate()
+    {
+        return this.indexRate;
+    }
+    
+    /**
+     * Get the index upgrade
+     * @return The number of upgrades performed
+     */
+    public int getIndexUpgrade()
+    {
+        return this.indexUpgrade;
     }
     
     /**

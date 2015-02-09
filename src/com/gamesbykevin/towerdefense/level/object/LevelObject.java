@@ -102,7 +102,7 @@ public abstract class LevelObject extends Sprite implements Disposable
             createSpriteSheet();
         
         //add animation
-        super.getSpriteSheet().add(animation, key.toString());
+        super.getSpriteSheet().add(animation, key);
         
         //if no current animation is set default
         if (getSpriteSheet().getCurrent() == null)
@@ -118,6 +118,6 @@ public abstract class LevelObject extends Sprite implements Disposable
     protected void setAnimation(final Object key)
     {
         //set this as the current animation
-        super.getSpriteSheet().setCurrent(key.toString());
+        super.getSpriteSheet().setCurrent(key);
     }
 }

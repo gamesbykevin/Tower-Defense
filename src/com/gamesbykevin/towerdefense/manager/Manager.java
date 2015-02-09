@@ -7,11 +7,13 @@ import com.gamesbykevin.framework.util.*;
 import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
+import com.gamesbykevin.towerdefense.entity.effects.Effects;
 import com.gamesbykevin.towerdefense.entity.enemy.Enemies;
-import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
+import com.gamesbykevin.towerdefense.entity.projectile.Projectiles;
 import com.gamesbykevin.towerdefense.entity.tower.Towers;
 import com.gamesbykevin.towerdefense.menu.CustomMenu;
 import com.gamesbykevin.towerdefense.menu.CustomMenu.*;
+import com.gamesbykevin.towerdefense.player.Player;
 import com.gamesbykevin.towerdefense.resources.GameAudio;
 import com.gamesbykevin.towerdefense.resources.GameFont;
 import com.gamesbykevin.towerdefense.resources.GameImages;
@@ -25,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The parent class that contains all of the game elements
+ * The class that contains all of the game elements
  * @author GOD
  */
 public final class Manager implements IManager
@@ -41,6 +43,15 @@ public final class Manager implements IManager
     
     //the object containing the enemies in the game
     private Enemies enemies;
+    
+    //object containing the projectiles in the game
+    private Projectiles projectiles;
+    
+    //object containing the effects in the game
+    private Effects effects;
+    
+    //the user controlling the game
+    private Player player;
     
     /**
      * Constructor for Manager, this is the point where we load any menu option configurations
@@ -59,34 +70,76 @@ public final class Manager implements IManager
     @Override
     public void reset(final Engine engine) throws Exception
     {
-        if (map == null)
-        {
-            map = new Map(engine.getResources().getGameImage(GameImages.Keys.Road));
-        }
+        if (this.map == null)
+            this.map = new Map(engine.getResources().getGameImage(GameImages.Keys.Road));
         
-        if (enemies == null)
-        {
-            enemies = new Enemies(engine.getResources().getGameImage(GameImages.Keys.Enemies));
-        }
+        if (this.enemies == null)
+            this.enemies = new Enemies(engine.getResources().getGameImage(GameImages.Keys.Enemies));
         
-        //enemies.add(Enemy.Type.Boss1, 5, 5);
+        if (this.towers == null)
+            this.towers = new Towers(engine.getResources().getGameImage(GameImages.Keys.Towers));
         
-        if (towers == null)
+        //add default tower for testing
+        getTowers().add(Tower.Type.Tower1, .5, .5);
+        
+        if (this.projectiles == null)
+            this.projectiles = new Projectiles(engine.getResources().getGameImage(GameImages.Keys.Projectiles));
+        
+        if (this.effects == null)
+            this.effects = new Effects(engine.getResources().getGameImage(GameImages.Keys.Effects));
+        
+        if (this.player == null)
         {
-            towers = new Towers(engine.getResources().getGameImage(GameImages.Keys.Towers));
+            this.player = new Player(
+                engine.getResources().getGameImage(GameImages.Keys.MiniMenu), 
+                engine.getResources().getGameFont(GameFont.Keys.MiniMenu));
+            
+            this.player.getTowerMenu().assignTower(getTowers().getTower(0));
         }
         
         //add default tower for testing
-        towers.add(Tower.Type.Tower1, 5.5, 5.5);
+        //getTowers().add(Tower.Type.Tower1, .5, .5);
+        
+        //getEnemies().add(Enemy.Type.Boss1, 5, 5);
         
         /*
-        towers.add(Tower.Type.Tower2, 0.5, 0.5);
-        towers.add(Tower.Type.Tower3, 4.5, 0.5);
-        towers.add(Tower.Type.Tower4, 2.5, 5.5);
-        towers.add(Tower.Type.Tower5, 8.5, 6.5);
-        towers.add(Tower.Type.Tower6, 5.65, 07.5);
-        towers.add(Tower.Type.Tower7, 5.5, 3.5);
+        getTowers().add(Tower.Type.Tower2, 0.5, 0.5);
+        getTowers().add(Tower.Type.Tower3, 4.5, 0.5);
+        getTowers().add(Tower.Type.Tower4, 2.5, 5.5);
+        getTowers().add(Tower.Type.Tower5, 8.5, 6.5);
+        getTowers().add(Tower.Type.Tower6, 5.65, 07.5);
+        getTowers().add(Tower.Type.Tower7, 5.5, 3.5);
         */
+    }
+    
+    public Player getPlayer()
+    {
+        return this.player;
+    }
+    
+    public Map getMap()
+    {
+        return this.map;
+    }
+    
+    public Enemies getEnemies()
+    {
+        return this.enemies;
+    }
+    
+    public Towers getTowers()
+    {
+        return this.towers;
+    }
+    
+    public Projectiles getProjectiles()
+    {
+        return this.projectiles;
+    }
+    
+    public Effects getEffects()
+    {
+        return this.effects;
     }
     
     @Override
@@ -128,6 +181,18 @@ public final class Manager implements IManager
             enemies = null;
         }
         
+        if (projectiles != null)
+        {
+            projectiles.dispose();
+            projectiles = null;
+        }
+        
+        if (player != null)
+        {
+            player.dispose();
+            player = null;
+        }
+        
         try
         {
             //recycle objects
@@ -147,20 +212,23 @@ public final class Manager implements IManager
     @Override
     public void update(final Engine engine) throws Exception
     {
-        if (map != null)
-        {
-            map.update(engine);
-        }
+        if (getMap() != null)
+            getMap().update(engine);
         
-        if (towers != null)
-        {
-            towers.update(engine);
-        }
+        if (getTowers() != null)
+            getTowers().update(engine);
         
-        if (enemies != null)
-        {
-            enemies.update(engine);
-        }
+        if (getEnemies() != null)
+            getEnemies().update(engine);
+        
+        if (getProjectiles() != null)
+            getProjectiles().update(engine);
+        
+        if (getEffects() != null)
+            getEffects().update(engine);
+        
+        if (getPlayer() != null)
+            getPlayer().update(engine);
     }
     
     /**
@@ -170,19 +238,22 @@ public final class Manager implements IManager
     @Override
     public void render(final Graphics graphics) throws Exception
     {
-        if (map != null)
-        {
-            map.render(graphics);
-        }
+        if (getMap() != null)
+            getMap().render(graphics);
         
-        if (towers != null)
-        {
-            towers.render(graphics);
-        }
+        if (getTowers() != null)
+            getTowers().render(graphics);
         
-        if (enemies != null)
-        {
-            enemies.render(graphics);
-        }
+        if (getEnemies() != null)
+            getEnemies().render(graphics);
+        
+        if (getProjectiles() != null)
+            getProjectiles().render(graphics);
+        
+        if (getEffects() != null)
+            getEffects().render(graphics);
+        
+        if (getPlayer() != null)
+            getPlayer().render(graphics);
     }
 }

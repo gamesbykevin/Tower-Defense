@@ -1,23 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gamesbykevin.towerdefense.entity.enemy;
 
-import com.gamesbykevin.framework.base.Sprite;
 import com.gamesbykevin.framework.resources.Disposable;
+
 import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.Entities;
-import com.gamesbykevin.towerdefense.entity.Entity;
-import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
-import com.gamesbykevin.towerdefense.entity.tower.Tower;
-import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
-import java.awt.Graphics;
 import java.awt.Image;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This object contains all the enemies in play

@@ -31,7 +31,7 @@ public final class Projectiles extends Entities  implements Disposable, IElement
         projectile.setCol(col);
         projectile.setRow(row);
         
-        //add tower to list
+        //add to list
         getEntities().add(projectile);
     }
     

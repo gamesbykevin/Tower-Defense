@@ -46,12 +46,19 @@ public abstract class Entity extends LevelObject
     }
     
     /**
-     * Set the facing angle of this entity
+     * Set the facing angle of this entity.<br>
+     * If the angle is greater than PI * 2 we will adjust to keep in bounds
      * @param angle The angle is in radians
      */
     public void setAngle(final double angle)
     {
         this.angle = angle;
+        
+        //keep angle in bounds
+        if (getAngle() > Math.PI * 2)
+            setAngle(getAngle() - (Math.PI * 2));
+        if (getAngle() < 0)
+            setAngle(Math.PI * 2);
     }
     
     /**
@@ -84,7 +91,7 @@ public abstract class Entity extends LevelObject
     /**
      * Offset the entity so the current location will be in the center of the entity
      */
-    protected void positionCenter()
+    public void positionCenter()
     {
         //position entity in center
         setX(getX() - (getWidth()  / 2));
@@ -94,7 +101,7 @@ public abstract class Entity extends LevelObject
     /**
      * Reset the entity back before positionCenter() was called
      */
-    protected void positionReset()
+    public void positionReset()
     {
         //move entity back
         setX(getX() + (getWidth()  / 2));

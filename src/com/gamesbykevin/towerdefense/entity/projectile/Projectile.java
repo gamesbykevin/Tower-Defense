@@ -86,6 +86,6 @@ public final class Projectile extends Entity
     @Override
     public void dispose()
     {
-        dispose();
+        super.dispose();
     }
 }

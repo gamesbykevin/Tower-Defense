@@ -12,7 +12,7 @@ public final class GameFont extends FontManager
      */
     public enum Keys
     {
-        Default
+        Default, MiniMenu
     }
     
     public GameFont() throws Exception

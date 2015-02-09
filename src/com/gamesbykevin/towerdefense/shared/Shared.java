@@ -27,7 +27,7 @@ public final class Shared
     public static final int ORIGINAL_HEIGHT = 512;
     
     //do we hide mouse when the menu is not visible and actual gameplay has started
-    public static boolean HIDE_MOUSE = true;
+    public static boolean HIDE_MOUSE = false;
     
     //how many updates per second, controls speed of game
     public static final int DEFAULT_UPS = 60;

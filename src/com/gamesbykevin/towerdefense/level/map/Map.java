@@ -29,13 +29,19 @@ public final class Map extends Sprite implements Disposable, IElement
     public static final int ROWS = 8;
     public static final int COLS = 12;
     
-    //the size of each cell in the map
+    /**
+     * The dimensions of each cell in the map
+     */
     public static final double WIDTH = 64.0;
+    
+    /**
+     * The dimensions of each cell in the map
+     */
     public static final double HEIGHT = 64.0;
     
     //the start location
-    private static final double START_X = 0.0;
-    private static final double START_Y = 0.0;
+    public static final double START_X = 0.0;
+    public static final double START_Y = 0.0;
     
     //how many walls determine a dead end
     private static final int DEAD_END_WALL_COUNT = 3;
