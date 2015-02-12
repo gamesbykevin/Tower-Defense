@@ -16,11 +16,6 @@ import java.awt.Image;
  */
 public final class Towers extends Entities implements Disposable, IElement
 {
-    /**
-     * The distance we have to be within to select a tower
-     */
-    public static final double SELECTION_RANGE = 0.15;
-    
     public Towers(final Image image)
     {
         super.setImage(image);
@@ -50,7 +45,7 @@ public final class Towers extends Entities implements Disposable, IElement
      * Get the tower
      * @param col Column
      * @param row Row
-     * @return The tower located
+     * @return The tower located, if not located null is returned
      */
     public Tower getTower(final double col, final double row)
     {
@@ -62,8 +57,11 @@ public final class Towers extends Entities implements Disposable, IElement
             //get the distance from the current tower
             final double distance = Cell.getDistance(tower.getCol(), tower.getRow(), col, row);
             
+            //get the width of the entity
+            final double requirement = tower.getWidth() / Map.WIDTH;
+            
             //if the provided location is close enough return the tower
-            if (distance <= SELECTION_RANGE)
+            if (distance <= requirement / 2)
                 return tower;
         }
         

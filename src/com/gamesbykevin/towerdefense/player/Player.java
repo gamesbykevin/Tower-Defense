@@ -4,6 +4,8 @@ import com.gamesbykevin.framework.base.Sprite;
 import com.gamesbykevin.framework.resources.Disposable;
 
 import com.gamesbykevin.towerdefense.engine.Engine;
+import com.gamesbykevin.towerdefense.entity.Entity;
+import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.player.ui.menu.mini.EnemyMenu;
@@ -31,6 +33,15 @@ public final class Player extends Sprite implements Disposable, IElement
         this.towerMenu = new TowerMenu();
         this.towerMenu.setImage(miniMenu);
         this.towerMenu.setFont(font.deriveFont(14f));
+        
+        this.enemyMenu = new EnemyMenu();
+        this.enemyMenu.setImage(miniMenu);
+        this.enemyMenu.setFont(font.deriveFont(14f));
+    }
+    
+    public EnemyMenu getEnemyMenu()
+    {
+        return this.enemyMenu;
     }
     
     public TowerMenu getTowerMenu()
@@ -54,17 +65,29 @@ public final class Player extends Sprite implements Disposable, IElement
             final double y = engine.getMouse().getLocation().getY();
             
             //if the tower menu is visible
-            if (this.towerMenu.isVisible())
+            if (getTowerMenu().isVisible())
             {
                 //check if the user selected an option in the mini-menu
-                if (this.towerMenu.getRectangle().contains(x, y))
+                if (getTowerMenu().getRectangle().contains(x, y))
                 {
                     
                 }
                 else
                 {
                     //we did not click in the menu, hide it
-                    this.towerMenu.setVisible(false);
+                    getTowerMenu().setVisible(false);
+                }
+            }
+            else if (getEnemyMenu().isVisible())
+            {
+                if (getEnemyMenu().getRectangle().contains(x, y))
+                {
+                    
+                }
+                else
+                {
+                    //we did not click in the menu, hide it
+                    getEnemyMenu().setVisible(false);
                 }
             }
             else
@@ -77,10 +100,23 @@ public final class Player extends Sprite implements Disposable, IElement
                 Tower tower = engine.getManager().getTowers().getTower(col, row);
 
                 //assign tower accordingly
-                this.towerMenu.assignTower(tower);
+                getTowerMenu().assignTower(tower);
 
-                //determine if the tower is visible
-                this.towerMenu.setVisible((tower != null));
+                //determine if the menu is visible
+                getTowerMenu().setVisible(tower != null);
+                
+                //if tower is not made visible, check if enemy menu should be visible
+                if (!getTowerMenu().isVisible())
+                {
+                    //get the enemy based on the position
+                    Enemy enemy = engine.getManager().getEnemies().getEnemy(col, row);
+
+                    //assign the enemy to the menu
+                    getEnemyMenu().assignEnemy(enemy);
+
+                    //determine if the menu is visible
+                    getEnemyMenu().setVisible(enemy != null);
+                }
             }
             
             //reset mouse released
@@ -91,6 +127,10 @@ public final class Player extends Sprite implements Disposable, IElement
     @Override
     public void render(final Graphics graphics) throws Exception
     {
-        this.towerMenu.render(graphics);
+        //draw tower menu
+        getTowerMenu().render(graphics);
+        
+        //draw enemy menu
+        getEnemyMenu().render(graphics);
     }
 }

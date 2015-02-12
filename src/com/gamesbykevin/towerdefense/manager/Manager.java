@@ -100,7 +100,7 @@ public final class Manager implements IManager
         //add default tower for testing
         //getTowers().add(Tower.Type.Tower1, .5, .5);
         
-        //getEnemies().add(Enemy.Type.Boss1, 5, 5);
+        getEnemies().add(com.gamesbykevin.towerdefense.entity.enemy.Enemy.Type.Boss1, 5, 5);
         
         /*
         getTowers().add(Tower.Type.Tower2, 0.5, 0.5);

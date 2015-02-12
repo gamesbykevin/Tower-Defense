@@ -16,6 +16,16 @@ public final class Enemy extends Entity
     public static final double WIDTH = 46.0;
     public static final double HEIGHT = 46.0;
     
+    /**
+     * The max start health for the enemy
+     */
+    private double maxHealth = 100.0;
+    
+    /**
+     * The enemy's current health
+     */
+    private double health = 85.0;
+    
     public enum Type
     {
         Blue1,
@@ -164,6 +174,45 @@ public final class Enemy extends Entity
         
         //add animation
         super.addAnimation(animation);
+    }
+    
+    /**
+     * Set the starting and current health of the enemy
+     * @param health The max health we want to assign to the enemy
+     */
+    public void setStartHealth(final double health)
+    {
+        this.maxHealth = health;
+        
+        //assign the current health
+        setHealth(health);
+    }
+    
+    /**
+     * Assign the current health 
+     * @param health The current health we want to assign to the enemy
+     */
+    public void setHealth(final double health)
+    {
+        this.health = health;
+    }
+    
+    /**
+     * Get the enemy's starting health upon creation
+     * @return The max starting health
+     */
+    public double getStartHealth()
+    {
+        return this.maxHealth;
+    }
+    
+    /**
+     * Get the enemy's current health
+     * @return The current health
+     */
+    public double getHealth()
+    {
+        return this.health;
     }
     
     /**
