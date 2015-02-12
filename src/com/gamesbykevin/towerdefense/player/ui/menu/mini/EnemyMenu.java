@@ -3,6 +3,7 @@ package com.gamesbykevin.towerdefense.player.ui.menu.mini;
 import com.gamesbykevin.framework.resources.Disposable;
 
 import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
+import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.player.ui.menu.mini.MiniMenu;
 import java.awt.Color;
 
@@ -73,8 +74,29 @@ public final class EnemyMenu extends MiniMenu implements Disposable
         //if enemy exists assign menu location
         if (enemy != null)
         {
-            super.setX(enemy.getX());
-            super.setY(enemy.getY());
+            //check if menu should be placed on west or east side
+            if (enemy.getX() < (Map.COLS / 2) * Map.WIDTH)
+            {
+                //add menu to right side
+                super.setX(enemy.getX() + Map.WIDTH);
+            }
+            else
+            {
+                //add menu to left side
+                super.setX(enemy.getX() - WIDTH);
+            }
+            
+            //check if menu should be placed on north or south side
+            if (enemy.getY() < (Map.ROWS / 2) * Map.HEIGHT)
+            {
+                //add menu to south side
+                super.setY(enemy.getY() + Map.HEIGHT);
+            }
+            else
+            {
+                //add menu to north side
+                super.setY(enemy.getY() - HEIGHT);
+            }
         }
     }
     
