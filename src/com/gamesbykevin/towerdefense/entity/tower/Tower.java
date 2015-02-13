@@ -19,13 +19,18 @@ public final class Tower extends Entity
         Default, Upgrade1, Upgrade2;
     }
     
+    public enum RangeKey
+    {
+        Regular, Valid, Invalid
+    }
+    
     /**
      * There are 8 different towers to choose from.<br>
      * The type will also determine the attributes set
      */
     public enum Type
     {
-        Tower1(4, 1, 3), 
+        Tower1(1, 1, 3), 
         Tower2(0, 0, 0), 
         Tower3(0, 0, 0), 
         Tower4(0, 0, 0), 
@@ -230,7 +235,16 @@ public final class Tower extends Entity
                 throw new Exception("Tower type not setup here " + type.toString());
         }
         
-        //set default animation
+        //add range animations
+        super.addAnimation(0, 320, 400, 400, RangeKey.Regular);
+        
+        //add range animations
+        super.addAnimation(800, 320, 400, 400, RangeKey.Invalid);
+        
+        //add range animations
+        super.addAnimation(400, 320, 400, 400, RangeKey.Valid);
+        
+        //assign default animation
         super.setAnimation(Upgrade.Default);
     }
     

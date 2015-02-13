@@ -117,7 +117,7 @@ public abstract class Entities extends Sprite implements Disposable, IElement
     }
     
     @Override
-    public final void render(final Graphics graphics) throws Exception
+    public void render(final Graphics graphics) throws Exception
     {
         //if the image does not exist there is nothing to draw
         if (super.getImage() == null)

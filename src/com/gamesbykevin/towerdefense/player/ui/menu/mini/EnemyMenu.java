@@ -119,7 +119,7 @@ public final class EnemyMenu extends MiniMenu implements Disposable
         getGraphics().setColor(Color.BLACK);
         
         //draw text description
-        getGraphics().drawString("Health: " + enemy.getHealth(), HEALTH_DESC_X, HEALTH_DESC_Y);
+        getGraphics().drawString("Enemy Health: " + enemy.getHealth(), HEALTH_DESC_X, HEALTH_DESC_Y);
         
         //get the health ratio
         final double ratio = enemy.getHealth() / enemy.getStartHealth();

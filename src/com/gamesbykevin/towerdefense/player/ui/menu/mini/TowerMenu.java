@@ -6,7 +6,6 @@ import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
 import java.awt.Color;
 
-import java.awt.Graphics;
 import java.awt.Rectangle;
 
 /**
@@ -45,7 +44,8 @@ public final class TowerMenu extends MiniMenu implements Disposable
         StatRed(38, 225, 19,26),
         ActiveUpgrade(57, 225, 48, 48),
         InActiveUpgrade(135, 165, 48, 48),
-        TowerSell(135, 115, 48, 48);
+        TowerSell(135, 115, 48, 48),
+        Range(250,0,400,400);
         
         //location of key on sprite sheet
         private final Rectangle location;

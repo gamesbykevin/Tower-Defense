@@ -76,6 +76,9 @@ public final class Player extends Sprite implements Disposable, IElement
                 {
                     //we did not click in the menu, hide it
                     getTowerMenu().setVisible(false);
+                    
+                    //no assigned tower
+                    engine.getManager().getTowers().setAssigned(null);
                 }
             }
             else if (getEnemyMenu().isVisible())

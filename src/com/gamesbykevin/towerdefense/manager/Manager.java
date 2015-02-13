@@ -79,9 +79,6 @@ public final class Manager implements IManager
         if (this.towers == null)
             this.towers = new Towers(engine.getResources().getGameImage(GameImages.Keys.Towers));
         
-        //add default tower for testing
-        getTowers().add(Tower.Type.Tower1, .5, .5);
-        
         if (this.projectiles == null)
             this.projectiles = new Projectiles(engine.getResources().getGameImage(GameImages.Keys.Projectiles));
         
@@ -93,12 +90,14 @@ public final class Manager implements IManager
             this.player = new Player(
                 engine.getResources().getGameImage(GameImages.Keys.MiniMenu), 
                 engine.getResources().getGameFont(GameFont.Keys.MiniMenu));
-            
-            this.player.getTowerMenu().assignTower(getTowers().getTower(0));
         }
         
+        
         //add default tower for testing
-        //getTowers().add(Tower.Type.Tower1, .5, .5);
+        getTowers().add(Tower.Type.Tower1, .5, .5);
+        
+        //add default tower for testing
+        getTowers().add(Tower.Type.Tower1, 4.5, 3.5);
         
         getEnemies().add(com.gamesbykevin.towerdefense.entity.enemy.Enemy.Type.Boss1, 5, 5);
         

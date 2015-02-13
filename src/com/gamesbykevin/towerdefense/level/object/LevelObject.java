@@ -115,7 +115,11 @@ public abstract class LevelObject extends Sprite implements Disposable
         }
     }
     
-    protected void setAnimation(final Object key)
+    /**
+     * Assign the current animation
+     * @param key Unique key of the animation
+     */
+    public void setAnimation(final Object key)
     {
         //set this as the current animation
         super.getSpriteSheet().setCurrent(key);
