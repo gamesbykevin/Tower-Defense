@@ -110,16 +110,13 @@ public final class EnemyMenu extends MiniMenu implements Disposable
     protected void renderImage()
     {
         //draw background first
-        draw(getGraphics(), getImage(), Key.Background.getLocation());
-        
-        //assign the font
-        getGraphics().setFont(getFont());
+        draw(getGraphics2D(), getImage(), Key.Background.getLocation());
         
         //set color
-        getGraphics().setColor(Color.BLACK);
+        getGraphics2D().setColor(Color.BLACK);
         
         //draw text description
-        getGraphics().drawString("Enemy Health: " + enemy.getHealth(), HEALTH_DESC_X, HEALTH_DESC_Y);
+        getGraphics2D().drawString("Enemy Health: " + enemy.getHealth(), HEALTH_DESC_X, HEALTH_DESC_Y);
         
         //get the health ratio
         final double ratio = enemy.getHealth() / enemy.getStartHealth();
@@ -135,15 +132,15 @@ public final class EnemyMenu extends MiniMenu implements Disposable
         //use the appropriate animation depending on remaining health
         if (ratio >= HEALTH_HI)
         {
-            draw(getGraphics(), getImage(), Key.HealthGreen.getLocation());
+            draw(getGraphics2D(), getImage(), Key.HealthGreen.getLocation());
         }
         else if (ratio >= HEALTH_MED)
         {
-            draw(getGraphics(), getImage(), Key.HealthYellow.getLocation());
+            draw(getGraphics2D(), getImage(), Key.HealthYellow.getLocation());
         }
         else
         {
-            draw(getGraphics(), getImage(), Key.HealthRed.getLocation());
+            draw(getGraphics2D(), getImage(), Key.HealthRed.getLocation());
         }
     }
 }

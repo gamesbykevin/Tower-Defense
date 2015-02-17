@@ -6,5 +6,5 @@
     <image id="Projectiles">resources/images/game/projectiles.png</image>
     <image id="Effects">resources/images/game/explosions.png</image>
     <image id="MiniMenu">resources/images/game/minimenu.png</image>
-    
+    <image id="MainMenu">resources/images/game/mainmenu.png</image>
 </images>

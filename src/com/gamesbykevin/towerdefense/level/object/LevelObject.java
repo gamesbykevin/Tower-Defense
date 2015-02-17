@@ -4,6 +4,8 @@ import com.gamesbykevin.framework.base.Animation;
 import com.gamesbykevin.framework.base.Sprite;
 import com.gamesbykevin.framework.resources.Disposable;
 
+import java.awt.Rectangle;
+
 /**
  * Every object in the game is a level object
  * @author GOD
@@ -31,6 +33,17 @@ public abstract class LevelObject extends Sprite implements Disposable
     protected void addAnimation(final double x, final double y, final double w, final double h) throws Exception
     {
         addAnimation((int)x, (int)y, (int)w, (int)h);
+    }
+    
+    /**
+     * Add single animation, that will not loop
+     * @param location The coordinates of the image
+     * @param key Unique key to identify the animation
+     * @throws Exception If there is a problem creating animation
+     */
+    protected void addAnimation(final Rectangle location, final Object key) throws Exception
+    {
+        addAnimation(location.getX(), location.getY(), location.getWidth(), location.getHeight(), key);
     }
     
     /**

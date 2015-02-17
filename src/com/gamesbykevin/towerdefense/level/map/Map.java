@@ -27,7 +27,7 @@ public final class Map extends Sprite implements Disposable, IElement
     
     //dimensions for the map
     public static final int ROWS = 8;
-    public static final int COLS = 12;
+    public static final int COLS = 11;
     
     /**
      * The dimensions of each cell in the map
@@ -478,6 +478,27 @@ public final class Map extends Sprite implements Disposable, IElement
                 this.tiles[row][col].setY(getStartY(row));
             }
         }
+    }
+    
+    /**
+     * Is this location valid?
+     * @param col Column
+     * @param row Row
+     * @return true if the tile is type OPEN, false otherwise
+     */
+    public boolean isValid(final double col, final double row)
+    {
+        if (col < 0 || col >= tiles[0].length)
+            return false;
+        if (row < 0 || row >= tiles.length)
+            return false;
+        
+        return getTile((int)col, (int) row).getType() == Tile.Type.OPEN;
+    }
+    
+    private Tile getTile(final int col, final int row)
+    {
+        return (Tile)tiles[row][col];
     }
     
     @Override

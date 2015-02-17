@@ -76,7 +76,7 @@ public abstract class Entities extends Sprite implements Disposable, IElement
      * @param entity The entity we want to remove
      * @throws Exception if entity is not found
      */
-    protected final void remove(final Entity entity) throws Exception
+    public final void remove(final Entity entity) throws Exception
     {
         //check each entity until we find the one
         for (int i = 0; i < getEntities().size(); i++)

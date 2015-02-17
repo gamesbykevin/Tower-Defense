@@ -115,5 +115,6 @@ public final class Tile extends LevelObject
     public void dispose()
     {
         //clean up performed here
+        super.dispose();
     }
 }

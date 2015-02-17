@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 
 /**
  * This Shared class will have shared objects
- * 
  * @author GOD
  */
 public final class Shared 

@@ -89,7 +89,9 @@ public final class Manager implements IManager
         {
             this.player = new Player(
                 engine.getResources().getGameImage(GameImages.Keys.MiniMenu), 
-                engine.getResources().getGameFont(GameFont.Keys.MiniMenu));
+                engine.getResources().getGameImage(GameImages.Keys.MainMenu), 
+                engine.getResources().getGameFont(GameFont.Keys.MiniMenu)
+            );
         }
         
         

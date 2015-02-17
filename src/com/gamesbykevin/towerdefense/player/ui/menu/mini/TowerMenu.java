@@ -36,6 +36,9 @@ public final class TowerMenu extends MiniMenu implements Disposable
     //the tower for this mini-menu
     private Tower tower;
     
+    //show the active upgrade icon
+    private boolean active = false;
+    
     public enum Key
     {
         Background(0,0, 250, 225),
@@ -43,9 +46,8 @@ public final class TowerMenu extends MiniMenu implements Disposable
         StatYellow(0, 225, 19,26), 
         StatRed(38, 225, 19,26),
         ActiveUpgrade(57, 225, 48, 48),
-        InActiveUpgrade(135, 165, 48, 48),
-        TowerSell(135, 115, 48, 48),
-        Range(250,0,400,400);
+        InActiveUpgrade(185, 165, 48, 48),
+        TowerSell(185, 115, 48, 48);
         
         //location of key on sprite sheet
         private final Rectangle location;
@@ -64,6 +66,77 @@ public final class TowerMenu extends MiniMenu implements Disposable
     public TowerMenu() throws Exception
     {
         super(WIDTH, HEIGHT);
+    }
+    
+    public void setActiveUpgradeIcon(final boolean active)
+    {
+        this.active = active;
+    }
+    
+    public boolean hasActiveUpgradeIcon()
+    {
+        return this.active;
+    }
+
+    /**
+     * Is the specified location within the provided window
+     * @param x x-coordinate 
+     * @param y y-coordinate 
+     * @param window The area of the tower menu we want to check
+     * @return true if the coordinate is within the window, false otherwise
+     */
+    private boolean contains(final double x, final double y, final Rectangle window)
+    {
+        //verify x-coordinate is within boundary
+        if (x >= getX() + window.getX() && x <= getX() + window.getX() + window.getWidth())
+        {
+            //verify y-coordinate is within boundary
+            if (y >= getY() + window.getY() && y <= getY() + window.getY() + window.getHeight())
+            {
+                //location is within window, return true
+                return true;
+            }
+        }
+        
+        //the location was not within the window
+        return false;
+    }
+    
+    /**
+     * Is the specified location within the sell icon?
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return true if the coordinate is within the sell tower icon boundary, false otherwise
+     */
+    public boolean containsTowerSell(final double x, final double y)
+    {
+        //returns result
+        return contains(x, y, Key.TowerSell.getLocation());
+    }
+    
+    /**
+     * Is the specified location within the upgrade icon?
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return true if the coordinate is within the upgrade tower icon boundary and can still upgrade, false otherwise
+     */
+    public boolean containsTowerUpgrade(final double x, final double y)
+    {
+        //always return false if this tower has reached the max allowed
+        if (tower.hasUpgradeMax())
+            return false;
+        
+        //return result
+        return contains(x, y, Key.InActiveUpgrade.getLocation());
+    }
+    
+    /**
+     * Get the tower tied to this menu
+     * @return The tower tied to this menu
+     */
+    public Tower getTower()
+    {
+        return this.tower;
     }
     
     /**
@@ -110,35 +183,32 @@ public final class TowerMenu extends MiniMenu implements Disposable
     }
     
     @Override
-    protected void renderImage() throws Exception
+    protected void renderImage()
     {
         //draw background first
-        draw(getGraphics(), getImage(), Key.Background.getLocation());
-        
-        //assign the font
-        getGraphics().setFont(getFont());
+        draw(getGraphics2D(), getImage(), Key.Background.getLocation());
         
         //set color
-        getGraphics().setColor(Color.BLACK);
+        getGraphics2D().setColor(Color.BLACK);
         
         //draw text description
-        getGraphics().drawString("Rate",   DESCRIPTION1_X, DESCRIPTION1_Y + (DESCRIPTION_OFFSET_Y * 0));
-        getGraphics().drawString("Damage", DESCRIPTION1_X, DESCRIPTION1_Y + (DESCRIPTION_OFFSET_Y * 1));
-        getGraphics().drawString("Range",  DESCRIPTION1_X, DESCRIPTION1_Y + (DESCRIPTION_OFFSET_Y * 2));
+        getGraphics2D().drawString("Rate",   DESCRIPTION1_X, DESCRIPTION1_Y + (DESCRIPTION_OFFSET_Y * 0));
+        getGraphics2D().drawString("Damage", DESCRIPTION1_X, DESCRIPTION1_Y + (DESCRIPTION_OFFSET_Y * 1));
+        getGraphics2D().drawString("Range",  DESCRIPTION1_X, DESCRIPTION1_Y + (DESCRIPTION_OFFSET_Y * 2));
         
         //sell price
-        getGraphics().drawString("Sell $", DESCRIPTION1_X, DESCRIPTION1_Y + (int)(DESCRIPTION_OFFSET_Y * 3.25));
+        getGraphics2D().drawString("Sell $" + tower.getCostSell(), DESCRIPTION1_X, DESCRIPTION1_Y + (int)(DESCRIPTION_OFFSET_Y * 3.25));
         
-        //if reached the limit display max
-        if (tower.getIndexUpgrade() >= Tower.UPGRADE_COUNT_LIMIT - 1)
+        //if reached the limit or are a tower we can't upgrade
+        if (tower.hasUpgradeMax() || tower.getType() == Tower.Type.Tower8)
         {
             //upgrade cost
-            getGraphics().drawString("Upgrade: N/A", DESCRIPTION1_X, DESCRIPTION1_Y + (int)(DESCRIPTION_OFFSET_Y * 4.75));
+            getGraphics2D().drawString("Upgrade: N/A", DESCRIPTION1_X, DESCRIPTION1_Y + (int)(DESCRIPTION_OFFSET_Y * 4.75));
         }
         else
         {
             //upgrade cost
-            getGraphics().drawString("Upgrade $", DESCRIPTION1_X, DESCRIPTION1_Y + (int)(DESCRIPTION_OFFSET_Y * 4.75));
+            getGraphics2D().drawString("Upgrade $" + tower.getCostUpgrade(), DESCRIPTION1_X, DESCRIPTION1_Y + (int)(DESCRIPTION_OFFSET_Y * 4.75));
         }
         
         //assign proper dimensions
@@ -170,7 +240,7 @@ public final class TowerMenu extends MiniMenu implements Disposable
                 setY(ATTRIBUTE1_Y + (ATTRIBUTE_OFFSET_Y * 1));
                 
                 //draw stats
-                draw(getGraphics(), getImage(), key.getLocation());
+                draw(getGraphics2D(), getImage(), key.getLocation());
             }
             
             if (i <= tower.getIndexRange())
@@ -178,7 +248,7 @@ public final class TowerMenu extends MiniMenu implements Disposable
                 setY(ATTRIBUTE1_Y + (ATTRIBUTE_OFFSET_Y * 2));
                 
                 //draw stats
-                draw(getGraphics(), getImage(), key.getLocation());
+                draw(getGraphics2D(), getImage(), key.getLocation());
             }
             
             if (i <= tower.getIndexRate())
@@ -186,8 +256,23 @@ public final class TowerMenu extends MiniMenu implements Disposable
                 setY(ATTRIBUTE1_Y + (ATTRIBUTE_OFFSET_Y * 0));
                 
                 //draw stats
-                draw(getGraphics(), getImage(), key.getLocation());
+                draw(getGraphics2D(), getImage(), key.getLocation());
             }
+        }
+        
+        //if we have not upgraded to the max, and have the money to upgrade
+        if (!tower.hasUpgradeMax() && hasActiveUpgradeIcon())
+        {
+            //set the location to draw
+            setX(Key.InActiveUpgrade.getLocation().getX());
+            setY(Key.InActiveUpgrade.getLocation().getY());
+            
+            //assign proper dimensions
+            setWidth(Key.InActiveUpgrade.getLocation().getWidth());
+            setHeight(Key.InActiveUpgrade.getLocation().getHeight());
+            
+            //now draw the icon
+            draw(getGraphics2D(), getImage(), Key.ActiveUpgrade.getLocation());
         }
     }
 }

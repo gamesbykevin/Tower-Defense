@@ -84,6 +84,20 @@ public final class Towers extends Entities implements Disposable, IElement
     }
     
     /**
+     * Upgrade the tower
+     * @param tower The tower we want to upgrade
+     */
+    public void upgrade(final Tower tower)
+    {
+        for (int i = 0; i < getEntities().size(); i++)
+        {
+            //if this is the tower upgrade
+            if (getTower(i).getId() == tower.getId())
+                getTower(i).upgrade();
+        }
+    }
+    
+    /**
      * Set the assigned tower that we want to draw the range for
      * @param tower The tower we want to draw the range for
      */

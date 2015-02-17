@@ -4,6 +4,8 @@ import com.gamesbykevin.framework.util.Timer;
 import com.gamesbykevin.framework.util.Timers;
 import com.gamesbykevin.towerdefense.entity.Entity;
 
+import java.awt.Rectangle;
+
 /**
  * The tower that attacks the enemy
  * @author GOD
@@ -14,6 +16,26 @@ public final class Tower extends Entity
     public static final double WIDTH = 40.0;
     public static final double HEIGHT = 40.0;
     
+    /**
+     * The money the tower is worth when sold
+     */
+    private int sell;
+    
+    /**
+     * The cost to upgrade the tower
+     */
+    private int upgrade;
+    
+    /**
+     * The rate at which we increase the upgrade cost, per upgrade
+     */
+    private static final double UPGRADE_INCREASE_RATIO = .33;
+    
+    /**
+     * The rate at which we increase the sell value, per upgrade
+     */
+    private static final double SELL_INCREASE_RATIO = .2;
+    
     public enum Upgrade
     {
         Default, Upgrade1, Upgrade2;
@@ -21,7 +43,7 @@ public final class Tower extends Entity
     
     public enum RangeKey
     {
-        Regular, Valid, Invalid
+        Regular
     }
     
     /**
@@ -30,37 +52,75 @@ public final class Tower extends Entity
      */
     public enum Type
     {
-        Tower1(1, 1, 3), 
-        Tower2(0, 0, 0), 
-        Tower3(0, 0, 0), 
-        Tower4(0, 0, 0), 
-        Tower5(0, 0, 0), 
-        Tower6(0, 0, 0), 
-        Tower7(0, 0, 0), 
-        Tower8(0, 0, 0);
+        Tower1(1, 1, 3, 5,  4,  10, 0, 0,  (int)WIDTH, (int)HEIGHT), 
+        Tower2(0, 0, 0, 0,  0,  0, 0, 40,  (int)WIDTH, (int)HEIGHT), 
+        Tower3(0, 0, 0, 0,  0,  0, 0, 80,  (int)WIDTH, (int)HEIGHT), 
+        Tower4(0, 0, 0, 0,  0,  0, 0, 120, (int)WIDTH, (int)HEIGHT), 
+        Tower5(0, 0, 0, 0,  0,  0, 0, 160, (int)WIDTH, (int)HEIGHT), 
+        Tower6(0, 0, 0, 0,  0,  0, 0, 200, (int)WIDTH, (int)HEIGHT), 
+        Tower7(0, 0, 0, 0,  0,  0, 0, 240, (int)WIDTH, (int)HEIGHT), 
+        Tower8(4, 4, 4, 25, 10, 50, 0, 280, (int)WIDTH, (int)HEIGHT);
         
+        //index for the 3 attributes
         private final int levelRange, levelDamage, levelRate;
         
-        private Type(final int levelRange, final int levelDamage, final int levelRate)
+        //the sell price, upgrade price, and urchase price
+        private final int sell, upgrade, purchase;
+        
+        //the initial location of the animation
+        private final Rectangle location;
+        
+        private Type(
+                final int levelRange, 
+                final int levelDamage, 
+                final int levelRate, 
+                final int sell, 
+                final int upgrade, 
+                final int purchase,
+                final int x, final int y, final int w, final int h)
         {
             this.levelDamage = levelDamage;
             this.levelRange = levelRange;
             this.levelRate = levelRate;
+            this.sell = sell;
+            this.upgrade = upgrade;
+            this.purchase = purchase;
+            this.location = new Rectangle(x, y, w, h);
         }
         
-        private int getLevelRate()
+        public int getCostSell()
+        {
+            return this.sell;
+        }
+        
+        public int getCostUpgrade()
+        {
+            return this.upgrade;
+        }
+        
+        public int getCostPurchase()
+        {
+            return this.purchase;
+        }
+        
+        public int getLevelRate()
         {
             return this.levelRate;
         }
         
-        private int getLevelDamage()
+        public int getLevelDamage()
         {
             return this.levelDamage;
         }
         
-        private int getLevelRange()
+        public int getLevelRange()
         {
             return this.levelRange;
+        }
+        
+        public Rectangle getLocation()
+        {
+            return this.location;
         }
     }
     
@@ -161,12 +221,6 @@ public final class Tower extends Entity
     //which tower is this
     private final Type type;
     
-    /**
-     * @param type
-     * @param levelRange
-     * @param levelDamage
-     * @param levelRate 
-     */
     protected Tower(final Type type) throws Exception
     {
         //all tower animations in our sprite sheet face north by default
@@ -178,71 +232,65 @@ public final class Tower extends Entity
         //create empty timer
         this.timer = new Timer();
         
+        //set the upgrade and sell costs
+        this.upgrade = type.getCostUpgrade();
+        this.sell = type.getCostSell();
+        
         //assign the attributes of the tower
         this.setLevelDamage(type.getLevelDamage());
         this.setLevelRange(type.getLevelRange());
         this.setLevelRate(type.getLevelRate());
         
+        //add default
+        super.addAnimation(type.getLocation(), Upgrade.Default);
+        
         switch (type)
         {
             case Tower1:
-                super.addAnimation(0.0,  0.0, WIDTH, HEIGHT, Upgrade.Default);
                 super.addAnimation(40.0, 0.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
                 super.addAnimation(80.0, 0.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
                 break;
                 
             case Tower2:
-                super.addAnimation(0.0,  40.0, WIDTH, HEIGHT, Upgrade.Default);
                 super.addAnimation(40.0, 40.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
                 super.addAnimation(80.0, 40.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
                 break;
                 
             case Tower3:
-                super.addAnimation(0.0,  80.0, WIDTH, HEIGHT, Upgrade.Default);
                 super.addAnimation(40.0, 80.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
                 super.addAnimation(80.0, 80.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
                 break;
                 
             case Tower4:
-                super.addAnimation(0.0,  120.0, WIDTH, HEIGHT, Upgrade.Default);
                 super.addAnimation(40.0, 120.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
                 super.addAnimation(80.0, 120.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
                 break;
                 
             case Tower5:
-                super.addAnimation(0.0,  160.0, WIDTH, HEIGHT, Upgrade.Default);
                 super.addAnimation(40.0, 160.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
                 super.addAnimation(80.0, 160.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
                 break;
                 
             case Tower6:
-                super.addAnimation(0.0,  200.0, WIDTH, HEIGHT, Upgrade.Default);
                 super.addAnimation(40.0, 200.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
                 super.addAnimation(80.0, 200.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
                 break;
                 
             case Tower7:
-                super.addAnimation(0.0,  240.0, WIDTH, HEIGHT, Upgrade.Default);
                 super.addAnimation(40.0, 240.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
                 super.addAnimation(80.0, 240.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
                 break;
                 
             case Tower8:
-                super.addAnimation(0.0, 280.0, WIDTH, HEIGHT, Upgrade.Default);
+                //this tower will have no upgrade option
                 break;
                 
             default:
                 throw new Exception("Tower type not setup here " + type.toString());
         }
         
-        //add range animations
+        //add range animation
         super.addAnimation(0, 320, 400, 400, RangeKey.Regular);
-        
-        //add range animations
-        super.addAnimation(800, 320, 400, 400, RangeKey.Invalid);
-        
-        //add range animations
-        super.addAnimation(400, 320, 400, 400, RangeKey.Valid);
         
         //assign default animation
         super.setAnimation(Upgrade.Default);
@@ -250,12 +298,30 @@ public final class Tower extends Entity
     
     public double getRange()
     {
-        return Range.values()[indexRange].getRange();
+        return Range.values()[getIndexRange()].getRange();
     }
     
     public double getDamage()
     {
-        return Damage.values()[indexDamage].getDamageAmount();
+        return Damage.values()[getIndexDamage()].getDamageAmount();
+    }
+    
+    /**
+     * Get the cost of the next upgrade
+     * @return The cost of the next upgrade
+     */
+    public int getCostUpgrade()
+    {
+        return this.upgrade;
+    }
+    
+    /**
+     * Get the value of selling the tower
+     * @return The value of selling the tower
+     */
+    public int getCostSell()
+    {
+        return this.sell;
     }
     
     /**
@@ -366,6 +432,25 @@ public final class Tower extends Entity
     }
     
     /**
+     * Has the upgrade reached the max.
+     * @param indexUpgrade The specific upgrade level to check
+     * @return true if the indexUpgrade has reached the (UPGRADE_COUNT_LIMIT - 1), false otherwise
+     */
+    public boolean hasUpgradeMax(final int indexUpgrade)
+    {
+        return (indexUpgrade >= UPGRADE_COUNT_LIMIT - 1);
+    }
+            
+    /**
+     * Has the tower been upgraded to the allowed max
+     * @return true if the tower upgrade count has reached the (UPGRADE_COUNT_LIMIT - 1), false otherwise
+     */
+    public boolean hasUpgradeMax()
+    {
+        return hasUpgradeMax(getIndexUpgrade());
+    }
+    
+    /**
      * Upgrade the tower.<br>
      * Tower8 is the only tower that cannot be upgraded
      */
@@ -376,14 +461,14 @@ public final class Tower extends Entity
             return;
         
         //if we have already reached the limit, don't continue
-        if(indexUpgrade >= UPGRADE_COUNT_LIMIT - 1)
+        if(hasUpgradeMax())
             return;
         
         //increase upgrade count
         this.indexUpgrade++;
         
         //set the correct animation for the tower
-        super.setAnimation(Upgrade.values()[indexUpgrade]);
+        super.setAnimation(Upgrade.values()[getIndexUpgrade()]);
         
         //increase the level of each attribute
         indexRange++;
@@ -397,6 +482,10 @@ public final class Tower extends Entity
             indexRate = UPGRADE_MAXIMUM_LEVEL;
         if (indexDamage > UPGRADE_MAXIMUM_LEVEL)
             indexDamage = UPGRADE_MAXIMUM_LEVEL;
+        
+        //increase the sell value and upgrade cost
+        this.sell = getCostSell() + (int)Math.round(getCostSell() * SELL_INCREASE_RATIO);
+        this.upgrade = getCostUpgrade() + (int)Math.round(getCostUpgrade() * UPGRADE_INCREASE_RATIO);
     }
     
     /**

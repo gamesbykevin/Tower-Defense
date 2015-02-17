@@ -2,41 +2,16 @@ package com.gamesbykevin.towerdefense.player.ui.menu.mini;
 
 import com.gamesbykevin.framework.resources.Disposable;
 
-import com.gamesbykevin.towerdefense.level.object.LevelObject;
+import com.gamesbykevin.towerdefense.player.ui.menu.main.MainMenu;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * This class manages the common elements for the mini menus
+ * This class manages the element locations for the mini menus
  * @author GOD
  */
-public abstract class MiniMenu extends LevelObject implements Disposable
+public abstract class MiniMenu extends MainMenu implements Disposable
 {
-    //do we show the mini menu
-    private boolean visible = false;
-    
-    //flag a change was made to know if we need to render a new image
-    private boolean change = true;
-    
-    //the font used for this menu
-    private Font font;
-    
-    //buffered image to create our minimenu
-    private BufferedImage bi;
-    
-    //graphics to draw the buffered image
-    private Graphics2D g2d;
-    
-    //color with 100% transparency so you can't see it
-    private static final Color TRANSPARENT_COLOR = new Color(0,0,0,0);
-    
     protected enum MenuKey
     {
         Background(0, 0, 100, 100), 
@@ -70,120 +45,6 @@ public abstract class MiniMenu extends LevelObject implements Disposable
     
     protected MiniMenu(final int width, final int height) throws Exception
     {
-        //set dimensions
-        super.setDimensions(width, height);
-        
-        //create buffered image
-        this.bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        
-        //get graphics object to draw image
-        this.g2d = this.bi.createGraphics();
-        
-        //set transparent background
-        this.g2d.setBackground(TRANSPARENT_COLOR);
-    }
-    
-    public void setFont(final Font font)
-    {
-        this.font = font;
-    }
-    
-    protected Font getFont()
-    {
-        return this.font;
-    }
-    
-    /**
-     * Is the menu to be displayed?
-     * @return true if yes, false otherwise
-     */
-    public boolean isVisible()
-    {
-        return this.visible;
-    }
-    
-    private boolean hasChange()
-    {
-        return this.change;
-    }
-    
-    public void setChange(final boolean change)
-    {
-        this.change = change;
-    }
-    
-    /**
-     * Mark the menu to be displayed
-     * @param visible true if yes, false otherwise
-     */
-    public void setVisible(final boolean visible)
-    {
-        this.visible = visible;
-    }
-    
-    @Override
-    public void dispose()
-    {
-        super.dispose();
-        
-        if (font != null)
-            font = null;
-    }
-    
-    /**
-     * Get the graphics object for the buffered image
-     * @return Object used to draw image
-     */
-    protected Graphics2D getGraphics()
-    {
-        return this.g2d;
-    }
-    
-    /**
-     * Children will need to create the image
-     */
-    protected abstract void renderImage() throws Exception;
-    
-    /**
-     * Children will need to implement how to draw the menu
-     * @param graphics Object used to draw graphics
-     */
-    public void render(final Graphics graphics) throws Exception
-    {
-        //don't continue if not visible
-        if (!isVisible())
-            return;
-        
-        //if a change was made, render new image
-        if (hasChange())
-        {
-            //store current location
-            final double x = getX();
-            final double y = getY();
-            
-            //clear image
-            getGraphics().clearRect(0, 0, bi.getWidth(), bi.getHeight());
-            
-            //set position to 0,0
-            super.setX(0);
-            super.setY(0);
-            
-            //render new image
-            renderImage();
-            
-            //restore location
-            super.setX(x);
-            super.setY(y);
-            
-            //restore dimensions
-            super.setWidth(bi.getWidth());
-            super.setHeight(bi.getHeight());
-            
-            //flag false
-            setChange(false);
-        }
-        
-        //draw our buffered image
-        super.draw(graphics, bi);
+        super(width, height);
     }
 }
