@@ -7,6 +7,7 @@ import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
+import com.gamesbykevin.towerdefense.menu.CustomMenu;
 import com.gamesbykevin.towerdefense.player.ui.menu.main.UIMenu;
 import com.gamesbykevin.towerdefense.player.ui.menu.mini.EnemyMenu;
 import com.gamesbykevin.towerdefense.player.ui.menu.mini.TowerMenu;
@@ -208,7 +209,23 @@ public final class Player extends Sprite implements Disposable, IElement
                     if (!getUIMenu().hasTowerSelection())
                     {
                         //check to see what selection was made
-                        getUIMenu().performTowerSelection(x, y);
+                        if (getUIMenu().performTowerSelection(x, y))
+                        {
+                            
+                        }
+                        else if (getUIMenu().performAudioSelection(x, y))
+                        {
+                            
+                        }
+                        else if (getUIMenu().performSpeedSelection(x, y))
+                        {
+                            
+                        }
+                        else if (getUIMenu().performMenuSelection(x, y))
+                        {
+                            //open menu
+                            engine.getMenu().setLayer(CustomMenu.LayerKey.OptionsInGame);
+                        }
                     }
                     else
                     {
@@ -227,6 +244,9 @@ public final class Player extends Sprite implements Disposable, IElement
             
             //reset mouse released
             engine.getMouse().reset();
+            
+            //reset keyboard
+            engine.getKeyboard().reset();
         }
         else if (engine.getMouse().hasMouseMoved())
         {

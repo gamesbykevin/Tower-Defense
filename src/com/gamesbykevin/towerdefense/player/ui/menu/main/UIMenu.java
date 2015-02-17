@@ -134,6 +134,48 @@ public final class UIMenu extends MainMenu implements Disposable
         super(WIDTH, HEIGHT);
     }
     
+    public boolean performAudioSelection(final double x, final double y)
+    {
+        //make sure within x coordinates
+        if (x >= getX() + LOCATION_AUDIO.x && x <= getX() + LOCATION_AUDIO.x + Tower.WIDTH)
+        {
+            //make sure within y coordinates
+            if (y >= getY() + LOCATION_AUDIO.y && y <= getY() + LOCATION_AUDIO.y + Tower.HEIGHT)
+                return true;
+        }
+        
+        //no selection was made
+        return false;
+    }
+    
+    public boolean performSpeedSelection(final double x, final double y)
+    {
+        //make sure within x coordinates
+        if (x >= getX() + LOCATION_SPEED.x && x <= getX() + LOCATION_SPEED.x + Tower.WIDTH)
+        {
+            //make sure within y coordinates
+            if (y >= getY() + LOCATION_SPEED.y && y <= getY() + LOCATION_SPEED.y + Tower.HEIGHT)
+                return true;
+        }
+        
+        //no selection was made
+        return false;
+    }
+    
+    public boolean performMenuSelection(final double x, final double y)
+    {
+        //make sure within x coordinates
+        if (x >= getX() + LOCATION_MENU.x && x <= getX() + LOCATION_MENU.x + Tower.WIDTH)
+        {
+            //make sure within y coordinates
+            if (y >= getY() + LOCATION_MENU.y && y <= getY() + LOCATION_MENU.y + Tower.HEIGHT)
+                return true;
+        }
+        
+        //no selection was made
+        return false;
+    }
+    
     public TowerSelection getTowerSelection()
     {
         return this.towerSelection;
