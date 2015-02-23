@@ -23,8 +23,8 @@ public final class Effect extends Entity
     
     protected Effect(final Type type) throws Exception
     {
-        //default facing direction
-        super(Direction.North);
+        //call parent
+        super();
         
         //assign the type
         this.type = type;

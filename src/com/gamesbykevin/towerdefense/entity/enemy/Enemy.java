@@ -1,6 +1,7 @@
 package com.gamesbykevin.towerdefense.entity.enemy;
 
 import com.gamesbykevin.framework.base.Animation;
+import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.util.Timers;
 
 import com.gamesbykevin.towerdefense.entity.Entity;
@@ -24,24 +25,45 @@ public final class Enemy extends Entity
     /**
      * The enemy's current health
      */
-    private double health = 85.0;
+    private double health = 100.0;
+    
+    /**
+     * How fast does the enemy move from column to column, etc.....
+     */
+    private double speed = .01;
+    
+    //where the enemy is heading
+    private Cell destination;
     
     public enum Type
     {
-        Blue1,
-        Blue2,
-        Blue3,
-        Green1,
-        Green2,
-        Green3,
-        Red1,
-        Red2,
-        Red3,
-        Yellow1,
-        Yellow2,
-        Yellow3,
-        Boss1,
-        Boss2
+        Blue1(.01),
+        Blue2(.01),
+        Blue3(.01),
+        Green1(.01),
+        Green2(.01),
+        Green3(.01),
+        Red1(.01),
+        Red2(.01),
+        Red3(.01),
+        Yellow1(.01),
+        Yellow2(.01),
+        Yellow3(.01),
+        Boss1(.01),
+        Boss2(.01);
+        
+        //the speed of the type of enemy
+        private final double speed;
+        
+        private Type(final double speed)
+        {
+            this.speed = speed;
+        }
+        
+        protected double getSpeed()
+        {
+            return this.speed;
+        }
     }
     
     //the type of enemy
@@ -49,8 +71,8 @@ public final class Enemy extends Entity
     
     protected Enemy(final Type type) throws Exception
     {
-        //all enemies default facing east
-        super(Direction.East);
+        //call parent
+        super();
         
         //assign type
         this.type = type;
@@ -60,6 +82,9 @@ public final class Enemy extends Entity
         
         //all enemy animations will loop 
         animation.setLoop(true);
+        
+        //set the enemy speed
+        this.setSpeed(type.getSpeed());
         
         switch (type)
         {
@@ -174,6 +199,48 @@ public final class Enemy extends Entity
         
         //add animation
         super.addAnimation(animation);
+    }
+    
+    /**
+     * Get the location where the enemy is headed
+     * @return The column, row
+     */
+    public Cell getDestination()
+    {
+        return this.destination;
+    }
+    
+    public void setDestination(final Cell destination)
+    {
+        setDestination(destination.getCol(), destination.getRow());
+    }
+    
+    public void setDestination(final double col, final double row)
+    {
+        if (getDestination() == null)
+            this.destination = new Cell();
+        
+        //set the location
+        this.destination.setCol(col);
+        this.destination.setRow(row);
+    }
+    
+    /**
+     * Set the speed of the enemy
+     * @param speed The rate at which the enemy can move
+     */
+    public final void setSpeed(final double speed)
+    {
+        this.speed = speed;
+    }
+    
+    /**
+     * Get the speed
+     * @return The rate at which the enemy can move
+     */
+    public final double getSpeed()
+    {
+        return this.speed;
     }
     
     /**

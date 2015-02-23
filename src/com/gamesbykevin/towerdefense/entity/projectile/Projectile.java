@@ -20,8 +20,8 @@ public final class Projectile extends Entity
     
     protected Projectile(final Type type) throws Exception
     {
-        //all projectiles are vertical facing north
-        super(Direction.North);
+        //call parent
+        super();
         
         //assign type
         this.type = type;

@@ -1,5 +1,6 @@
 package com.gamesbykevin.towerdefense.level.map;
 
+import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.base.Sprite;
 import com.gamesbykevin.framework.labyrinth.*;
 import com.gamesbykevin.framework.labyrinth.Location.Wall;
@@ -49,9 +50,18 @@ public final class Map extends Sprite implements Disposable, IElement
     //chance to correct a dead end, example 1 in 3
     private static final int FIX_DEAD_END_PROBABILITY = 3;
     
+    //the location of the start and finish
+    private Cell start, finish;
+    
     public Map(final Image road)
     {
         super.setImage(road);
+        
+        super.setBounds(0, COLS - 1, 0, ROWS - 1);
+        
+        //create start and finish
+        this.start = new Cell();
+        this.finish = new Cell();
     }
     
     /**
@@ -403,6 +413,10 @@ public final class Map extends Sprite implements Disposable, IElement
                     //if the current location is at the finish
                     if (maze.getFinish().equals(current))
                     {
+                        //store finish locaton
+                        this.finish.setCol(maze.getFinish().getCol() + 0.5);
+                        this.finish.setRow(maze.getFinish().getRow() + 0.5);
+                                
                         //add west to the appropriate location
                         switch (type)
                         {
@@ -434,6 +448,10 @@ public final class Map extends Sprite implements Disposable, IElement
                     }
                     else if (maze.getStart().equals(current))
                     {
+                        //store start locaton
+                        this.start.setCol(maze.getStart().getCol() + 0.5);
+                        this.start.setRow(maze.getStart().getRow() + 0.5);
+                        
                         //add east to the appropriate location
                         switch (type)
                         {
@@ -478,6 +496,100 @@ public final class Map extends Sprite implements Disposable, IElement
                 this.tiles[row][col].setY(getStartY(row));
             }
         }
+        
+        maze.dispose();
+        maze = null;
+    }
+    
+    /**
+     * Get the next destination.<br>
+     * The next location with a cost higher than the current location
+     * @param cell The current column, row
+     * @return The column, row of the next place to head in
+     */
+    public Cell getNextDestination(final Cell cell)
+    {
+        return this.getNextDestination(cell.getCol(), cell.getRow());
+    }
+    
+    /**
+     * Get the next destination.<br>
+     * The next location with a cost higher than the current location
+     * @param col Current column
+     * @param row Current row
+     * @return The column, row of the next place to head in
+     */
+    public Cell getNextDestination(final double currentCol, final double currentRow)
+    {
+        //our solution
+        Cell destination = new Cell();
+        
+        Tile tile = getTile((int)currentCol, (int)currentRow);
+        
+        //the current highest cost to beat
+        int cost = tile.getCost();
+        
+        for (int col = -1; col <= 1; col++)
+        {
+            //if not in bounds skip
+            if (!hasBounds((int)currentCol + col, (int)currentRow))
+                continue;
+            
+            //get current tile
+            tile = getTile((int)currentCol + col, (int)currentRow);
+            
+            //make sure the tile has a higher cost
+            if (tile.getCost() > cost)
+            {
+                //store new higher cost
+                cost = tile.getCost();
+                
+                //set new destination
+                destination.setCol(currentCol + col);
+                destination.setRow(currentRow);
+            }
+        }
+        
+        for (int row = -1; row <= 1; row++)
+        {
+            //if not in bounds skip
+            if (!hasBounds((int)currentCol, (int)currentRow + row))
+                continue;
+            
+            //get current tile
+            tile = getTile((int)currentCol, (int)currentRow + row);
+            
+            //make sure the tile has a higher cost
+            if (tile.getCost() > cost)
+            {
+                //store new higher cost
+                cost = tile.getCost();
+                
+                //set new destination
+                destination.setCol(currentCol);
+                destination.setRow(currentRow + row);
+            }
+        }
+        
+        return destination;
+    }
+    
+    /**
+     * Get the start location
+     * @return The col, row where the enemy is to begin
+     */
+    public Cell getStart()
+    {
+        return this.start;
+    }
+    
+    /**
+     * Get the finish location
+     * @return The col, row where the enemy is to finish
+     */
+    public Cell getFinish()
+    {
+        return this.finish;
     }
     
     /**
@@ -533,6 +645,23 @@ public final class Map extends Sprite implements Disposable, IElement
                     }
                 }
             }
+            
+            /*
+            for (int row = 0; row < tiles.length; row++)
+            {
+                for (int col = 0; col < tiles[0].length; col++)
+                {
+                    if (tiles[row][col] != null)
+                    {
+                        graphics.drawRect(
+                                (int)tiles[row][col].getX(), 
+                                (int)tiles[row][col].getY(), 
+                                (int)tiles[row][col].getWidth(), 
+                                (int)tiles[row][col].getHeight());
+                    }
+                }
+            }
+            */
         }
     }
 }

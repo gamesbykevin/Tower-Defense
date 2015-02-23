@@ -2,9 +2,7 @@ package com.gamesbykevin.towerdefense.entity;
 
 import com.gamesbykevin.towerdefense.level.object.LevelObject;
 
-import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 
 /**
@@ -13,27 +11,11 @@ import java.awt.Image;
  */
 public abstract class Entity extends LevelObject
 {
-    /**
-     * The different directions
-     */
-    public enum Direction
-    {
-        North, South, East, West
-    }
-    
-    //the default facing direction of the entity animation
-    private final Direction directionDefault;
-    
-    //the current facing direction of the entity
-    private Direction direction;
-    
     //the angle to face in radians
     private double angle = 0;
     
-    protected Entity(final Direction directionDefault)
+    protected Entity()
     {
-        //assign the default directions
-        this.directionDefault = directionDefault;
     }
     
     /**
@@ -59,33 +41,6 @@ public abstract class Entity extends LevelObject
             setAngle(getAngle() - (Math.PI * 2));
         if (getAngle() < 0)
             setAngle(Math.PI * 2);
-    }
-    
-    /**
-     * Set the direction of the entity
-     * @param direction The direction the entity is facing (North, South, East, West)
-     */
-    public void setDirection(final Direction direction)
-    {
-        this.direction = direction;
-    }
-    
-    /**
-     * Get the direction of this entity
-     * @return The current facing direction (North, South, East, West)
-     */
-    public Direction getDirection()
-    {
-        return this.direction;
-    }
-    
-    /**
-     * Get the default facing direction of the entity animation
-     * @return default facing direction (North, South, East, West)
-     */
-    private Direction getDefaultDirection()
-    {
-        return this.directionDefault;
     }
     
     /**

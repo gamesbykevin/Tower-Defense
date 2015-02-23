@@ -52,14 +52,14 @@ public final class Tower extends Entity
      */
     public enum Type
     {
-        Tower1(1, 1, 3, 5,  4,  10, 0, 0,  (int)WIDTH, (int)HEIGHT), 
-        Tower2(0, 0, 0, 0,  0,  0, 0, 40,  (int)WIDTH, (int)HEIGHT), 
-        Tower3(0, 0, 0, 0,  0,  0, 0, 80,  (int)WIDTH, (int)HEIGHT), 
-        Tower4(0, 0, 0, 0,  0,  0, 0, 120, (int)WIDTH, (int)HEIGHT), 
-        Tower5(0, 0, 0, 0,  0,  0, 0, 160, (int)WIDTH, (int)HEIGHT), 
-        Tower6(0, 0, 0, 0,  0,  0, 0, 200, (int)WIDTH, (int)HEIGHT), 
-        Tower7(0, 0, 0, 0,  0,  0, 0, 240, (int)WIDTH, (int)HEIGHT), 
-        Tower8(4, 4, 4, 25, 10, 50, 0, 280, (int)WIDTH, (int)HEIGHT);
+        Tower1(1, 1, 3, 04, 10, 0, 0,  (int)WIDTH, (int)HEIGHT), 
+        Tower2(0, 0, 0, 00, 00, 0, 40, (int)WIDTH, (int)HEIGHT), 
+        Tower3(0, 0, 0, 00, 00, 0, 80, (int)WIDTH, (int)HEIGHT), 
+        Tower4(0, 0, 0, 00, 00, 0, 120,(int)WIDTH, (int)HEIGHT), 
+        Tower5(0, 0, 0, 00, 00, 0, 160,(int)WIDTH, (int)HEIGHT), 
+        Tower6(0, 0, 0, 00, 00, 0, 200,(int)WIDTH, (int)HEIGHT), 
+        Tower7(0, 0, 0, 00, 00, 0, 240,(int)WIDTH, (int)HEIGHT), 
+        Tower8(4, 4, 4, 10, 50, 0, 280,(int)WIDTH, (int)HEIGHT);
         
         //index for the 3 attributes
         private final int levelRange, levelDamage, levelRate;
@@ -74,7 +74,6 @@ public final class Tower extends Entity
                 final int levelRange, 
                 final int levelDamage, 
                 final int levelRate, 
-                final int sell, 
                 final int upgrade, 
                 final int purchase,
                 final int x, final int y, final int w, final int h)
@@ -82,7 +81,7 @@ public final class Tower extends Entity
             this.levelDamage = levelDamage;
             this.levelRange = levelRange;
             this.levelRate = levelRate;
-            this.sell = sell;
+            this.sell = (purchase / 2);
             this.upgrade = upgrade;
             this.purchase = purchase;
             this.location = new Rectangle(x, y, w, h);
@@ -148,16 +147,16 @@ public final class Tower extends Entity
         Damage4(15.625),
         Damage5(39.0625);
         
-        private final double amount;
+        private final double damage;
         
-        private Damage(final double amount)
+        private Damage(final double damage)
         {
-            this.amount = amount;
+            this.damage = damage;
         }
         
-        public double getDamageAmount()
+        public double getDamage()
         {
-            return this.amount;
+            return this.damage;
         }
     }
     
@@ -167,22 +166,22 @@ public final class Tower extends Entity
      */
     public enum Range
     {
-        Range1(1),
-        Range2(1.25),
-        Range3(2),
-        Range4(3.25),
-        Range5(6);
+        Range1(1.0),
+        Range2(2.0),
+        Range3(3.0),
+        Range4(4.0),
+        Range5(6.0);
         
-        private final double amount;
+        private final double range;
         
-        private Range(final double amount)
+        private Range(final double range)
         {
-            this.amount = amount;
+            this.range = range;
         }
         
         public double getRange()
         {
-            return this.amount;
+            return this.range;
         }
     }
     
@@ -197,16 +196,16 @@ public final class Tower extends Entity
         Rate4(Timers.toNanoSeconds(1000L)),
         Rate5(Timers.toNanoSeconds(250L));
         
-        private final long amount;
+        private final long rate;
         
-        private Rate(final long amount)
+        private Rate(final long rate)
         {
-            this.amount = amount;
+            this.rate = rate;
         }
         
         public long getRate()
         {
-            return this.amount;
+            return this.rate;
         }
     }
     
@@ -223,8 +222,8 @@ public final class Tower extends Entity
     
     protected Tower(final Type type) throws Exception
     {
-        //all tower animations in our sprite sheet face north by default
-        super(Direction.North);
+        //call parent
+        super();
         
         //assign the type of tower
         this.type = type;
@@ -303,7 +302,7 @@ public final class Tower extends Entity
     
     public double getDamage()
     {
-        return Damage.values()[getIndexDamage()].getDamageAmount();
+        return Damage.values()[getIndexDamage()].getDamage();
     }
     
     /**

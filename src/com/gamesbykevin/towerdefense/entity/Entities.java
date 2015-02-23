@@ -3,7 +3,6 @@ package com.gamesbykevin.towerdefense.entity;
 import com.gamesbykevin.framework.base.Sprite;
 import com.gamesbykevin.framework.resources.Disposable;
 
-import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Graphics;
@@ -133,7 +132,7 @@ public abstract class Entities extends Sprite implements Disposable, IElement
             
             //rotate at this anchor position
             at.rotate(entity.getAngle(), entity.getX(), entity.getY());
-        
+            
             //assign transform
             g2d.setTransform(at);
         

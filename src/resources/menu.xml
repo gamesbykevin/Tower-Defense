@@ -125,7 +125,10 @@
             <option>Off</option>
             <option>On</option>
         </options>
+        <!--
+        Hide this option for now, we may add back later
         <options name="New Game" next="NewGameConfirm" id="NewGameConfirm"></options>
+        -->
         <options name="Exit Game" next="ExitGameConfirm" id="ExitGameConfirm"></options>
     </layer>
     <layer id="NewGameConfirm">

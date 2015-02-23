@@ -19,8 +19,8 @@ public final class UIMenu extends MainMenu implements Disposable
     {
         RangeValid(200, 0, 400, 400), 
         RangeInvalid(600, 0, 400, 400), 
-        AudioMute(50, 0, 48, 48), 
-        AudioUnmute(50, 48, 48, 48), 
+        AudioUnmute(50, 0, 48, 48), 
+        AudioMute(50, 48, 48, 48), 
         Play(50, 96, 48, 48), 
         Fast(50, 144, 48, 48),
         Menu(50, 240, 48, 48),
@@ -129,9 +129,38 @@ public final class UIMenu extends MainMenu implements Disposable
     //the object representing the tower selection
     private TowerSelection towerSelection;
     
+    //is audio enabled
+    private boolean audioEnabled = true;
+    
+    //is the speed enabled
+    private boolean speedEnabled = false;
+    
     public UIMenu()
     {
         super(WIDTH, HEIGHT);
+    }
+    
+    public void setAudioEnabled(final boolean enabled)
+    {
+        //if setting changed, flag change
+        if (this.audioEnabled != enabled)
+            setChange(true);
+        
+        this.audioEnabled = enabled;
+    }
+    
+    public boolean hasSpeedEnabled()
+    {
+        return this.speedEnabled;
+    }
+    
+    public void setSpeedEnabled(final boolean enabled)
+    {
+        //if setting changed, flag change
+        if (this.speedEnabled != enabled)
+            setChange(true);
+        
+        this.speedEnabled = enabled;
     }
     
     public boolean performAudioSelection(final double x, final double y)
@@ -379,14 +408,14 @@ public final class UIMenu extends MainMenu implements Disposable
     {
         //draw speed icon
         setLocation(LOCATION_SPEED);
-        draw(getGraphics2D(), getImage(), Key.Play.getLocation());
+        draw(getGraphics2D(), getImage(), (speedEnabled) ? Key.Fast.getLocation() : Key.Play.getLocation());
     }
     
     private void drawAudioInfo()
     {
         //draw audio icon
         setLocation(LOCATION_AUDIO);
-        draw(getGraphics2D(), getImage(), Key.AudioMute.getLocation());
+        draw(getGraphics2D(), getImage(), (audioEnabled) ? Key.AudioUnmute.getLocation() : Key.AudioMute.getLocation());
     }
     
     private void drawMoneyInfo()

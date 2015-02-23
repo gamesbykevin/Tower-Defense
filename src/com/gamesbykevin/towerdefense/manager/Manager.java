@@ -94,14 +94,16 @@ public final class Manager implements IManager
             );
         }
         
+        //make sure audio icon matches audio menu setting
+        //getPlayer().getUIMenu().setAudioEnabled(engine.getResources().isAudioEnabled());
         
         //add default tower for testing
-        getTowers().add(Tower.Type.Tower1, .5, .5);
+        //getTowers().add(Tower.Type.Tower1, .5, .5);
         
         //add default tower for testing
-        getTowers().add(Tower.Type.Tower1, 4.5, 3.5);
+        //getTowers().add(Tower.Type.Tower1, 4.5, 3.5);
         
-        getEnemies().add(com.gamesbykevin.towerdefense.entity.enemy.Enemy.Type.Boss1, 5, 5);
+        //getEnemies().add(com.gamesbykevin.towerdefense.entity.enemy.Enemy.Type.Boss1, 5, 5);
         
         /*
         getTowers().add(Tower.Type.Tower2, 0.5, 0.5);

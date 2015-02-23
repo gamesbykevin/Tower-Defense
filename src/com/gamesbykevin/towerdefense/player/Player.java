@@ -211,19 +211,26 @@ public final class Player extends Sprite implements Disposable, IElement
                         //check to see what selection was made
                         if (getUIMenu().performTowerSelection(x, y))
                         {
-                            
+                            //possibly play sound effect here
                         }
                         else if (getUIMenu().performAudioSelection(x, y))
                         {
+                            //switch the audio selection
+                            engine.getMenu().switchAudioEnabled(engine.getResources());
                             
+                            //set correct icon
+                            getUIMenu().setAudioEnabled(engine.getResources().isAudioEnabled());
                         }
                         else if (getUIMenu().performSpeedSelection(x, y))
                         {
+                            engine.getManager().getEnemies().add(engine.getRandom(), engine.getManager().getMap().getStart());
                             
+                            //set correct icon
+                            getUIMenu().setSpeedEnabled(!getUIMenu().hasSpeedEnabled());
                         }
                         else if (getUIMenu().performMenuSelection(x, y))
                         {
-                            //open menu
+                            //open menu since icon was selected
                             engine.getMenu().setLayer(CustomMenu.LayerKey.OptionsInGame);
                         }
                     }
@@ -271,12 +278,15 @@ public final class Player extends Sprite implements Disposable, IElement
     public void render(final Graphics graphics) throws Exception
     {
         //draw tower menu
-        getTowerMenu().render(graphics);
+        if (getTowerMenu() != null)
+            getTowerMenu().render(graphics);
         
         //draw enemy menu
-        getEnemyMenu().render(graphics);
+        if (getEnemyMenu() != null)
+            getEnemyMenu().render(graphics);
         
         //draw the main menu
-        getUIMenu().render(graphics);
+        if (getUIMenu() != null)
+            getUIMenu().render(graphics);
     }
 }
