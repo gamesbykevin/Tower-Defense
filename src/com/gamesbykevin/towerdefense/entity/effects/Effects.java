@@ -1,5 +1,6 @@
 package com.gamesbykevin.towerdefense.entity.effects;
 
+import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.resources.Disposable;
 
 import com.gamesbykevin.towerdefense.engine.Engine;
@@ -7,6 +8,7 @@ import com.gamesbykevin.towerdefense.entity.Entities;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Image;
+import java.util.Random;
 
 /**
  * Object containing all of the Effects in the game
@@ -17,6 +19,17 @@ public final class Effects extends Entities implements Disposable, IElement
     public Effects(final Image image)
     {
         super.setImage(image);
+    }
+    
+    /**
+     * Add effect of random type at location
+     * @param random Object used to pick random effect type
+     * @param start Location
+     * @throws Exception 
+     */
+    public void add(final Random random, final Cell start) throws Exception
+    {
+        add(Effect.Type.values()[random.nextInt(Effect.Type.values().length)], start.getCol(), start.getRow());
     }
     
     /**
@@ -32,7 +45,7 @@ public final class Effects extends Entities implements Disposable, IElement
         effect.setRow(row);
         
         //add to list
-        getEntities().add(effect);
+        add(effect);
     }
     
     @Override
@@ -47,6 +60,15 @@ public final class Effects extends Entities implements Disposable, IElement
             //update the current enemy
             Effect effect = (Effect)getEntities().get(i);
             
+            //once the animation is finished 
+            if (effect.getSpriteSheet().hasFinished())
+            {
+                //remove from list
+                remove(effect);
+                
+                //move index back 1
+                i--;
+            }
         }
     }
 }

@@ -67,6 +67,10 @@ public abstract class Entities extends Sprite implements Disposable, IElement
      */
     protected void add(final Entity entity)
     {
+        //update the x,y location
+        entity.update();
+        
+        //add to list
         getEntities().add(entity);
     }
     

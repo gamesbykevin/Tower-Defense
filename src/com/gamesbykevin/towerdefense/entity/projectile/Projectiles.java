@@ -1,5 +1,6 @@
 package com.gamesbykevin.towerdefense.entity.projectile;
 
+import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.resources.Disposable;
 
 import com.gamesbykevin.towerdefense.engine.Engine;
@@ -7,6 +8,7 @@ import com.gamesbykevin.towerdefense.entity.Entities;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Image;
+import java.util.Random;
 
 /**
  * This class will contain all projectiles in play
@@ -21,18 +23,39 @@ public final class Projectiles extends Entities  implements Disposable, IElement
     
     /**
      * Add projectile
+     * @param random Object used to pick a random projectile type
+     * @param start Start
+     * @param goal Goal 
+     * @param angle facing angle
+     * @throws Exception 
      */
-    public void add(final Projectile.Type type, final double col, final double row) throws Exception
+    public void add(final Random random, final Cell start, final Cell goal, final double angle) throws Exception
+    {
+        add(Projectile.Type.values()[random.nextInt(Projectile.Type.values().length)], start, goal, angle);
+    }
+    
+    /**
+     * Add projectile
+     * @param type The type of animation
+     * @param start Start
+     * @param goal Goal 
+     * @param angle facing angle
+     * @throws Exception 
+     */
+    public void add(final Projectile.Type type, final Cell start, final Cell goal, final double angle) throws Exception
     {
         //create a new tower
-        Projectile projectile = new Projectile(type);
+        Projectile projectile = new Projectile(type, goal);
         
         //set position
-        projectile.setCol(col);
-        projectile.setRow(row);
+        projectile.setCol(start);
+        projectile.setRow(start);
+        
+        //set the facing angle
+        projectile.setAngle(angle);
         
         //add to list
-        getEntities().add(projectile);
+        add(projectile);
     }
     
     @Override

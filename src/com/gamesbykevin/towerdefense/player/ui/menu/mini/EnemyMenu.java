@@ -34,8 +34,11 @@ public final class EnemyMenu extends MiniMenu implements Disposable
     private static final int HEALTH_DESC_X = 30;
     private static final int HEALTH_DESC_Y = 30;
     
-    //the enemy for this menu
-    private Enemy enemy;
+    //the unique enemy id we are targeting for this menu
+    private long enemyId;
+    
+    //the current and start health of our targeted enemy
+    private double currentHealth, startingHealth;
     
     public enum Key
     {
@@ -64,39 +67,62 @@ public final class EnemyMenu extends MiniMenu implements Disposable
     }
     
     /**
-     * Assign the enemy to this menu
-     * @param enemy The enemy we want to display in the menu
+     * Keep the enemy health up to date
+     * @param enemy The enemy to update
      */
-    public void assignEnemy(final Enemy enemy)
+    public void updateEnemyStats(final Enemy enemy)
     {
-        this.enemy = enemy;
+        //flag change if the enemy health is different
+        if (enemy.getHealth() != this.currentHealth)
+            setChange(true);
         
-        //if enemy exists assign menu location
-        if (enemy != null)
+        this.currentHealth = enemy.getHealth();
+        this.startingHealth = enemy.getStartHealth();
+    }
+    
+    /**
+     * The id of the enemy we are targeting
+     * @return The unique key of the enemy we want to target
+     */
+    public long getEnemyId()
+    {
+        return this.enemyId;
+    }
+    
+    /**
+     * Assign the enemy id and position to this menu
+     * @param enemy The enemy to be displayed on the menu
+     */
+    public void assignPosition(final Enemy enemy)
+    {
+        //assign the unique id
+        this.enemyId = enemy.getId();
+        
+        //update the stats
+        updateEnemyStats(enemy);
+        
+        //check if menu should be placed on west or east side
+        if (enemy.getX() < (Map.COLS / 2) * Map.WIDTH)
         {
-            //check if menu should be placed on west or east side
-            if (enemy.getX() < (Map.COLS / 2) * Map.WIDTH)
-            {
-                //add menu to right side
-                super.setX(enemy.getX() + Map.WIDTH);
-            }
-            else
-            {
-                //add menu to left side
-                super.setX(enemy.getX() - WIDTH);
-            }
-            
-            //check if menu should be placed on north or south side
-            if (enemy.getY() < (Map.ROWS / 2) * Map.HEIGHT)
-            {
-                //add menu to south side
-                super.setY(enemy.getY() + Map.HEIGHT);
-            }
-            else
-            {
-                //add menu to north side
-                super.setY(enemy.getY() - HEIGHT);
-            }
+            //add menu to right side
+            super.setX(enemy.getX() + Map.WIDTH);
+        }
+        else
+        {
+            //add menu to left side
+            super.setX(enemy.getX() - WIDTH);
+        }
+
+        //check if menu should be placed on north or south side
+        if (enemy.getY() < (Map.ROWS / 2) * Map.HEIGHT)
+        {
+            //add menu to south side
+            super.setY(enemy.getY() + Map.HEIGHT);
+        }
+        else
+        {
+            //add menu to north side
+            super.setY(enemy.getY() - HEIGHT);
         }
     }
     
@@ -116,10 +142,10 @@ public final class EnemyMenu extends MiniMenu implements Disposable
         getGraphics2D().setColor(Color.BLACK);
         
         //draw text description
-        getGraphics2D().drawString("Enemy Health: " + enemy.getHealth(), HEALTH_DESC_X, HEALTH_DESC_Y);
+        getGraphics2D().drawString("Enemy Health: " + this.currentHealth, HEALTH_DESC_X, HEALTH_DESC_Y);
         
         //get the health ratio
-        final double ratio = enemy.getHealth() / enemy.getStartHealth();
+        final double ratio = this.currentHealth / this.startingHealth;
         
         //set location
         super.setX(HEALTH_START_X);

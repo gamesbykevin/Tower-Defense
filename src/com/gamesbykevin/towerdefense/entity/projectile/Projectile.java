@@ -1,5 +1,7 @@
 package com.gamesbykevin.towerdefense.entity.projectile;
 
+import com.gamesbykevin.framework.base.Cell;
+
 import com.gamesbykevin.towerdefense.entity.Entity;
 
 /**
@@ -18,13 +20,19 @@ public final class Projectile extends Entity
     //the type of projectile this is
     private final Type type;
     
-    protected Projectile(final Type type) throws Exception
+    //where the projectile is headed
+    private final Cell goal;
+    
+    protected Projectile(final Type type, final Cell goal) throws Exception
     {
         //call parent
         super();
         
         //assign type
         this.type = type;
+        
+        //assign the goal location
+        this.goal = goal;
         
         switch (type)
         {

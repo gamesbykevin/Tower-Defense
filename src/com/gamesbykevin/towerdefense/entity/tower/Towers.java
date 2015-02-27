@@ -6,6 +6,7 @@ import com.gamesbykevin.framework.resources.Disposable;
 import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.entity.Entities;
+import com.gamesbykevin.towerdefense.entity.projectile.Projectile;
 import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
@@ -38,12 +39,8 @@ public final class Towers extends Entities implements Disposable, IElement
         tower.setCol(col);
         tower.setRow(row);
         
-        //set the coordinates
-        tower.setX(Map.getStartX(col));
-        tower.setY(Map.getStartY(row));
-        
         //add to list
-        getEntities().add(tower);
+        add(tower);
     }
     
     /**
@@ -125,19 +122,22 @@ public final class Towers extends Entities implements Disposable, IElement
             Tower tower = (Tower)getEntities().get(i);
             
             //check if there is an enemy to target
-            tower.setTagret(engine.getManager().getEnemies().getEnemy(tower));
+            Enemy enemy = engine.getManager().getEnemies().getEnemy(tower);
+            
+            //check if there is an enemy to target
+            tower.setTagret(enemy);
             
             //if there is a target within range, aim at target
             if (tower.getTarget() != null)
             {
                 //calculate the slope
-                final double slope = (tower.getTarget().getRow() - tower.getRow()) / (tower.getTarget().getCol() - tower.getCol());
+                final double slope = (enemy.getRow() - tower.getRow()) / (enemy.getCol() - tower.getCol());
                 
                 //calculat the facing angle
                 double angle = Math.atan(slope);
                 
                 //if the difference is negative adjust
-                if (tower.getTarget().getCol() - tower.getCol() < 0)
+                if (enemy.getCol() - tower.getCol() < 0)
                     angle += Math.PI;
                 
                 //adjust due to the default facing east direction of the animation
@@ -153,11 +153,33 @@ public final class Towers extends Entities implements Disposable, IElement
                 tower.setAngle(angle);
             }
             
-            //check if time has passed
+            //check to see if time has passed to attack
             if (tower.getTimer().hasTimePassed())
             {
-                //time has passed reset timer
-                tower.getTimer().reset();
+                //make sure the tower has a target
+                if (tower.getTarget() != null)
+                {
+                    //time has passed reset timer
+                    tower.getTimer().reset();
+
+                    //fire projectile at enemy
+                    engine.getManager().getProjectiles().add(engine.getRandom(), tower, tower.getTarget(), tower.getAngle());
+
+                    //play projectile sound effect??
+                    
+                    
+                    //deduct damage from enemy
+                    enemy.setHealth(enemy.getHealth() - tower.getDamage());
+                    
+                    //if enemy is dead, we should add funds to the player
+                    if (enemy.isDead())
+                    {
+                        //add funds to player
+                        engine.getManager().getPlayer().getUIMenu().addReward(enemy);
+                        
+                        
+                    }
+                }
             }
             else
             {

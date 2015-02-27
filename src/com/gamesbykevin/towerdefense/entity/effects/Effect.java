@@ -1,6 +1,7 @@
 package com.gamesbykevin.towerdefense.entity.effects;
 
 import com.gamesbykevin.framework.base.Animation;
+import com.gamesbykevin.framework.util.Timers;
 
 import com.gamesbykevin.towerdefense.entity.Entity;
 import com.gamesbykevin.towerdefense.level.object.LevelObject;
@@ -17,6 +18,11 @@ public final class Effect extends Entity
         Explosion5, Explosion6, Explosion7, Explosion8, 
         Explosion9, Explosion10, Explosion11, Explosion12, 
     }
+    
+    /**
+     * Default delay between each animation in the effect
+     */
+    private static final long DEFAULT_DELAY = Timers.toNanoSeconds(100L);
     
     //the type of effect
     private final Type type;
@@ -156,7 +162,7 @@ public final class Effect extends Entity
         {
             for (int col = 0; col < cols; col++)
             {
-                animation.add(x + (col * w), y + (row * h), w, h, LevelObject.NO_DELAY);
+                animation.add(x + (col * w), y + (row * h), w, h, DEFAULT_DELAY);
             }
         }
         

@@ -194,8 +194,9 @@ public final class Player extends Sprite implements Disposable, IElement
                         //get the enemy based on the position to see if the enemy menu should be visible
                         Enemy enemy = engine.getManager().getEnemies().getEnemy(col, row);
 
-                        //assign the enemy to the menu
-                        getEnemyMenu().assignEnemy(enemy);
+                        //assign the enemy to the menu if exists
+                        if (enemy != null)
+                            getEnemyMenu().assignPosition(enemy);
 
                         //determine if the menu is visible
                         getEnemyMenu().setVisible(enemy != null);
@@ -245,6 +246,15 @@ public final class Player extends Sprite implements Disposable, IElement
                             //complete transaction
                             getUIMenu().completeTransaction();
                         }
+                        else
+                        {
+                            //if we have a tower selection and the mouse was released over the menu
+                            if (getUIMenu().getRectangle().contains(x, y))
+                            {
+                                //reset the tower selection
+                                getUIMenu().resetTowerSelection();
+                            }
+                        }
                     }
                 }
             }
@@ -270,6 +280,24 @@ public final class Player extends Sprite implements Disposable, IElement
                 //set the new position
                 getUIMenu().getTowerSelection().setLocation(x, y);
                 getUIMenu().getTowerSelection().setValid(engine.getManager().getMap().isValid(col, row));
+            }
+        }
+        
+        //if the enemy menu is visible, make sure the stats are up to date
+        if (getEnemyMenu().isVisible())
+        {
+            //the enemy we want to target
+            Enemy enemy = engine.getManager().getEnemies().getEnemy(getEnemyMenu().getEnemyId());
+            
+            if (enemy != null)
+            {
+                //update the enemy stats
+                getEnemyMenu().updateEnemyStats(enemy);
+            }
+            else
+            {
+                //if the enemy was not found, we should not display the menu
+                getEnemyMenu().setVisible(false);
             }
         }
     }

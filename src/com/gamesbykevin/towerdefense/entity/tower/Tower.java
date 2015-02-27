@@ -106,19 +106,19 @@ public final class Tower extends Entity
     public enum Damage
     {
         Damage1(1),
-        Damage2(2.5),
-        Damage3(6.25),
-        Damage4(15.625),
-        Damage5(39.0625);
+        Damage2(2),
+        Damage3(4),
+        Damage4(8),
+        Damage5(16);
         
-        private final double damage;
+        private final int damage;
         
-        private Damage(final double damage)
+        private Damage(final int damage)
         {
             this.damage = damage;
         }
         
-        public double getDamage()
+        public int getDamage()
         {
             return this.damage;
         }
@@ -318,7 +318,11 @@ public final class Tower extends Entity
         return Range.values()[getIndexRange()].getRange();
     }
     
-    public double getDamage()
+    /**
+     * Get the amount of damage the tower places
+     * @return The damage
+     */
+    public int getDamage()
     {
         return Damage.values()[getIndexDamage()].getDamage();
     }

@@ -1,6 +1,7 @@
 package com.gamesbykevin.towerdefense.player.ui.menu.main;
 
 import com.gamesbykevin.framework.resources.Disposable;
+import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
 
@@ -33,16 +34,6 @@ public final class UIMenu extends MainMenu implements Disposable
         private Key(final int x, final int y, final int w, final int h)
         {
             this.location = new Rectangle(x, y, w, h);
-        }
-        
-        private double getWidth()
-        {
-            return this.location.getWidth();
-        }
-        
-        private double getHeight()
-        {
-            return this.location.getHeight();
         }
         
         public Rectangle getLocation()
@@ -106,7 +97,7 @@ public final class UIMenu extends MainMenu implements Disposable
     private int lives = 100;
     
     //the current wave
-    private int wave = 0;
+    private int wave = 1;
     
     //where the lives icon will be drawn
     private static final Point LOCATION_LIVES = new Point(LEFT_X, 5);
@@ -274,11 +265,15 @@ public final class UIMenu extends MainMenu implements Disposable
     
     /**
      * Set the wave
-     * @param wave The assigned wave #
+     * @param num The assigned wave #
      */
-    public void setWave(final int wave)
+    public void setWave(final int num)
     {
-        this.wave = wave;
+        //flag change
+        if (this.wave != num)
+            setChange(true);
+        
+        this.wave = num;
     }
     
     /**
@@ -301,11 +296,15 @@ public final class UIMenu extends MainMenu implements Disposable
     
     /**
      * Set the lives
-     * @param lives The number of lives the player has remaining
+     * @param totalLives The number of lives to assign the player
      */
-    public void setLives(final int lives)
+    public void setLives(final int totalLives)
     {
-        this.lives = lives;
+        //flag change
+        if (this.lives != totalLives)
+            setChange(true);
+        
+        this.lives = totalLives;
     }
     
     /**
@@ -329,12 +328,31 @@ public final class UIMenu extends MainMenu implements Disposable
     }
     
     /**
-     * Set the funds
-     * @param funds The amount of cash the player should have
+     * Add the reward.<br>
+     * The reward will increase with every wave completed
+     * @param enemy The enemy destroyed that we are adding the reward to
      */
-    public void setFunds(final int funds)
+    public void addReward(final Enemy enemy)
     {
-        this.funds = funds;
+        this.setFunds(getFunds() + (enemy.getReward() * getWave()));
+    }
+    
+    /**
+     * Set the funds
+     * @param cash The amount of cash the player should have
+     */
+    public void setFunds(final int cash)
+    {
+        //flag change
+        if (this.funds != cash)
+            setChange(true);
+        
+        this.funds = cash;
+    }
+    
+    public void resetTowerSelection()
+    {
+        this.towerSelection = null;
     }
     
     /**
@@ -346,7 +364,7 @@ public final class UIMenu extends MainMenu implements Disposable
         setFunds(getFunds() - getTowerSelection().getTowerType().getCostPurchase());
         
         //we no longer have a tower selected
-        this.towerSelection = null;
+        resetTowerSelection();
         
         //flag change
         setChange(true);

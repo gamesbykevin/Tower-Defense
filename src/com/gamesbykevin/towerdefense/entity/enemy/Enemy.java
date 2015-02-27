@@ -17,14 +17,19 @@ public final class Enemy extends Entity
     public static final double HEIGHT = 46.0;
     
     /**
+     * The minimum allowed health
+     */
+    private static final int HEALTH_MIN = 0;
+    
+    /**
      * The max start health for the enemy
      */
-    private double maxHealth = 100.0;
+    private int maxHealth = 100;
     
     /**
      * The enemy's current health
      */
-    private double health = 100.0;
+    private int health = 100;
     
     /**
      * How fast does the enemy move from column to column, etc.....
@@ -39,32 +44,44 @@ public final class Enemy extends Entity
     
     public enum Type
     {
-        Blue1(.015),
-        Blue2(.015),
-        Blue3(.015),
-        Green1(.015),
-        Green2(.015),
-        Green3(.015),
-        Red1(.015),
-        Red2(.015),
-        Red3(.015),
-        Yellow1(.015),
-        Yellow2(.015),
-        Yellow3(.015);
+        Blue1(.015, 1),
+        Blue2(.015, 1),
+        Blue3(.015, 1),
+        Green1(.015, 1),
+        Green2(.015, 1),
+        Green3(.015, 1),
+        Red1(.015, 1),
+        Red2(.015, 1),
+        Red3(.015, 1),
+        Yellow1(.015, 1),
+        Yellow2(.015, 1),
+        Yellow3(.015, 1);
         //Boss1(.015),
         //Boss2(.015);
         
         //the speed of the type of enemy
         private final double speed;
         
-        private Type(final double speed)
+        //the reward for destroying the enemy
+        private final int reward;
+        
+        private Type(final double speed, final int reward)
         {
+            //assign the speed
             this.speed = speed;
+            
+            //assign the reward
+            this.reward = reward;
         }
         
         protected double getSpeed()
         {
             return this.speed;
+        }
+        
+        private int getReward()
+        {
+            return this.reward;
         }
     }
     
@@ -205,6 +222,15 @@ public final class Enemy extends Entity
     }
     
     /**
+     * Get the reward
+     * @return The cash reward for destroying the enemy
+     */
+    public int getReward()
+    {
+        return getType().getReward();
+    }
+    
+    /**
      * Get the location where the enemy was previously
      * @return The column, row
      */
@@ -274,7 +300,7 @@ public final class Enemy extends Entity
      * Set the starting and current health of the enemy
      * @param health The max health we want to assign to the enemy
      */
-    public void setStartHealth(final double health)
+    public void setStartHealth(final int health)
     {
         this.maxHealth = health;
         
@@ -286,16 +312,29 @@ public final class Enemy extends Entity
      * Assign the current health 
      * @param health The current health we want to assign to the enemy
      */
-    public void setHealth(final double health)
+    public void setHealth(final int health)
     {
         this.health = health;
+        
+        //make sure the health does not go below the minimum
+        if (this.health < HEALTH_MIN)
+            this.health = HEALTH_MIN;
+    }
+ 
+    /**
+     * Is the enemy dead?
+     * @return true if the enemy health is less than the health minimum "0"
+     */
+    public boolean isDead()
+    {
+        return (getHealth() <= HEALTH_MIN);
     }
     
     /**
      * Get the enemy's starting health upon creation
      * @return The max starting health
      */
-    public double getStartHealth()
+    public int getStartHealth()
     {
         return this.maxHealth;
     }
@@ -304,7 +343,7 @@ public final class Enemy extends Entity
      * Get the enemy's current health
      * @return The current health
      */
-    public double getHealth()
+    public int getHealth()
     {
         return this.health;
     }

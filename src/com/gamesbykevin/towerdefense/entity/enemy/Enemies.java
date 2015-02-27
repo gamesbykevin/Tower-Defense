@@ -72,7 +72,7 @@ public final class Enemies extends Entities implements Disposable, IElement
         enemy.setDestination(col, row);
         
         //add to list
-        getEntities().add(enemy);
+        add(enemy);
     }
     
     /**
@@ -103,6 +103,27 @@ public final class Enemies extends Entities implements Disposable, IElement
         return null;
     }
     
+    /**
+     * Get the enemy
+     * @param id The unique id all LevelObjects have upon creation
+     * @return The enemy containing the id, if not found null is returned
+     */
+    public Enemy getEnemy(final long id)
+    {
+        for (int i = 0; i < getEntities().size(); i++)
+        {
+            if (getEnemy(i).getId() == id)
+                return getEnemy(i);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Get the enemy
+     * @param index The index location where the enemy is in the list
+     * @return The enemy at the specified location
+     */
     public Enemy getEnemy(final int index)
     {
         return (Enemy)getEntities().get(index);
@@ -188,6 +209,23 @@ public final class Enemies extends Entities implements Disposable, IElement
             {
                 //check the location and velocity
                 manageEnemyLocation(enemy);
+            }
+            
+            //also check if enemies are dead
+            if (enemy.isDead())
+            {
+                //add explosion effect here
+                engine.getManager().getEffects().add(engine.getRandom(), enemy);
+                
+                //play sound effect
+                
+                
+                //remove from list
+                super.remove(enemy);
+
+                //move index back 1
+                i--;
+                
             }
         }
     }
