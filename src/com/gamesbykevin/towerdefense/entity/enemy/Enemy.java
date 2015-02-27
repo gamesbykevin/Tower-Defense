@@ -5,7 +5,6 @@ import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.util.Timers;
 
 import com.gamesbykevin.towerdefense.entity.Entity;
-import com.gamesbykevin.towerdefense.level.map.Map;
 
 /**
  * This class represents the enemy
@@ -35,22 +34,25 @@ public final class Enemy extends Entity
     //where the enemy is heading
     private Cell destination;
     
+    //the previous postion
+    private Cell previous;
+    
     public enum Type
     {
-        Blue1(.01),
-        Blue2(.01),
-        Blue3(.01),
-        Green1(.01),
-        Green2(.01),
-        Green3(.01),
-        Red1(.01),
-        Red2(.01),
-        Red3(.01),
-        Yellow1(.01),
-        Yellow2(.01),
-        Yellow3(.01),
-        Boss1(.01),
-        Boss2(.01);
+        Blue1(.015),
+        Blue2(.015),
+        Blue3(.015),
+        Green1(.015),
+        Green2(.015),
+        Green3(.015),
+        Red1(.015),
+        Red2(.015),
+        Red3(.015),
+        Yellow1(.015),
+        Yellow2(.015),
+        Yellow3(.015);
+        //Boss1(.015),
+        //Boss2(.015);
         
         //the speed of the type of enemy
         private final double speed;
@@ -179,7 +181,8 @@ public final class Enemy extends Entity
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 11), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 11), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 break;
-            
+                
+            /*
             case Boss1:
                 animation.add(0,   (int)(HEIGHT * 12), 118, 118, Timers.toNanoSeconds(250L));
                 animation.add(118, (int)(HEIGHT * 12), 118, 118, Timers.toNanoSeconds(250L));
@@ -192,13 +195,37 @@ public final class Enemy extends Entity
                 animation.add(128, 670, 64, 64, Timers.toNanoSeconds(333L));
                 animation.add(192, 670, 64, 64, Timers.toNanoSeconds(333L));
                 break;
-            
+            */
             default:
                 throw new Exception("Type not setup here = " + type.toString());
         }
         
         //add animation
         super.addAnimation(animation);
+    }
+    
+    /**
+     * Get the location where the enemy was previously
+     * @return The column, row
+     */
+    public Cell getPrevious()
+    {
+        return this.previous;
+    }
+    
+    public void setPrevious(final Cell destination)
+    {
+        setPrevious(destination.getCol(), destination.getRow());
+    }
+    
+    public void setPrevious(final double col, final double row)
+    {
+        if (getPrevious() == null)
+            this.previous = new Cell();
+        
+        //set the location
+        this.previous.setCol(col);
+        this.previous.setRow(row);
     }
     
     /**
@@ -280,23 +307,6 @@ public final class Enemy extends Entity
     public double getHealth()
     {
         return this.health;
-    }
-    
-    /**
-     * Update the enemy's location based on the velocity
-     */
-    @Override
-    public final void update()
-    {
-        //update the column location based on x-velocity
-        setCol(getCol() + getVelocityX());
-        
-        //update the row location based on y-velocity
-        setRow(getRow() + getVelocityY());
-        
-        //now assigned the x,y coordinates based on the column, row location
-        setX(Map.getStartX(getCol()));
-        setY(Map.getStartY(getRow()));
     }
     
     /**

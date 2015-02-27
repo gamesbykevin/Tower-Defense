@@ -1,5 +1,6 @@
 package com.gamesbykevin.towerdefense.entity;
 
+import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.level.object.LevelObject;
 
 import java.awt.Graphics;
@@ -16,6 +17,7 @@ public abstract class Entity extends LevelObject
     
     protected Entity()
     {
+        
     }
     
     /**
@@ -61,6 +63,23 @@ public abstract class Entity extends LevelObject
         //move entity back
         setX(getX() + (getWidth()  / 2));
         setY(getY() + (getHeight() / 2));
+    }
+    
+    /**
+     * Update the entity's location based on the velocity
+     */
+    @Override
+    public final void update()
+    {
+        //update the column location based on x-velocity
+        setCol(getCol() + getVelocityX());
+        
+        //update the row location based on y-velocity
+        setRow(getRow() + getVelocityY());
+        
+        //now assigned the x,y coordinates based on the column, row location
+        setX(Map.getStartX(getCol()));
+        setY(Map.getStartY(getRow()));
     }
     
     /**

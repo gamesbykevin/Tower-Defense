@@ -7,6 +7,7 @@ import com.gamesbykevin.framework.labyrinth.Location.Wall;
 import com.gamesbykevin.framework.resources.Disposable;
 
 import com.gamesbykevin.towerdefense.engine.Engine;
+import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.level.object.LevelObject;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
@@ -25,6 +26,12 @@ public final class Map extends Sprite implements Disposable, IElement
 {
     //tiles that make up the map
     private LevelObject[][] tiles;
+    
+    //object used to create random maze
+    private Labyrinth maze;
+    
+    //list of directions for the next move for the respected ai
+    private List<Cell> options;
     
     //dimensions for the map
     public static final int ROWS = 8;
@@ -62,6 +69,9 @@ public final class Map extends Sprite implements Disposable, IElement
         //create start and finish
         this.start = new Cell();
         this.finish = new Cell();
+        
+        //create new list of options
+        this.options = new ArrayList<>();
     }
     
     /**
@@ -102,6 +112,9 @@ public final class Map extends Sprite implements Disposable, IElement
             
             tiles = null;
         }
+        
+        options.clear();
+        options = null;
     }
     
     /**
@@ -112,7 +125,7 @@ public final class Map extends Sprite implements Disposable, IElement
     private void createMap(final Random random) throws Exception
     {
         //create a labyrinth of the specified size, and using the specified algorithm
-        Labyrinth maze = new Labyrinth(tiles[0].length, tiles.length, Labyrinth.Algorithm.DepthFirstSearch);
+        maze = new Labyrinth(tiles[0].length, tiles.length, Labyrinth.Algorithm.DepthFirstSearch);
         
         //set random start on right side
         maze.setStart(tiles[0].length - 1, random.nextInt(tiles.length));
@@ -488,42 +501,45 @@ public final class Map extends Sprite implements Disposable, IElement
                     type = Tile.Type.OPEN;
                 }
                 
-                //create new tile of type
-                this.tiles[row][col] = new Tile(type, current.getCost());
+                //if the tile is open the cost will be 0
+                if (type == Tile.Type.OPEN)
+                {
+                    //create new tile of type
+                    this.tiles[row][col] = new Tile(type, 0);
+                }
+                else
+                {
+                    //create new tile of type
+                    this.tiles[row][col] = new Tile(type, current.getCost());
+                }
                 
                 //assign x,y coordinates
                 this.tiles[row][col].setX(getStartX(col));
                 this.tiles[row][col].setY(getStartY(row));
             }
         }
-        
-        maze.dispose();
-        maze = null;
     }
     
     /**
      * Get the next destination.<br>
-     * The next location with a cost higher than the current location
-     * @param cell The current column, row
-     * @return The column, row of the next place to head in
+     * The next location with a cost higher than the current location.<br>
+     * If no locations exist we will continue to move in the same current direction.<br>
+     * If that is not possible will make a turn
+     * @param entity Enemy containing column, row, etc...
+     * @param random Object used to make random decisions
+     * @return The column, row of the next place to head in. 
      */
-    public Cell getNextDestination(final Cell cell)
+    public Cell getNextDestination(final Enemy entity, final Random random) throws Exception
     {
-        return this.getNextDestination(cell.getCol(), cell.getRow());
-    }
-    
-    /**
-     * Get the next destination.<br>
-     * The next location with a cost higher than the current location
-     * @param col Current column
-     * @param row Current row
-     * @return The column, row of the next place to head in
-     */
-    public Cell getNextDestination(final double currentCol, final double currentRow)
-    {
-        //our solution
-        Cell destination = new Cell();
+        //get the current location
+        final double currentCol = entity.getCol();
+        final double currentRow = entity.getRow();
         
+        //if we are at the finish, move to the left column
+        if (maze.getFinish().equals((int)currentCol, (int)currentRow))
+            return new Cell(currentCol - 1, currentRow);
+        
+        //get the current tile
         Tile tile = getTile((int)currentCol, (int)currentRow);
         
         //the current highest cost to beat
@@ -531,6 +547,10 @@ public final class Map extends Sprite implements Disposable, IElement
         
         for (int col = -1; col <= 1; col++)
         {
+            //skip 0
+            if (col == 0)
+                continue;
+            
             //if not in bounds skip
             if (!hasBounds((int)currentCol + col, (int)currentRow))
                 continue;
@@ -538,20 +558,37 @@ public final class Map extends Sprite implements Disposable, IElement
             //get current tile
             tile = getTile((int)currentCol + col, (int)currentRow);
             
+            //skip open tiles
+            if (tile.getType() == Tile.Type.OPEN)
+                continue;
+            
+            if (col < 0)
+            {
+                //skip if there is no opening
+                if (!isEastAvailable(tile.getType()))
+                    continue;
+            }
+            else if (col > 0)
+            {
+                //skip if there is no opening
+                if (!isWestAvailable(tile.getType()))
+                    continue;
+            }
+            
             //make sure the tile has a higher cost
             if (tile.getCost() > cost)
             {
-                //store new higher cost
-                cost = tile.getCost();
-                
-                //set new destination
-                destination.setCol(currentCol + col);
-                destination.setRow(currentRow);
+                //add possible option
+                options.add(new Cell(currentCol + col, currentRow));
             }
         }
         
         for (int row = -1; row <= 1; row++)
         {
+            //skip 0
+            if (row == 0)
+                continue;
+            
             //if not in bounds skip
             if (!hasBounds((int)currentCol, (int)currentRow + row))
                 continue;
@@ -559,19 +596,207 @@ public final class Map extends Sprite implements Disposable, IElement
             //get current tile
             tile = getTile((int)currentCol, (int)currentRow + row);
             
+            //skip open tiles
+            if (tile.getType() == Tile.Type.OPEN)
+                continue;
+            
+            if (row < 0)
+            {
+                //skip if there is no opening
+                if (!isSouthAvailable(tile.getType()))
+                    continue;
+            }
+            else if (row > 0)
+            {
+                //skip if there is no opening
+                if (!isNorthAvailable(tile.getType()))
+                    continue;
+            }
+            
             //make sure the tile has a higher cost
             if (tile.getCost() > cost)
             {
-                //store new higher cost
-                cost = tile.getCost();
-                
-                //set new destination
-                destination.setCol(currentCol);
-                destination.setRow(currentRow + row);
+                //add possible option
+                options.add(new Cell(currentCol, currentRow + row));
             }
         }
         
+        //if no options, we need to at least add one
+        if (options.isEmpty())
+        {
+            if (entity.hasVelocityX())
+            {
+                if (entity.getVelocityX() > 0)
+                {
+                    //make sure east is available
+                    if (isEastAvailable(tile.getType()))
+                        options.add(new Cell(currentCol + 1, currentRow));
+                }
+                else
+                {
+                    //make sure west is available
+                    if (isWestAvailable(tile.getType()))
+                        options.add(new Cell(currentCol - 1, currentRow));
+                }
+                
+                //if options is still empty will shift direction
+                if (options.isEmpty())
+                {
+                    //add south if available
+                    if (isSouthAvailable(tile.getType()))
+                        options.add(new Cell(currentCol, currentRow + 1));
+                    
+                    //add north if available
+                    if (isNorthAvailable(tile.getType()))
+                        options.add(new Cell(currentCol, currentRow - 1));
+                }
+            }
+            else if (entity.hasVelocityY())
+            {
+                if (entity.getVelocityY()> 0)
+                {
+                    //make sure south is available
+                    if (isSouthAvailable(tile.getType()))
+                        options.add(new Cell(currentCol, currentRow + 1));
+                }
+                else
+                {
+                    //make sure north is available
+                    if (isNorthAvailable(tile.getType()))
+                        options.add(new Cell(currentCol, currentRow - 1));
+                }
+                
+                //if options is still empty will shift direction
+                if (options.isEmpty())
+                {
+                    //add west if available
+                    if (isWestAvailable(tile.getType()))
+                        options.add(new Cell(currentCol - 1, currentRow));
+                    
+                    //add east if available
+                    if (isEastAvailable(tile.getType()))
+                        options.add(new Cell(currentCol + 1, currentRow));
+                }
+            }
+            else
+            {
+                //if no movement just pick an open spot
+                if (entity.getPrevious() == null)
+                    entity.setPrevious(entity);
+                
+                //just pick any place that was not the previous and is in bounds
+                if (!entity.getPrevious().equals(currentCol - 1, currentRow) && isWestAvailable(tile.getType()))
+                    options.add(new Cell(currentCol - 1, currentRow));
+                if (!entity.getPrevious().equals(currentCol + 1, currentRow) && isEastAvailable(tile.getType()))
+                    options.add(new Cell(currentCol + 1, currentRow));
+                if (!entity.getPrevious().equals(currentCol, currentRow - 1) && isNorthAvailable(tile.getType()))
+                    options.add(new Cell(currentCol, currentRow - 1));
+                if (!entity.getPrevious().equals(currentCol, currentRow + 1) && isSouthAvailable(tile.getType()))
+                    options.add(new Cell(currentCol, currentRow + 1));
+            }
+        }
+        
+        //pick random option
+        Cell destination = options.get(random.nextInt(options.size()));
+        
+        //clear list
+        options.clear();
+        
+        //return destination
         return destination;
+    }
+    
+    /**
+     * Does this tile have a west path
+     * @param type The type of tile
+     * @return true=yes, false=no
+     */
+    private boolean isWestAvailable(final Tile.Type type)
+    {
+        switch (type)
+        {
+            case WES:
+            case WS:
+            case NESW:
+            case NSW:
+            case WEN:
+            case NW:
+            case EW:
+                return true;
+                
+            default:
+                return false;
+            
+        }
+    }
+    
+    /**
+     * Does this tile have a east path
+     * @param type The type of tile
+     * @return true=yes, false=no
+     */
+    private boolean isEastAvailable(final Tile.Type type)
+    {
+        switch (type)
+        {
+            case ES:
+            case WES:
+            case NES:
+            case NESW:
+            case NE:
+            case WEN:
+            case EW:
+                return true;
+                
+            default:
+                return false;
+        }
+    }
+    
+    /**
+     * Does this tile have a south path
+     * @param type The type of tile
+     * @return true=yes, false=no
+     */
+    private boolean isSouthAvailable(final Tile.Type type)
+    {
+        switch (type)
+        {
+            case ES:
+            case WES:
+            case WS:
+            case NES:
+            case NESW:
+            case NSW:
+            case NS:
+                return true;
+                
+            default:
+                return false;
+        }
+    }
+    
+    /**
+     * Does this tile have a north path
+     * @param type The type of tile
+     * @return true=yes, false=no
+     */
+    private boolean isNorthAvailable(final Tile.Type type)
+    {
+        switch (type)
+        {
+            case NES:
+            case NESW:
+            case NSW:
+            case NE:
+            case WEN:
+            case NW:
+            case NS:
+                return true;
+                
+            default:
+                return false;
+        }
     }
     
     /**
@@ -626,7 +851,7 @@ public final class Map extends Sprite implements Disposable, IElement
         }
         else
         {
-            
+            //anything else here need to be done?
         }
     }
     
@@ -645,23 +870,6 @@ public final class Map extends Sprite implements Disposable, IElement
                     }
                 }
             }
-            
-            /*
-            for (int row = 0; row < tiles.length; row++)
-            {
-                for (int col = 0; col < tiles[0].length; col++)
-                {
-                    if (tiles[row][col] != null)
-                    {
-                        graphics.drawRect(
-                                (int)tiles[row][col].getX(), 
-                                (int)tiles[row][col].getY(), 
-                                (int)tiles[row][col].getWidth(), 
-                                (int)tiles[row][col].getHeight());
-                    }
-                }
-            }
-            */
         }
     }
 }

@@ -96,7 +96,7 @@ public abstract class Entities extends Sprite implements Disposable, IElement
     }
     
     /**
-     * Update the basic elements of each entity (location and animation)
+     * Update the animation of each entity (animation, location, etc..)
      * @param time The time to deduct, which will update the animation
      * @throws Exception 
      */
@@ -110,7 +110,7 @@ public abstract class Entities extends Sprite implements Disposable, IElement
             //update the entities animation
             entity.getSpriteSheet().update(time);
             
-            //update the location
+            //update location
             entity.update();
         }
     }

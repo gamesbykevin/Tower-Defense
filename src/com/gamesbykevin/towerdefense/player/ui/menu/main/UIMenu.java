@@ -309,6 +309,17 @@ public final class UIMenu extends MainMenu implements Disposable
     }
     
     /**
+     * Deduct 1 life from total
+     */
+    public void deductLife()
+    {
+        setLives(getLives() - 1);
+        
+        //flag change to menu
+        super.setChange(true);
+    }
+    
+    /**
      * Get the funds
      * @return The amount of cash the player has to make purchases
      */
@@ -344,6 +355,12 @@ public final class UIMenu extends MainMenu implements Disposable
     @Override
     public void renderImage()
     {
+        //set background color
+        getGraphics2D().setColor(Color.BLACK);
+        
+        //fill background
+        getGraphics2D().fillRect(0, 0, WIDTH, HEIGHT);
+        
         //set color
         getGraphics2D().setColor(Color.WHITE);
         

@@ -3,6 +3,7 @@ package com.gamesbykevin.towerdefense.entity.tower;
 import com.gamesbykevin.framework.util.Timer;
 import com.gamesbykevin.framework.util.Timers;
 import com.gamesbykevin.towerdefense.entity.Entity;
+import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 
 import java.awt.Rectangle;
 
@@ -12,30 +13,6 @@ import java.awt.Rectangle;
  */
 public final class Tower extends Entity
 {
-    //the pixel dimensions of the tower
-    public static final double WIDTH = 40.0;
-    public static final double HEIGHT = 40.0;
-    
-    /**
-     * The money the tower is worth when sold
-     */
-    private int sell;
-    
-    /**
-     * The cost to upgrade the tower
-     */
-    private int upgrade;
-    
-    /**
-     * The rate at which we increase the upgrade cost, per upgrade
-     */
-    private static final double UPGRADE_INCREASE_RATIO = .33;
-    
-    /**
-     * The rate at which we increase the sell value, per upgrade
-     */
-    private static final double SELL_INCREASE_RATIO = .2;
-    
     public enum Upgrade
     {
         Default, Upgrade1, Upgrade2;
@@ -124,19 +101,6 @@ public final class Tower extends Entity
     }
     
     /**
-     * The maximum number of upgrades that can be performed on this tower
-     */
-    public static final int UPGRADE_COUNT_LIMIT = Upgrade.values().length;
-    
-    /**
-     * The highest level an upgrade can get to 
-     */
-    public static final int UPGRADE_MAXIMUM_LEVEL = 5;
-    
-    //upgrade count
-    private int indexUpgrade = 0;
-    
-    /**
      * The levels of damage the tower can cause
      */
     public enum Damage
@@ -220,6 +184,46 @@ public final class Tower extends Entity
     //which tower is this
     private final Type type;
     
+    //the pixel dimensions of the tower
+    public static final double WIDTH = 40.0;
+    public static final double HEIGHT = 40.0;
+    
+    /**
+     * The money the tower is worth when sold
+     */
+    private int sell;
+    
+    /**
+     * The cost to upgrade the tower
+     */
+    private int upgrade;
+    
+    /**
+     * The rate at which we increase the upgrade cost, per upgrade
+     */
+    private static final double UPGRADE_INCREASE_RATIO = .33;
+    
+    /**
+     * The rate at which we increase the sell value, per upgrade
+     */
+    private static final double SELL_INCREASE_RATIO = .2;
+    
+    /**
+     * The maximum number of upgrades that can be performed on this tower
+     */
+    public static final int UPGRADE_COUNT_LIMIT = Upgrade.values().length;
+    
+    /**
+     * The highest level an upgrade can get to 
+     */
+    public static final int UPGRADE_MAXIMUM_LEVEL = 5;
+    
+    //upgrade count
+    private int indexUpgrade = 0;
+    
+    //the enemy targeted
+    private Enemy enemy;
+    
     protected Tower(final Type type) throws Exception
     {
         //call parent
@@ -295,6 +299,20 @@ public final class Tower extends Entity
         super.setAnimation(Upgrade.Default);
     }
     
+    public void setTagret(final Enemy enemy)
+    {
+        this.enemy = enemy;
+    }
+    
+    public Enemy getTarget()
+    {
+        return this.enemy;
+    }
+    
+    /**
+     * Get the range.
+     * @return The distance of cells which this tower can detect an enemy
+     */
     public double getRange()
     {
         return Range.values()[getIndexRange()].getRange();

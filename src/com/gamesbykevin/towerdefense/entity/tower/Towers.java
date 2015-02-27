@@ -4,6 +4,7 @@ import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.resources.Disposable;
 
 import com.gamesbykevin.towerdefense.engine.Engine;
+import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.entity.Entities;
 import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.shared.IElement;
@@ -123,7 +124,46 @@ public final class Towers extends Entities implements Disposable, IElement
             //update the current tower
             Tower tower = (Tower)getEntities().get(i);
             
+            //check if there is an enemy to target
+            tower.setTagret(engine.getManager().getEnemies().getEnemy(tower));
             
+            //if there is a target within range, aim at target
+            if (tower.getTarget() != null)
+            {
+                //calculate the slope
+                final double slope = (tower.getTarget().getRow() - tower.getRow()) / (tower.getTarget().getCol() - tower.getCol());
+                
+                //calculat the facing angle
+                double angle = Math.atan(slope);
+                
+                //if the difference is negative adjust
+                if (tower.getTarget().getCol() - tower.getCol() < 0)
+                    angle += Math.PI;
+                
+                //adjust due to the default facing east direction of the animation
+                angle += Math.toRadians(90);
+                
+                //make sure radians stay within range
+                if (angle > (2 * Math.PI))
+                    angle -= (2 * Math.PI);
+                if (angle < 0)
+                    angle += (2 * Math.PI);
+                
+                //now set the final angle
+                tower.setAngle(angle);
+            }
+            
+            //check if time has passed
+            if (tower.getTimer().hasTimePassed())
+            {
+                //time has passed reset timer
+                tower.getTimer().reset();
+            }
+            else
+            {
+                //update timer until we can fire again
+                tower.getTimer().update(engine.getMain().getTime());
+            }
         }
     }
     
