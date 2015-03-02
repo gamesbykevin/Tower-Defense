@@ -112,7 +112,7 @@ public final class UIMenu extends MainMenu implements Disposable
     private static final Point LOCATION_AUDIO = new Point(LEFT_X, 130);
     
     //where we display the speed icon
-    private static final Point LOCATION_SPEED = new Point(RIGHT_X, 130);
+    private static final Point LOCATION_SPEED = new Point(LEFT_X, 230);
     
     //where we display the menu icon
     private static final Point LOCATION_MENU = new Point(LEFT_X, 180);

@@ -156,6 +156,10 @@ public final class EnemyMenu extends MiniMenu implements Disposable
         super.setWidth(HEALTH_WIDTH * ratio);
         super.setHeight(HEALTH_HEIGHT);
         
+        //keep width at least 1 pixel
+        if (super.getWidth() < 1)
+            super.setWidth(1);
+        
         //use the appropriate animation depending on remaining health
         if (ratio >= HEALTH_HI)
         {

@@ -230,9 +230,9 @@ public final class Towers extends Entities implements Disposable, IElement
             if (tower.getId() != getTowerIdSelection())
             {
                 //only draw the range right when the time passes
-                if (tower.canFreeze() && !tower.getTimer().hasTimePassed())
+                if (tower.canFreeze() && !tower.getTimer().hasTimePassed() || tower.canFreeze() && tower.getTarget() == null)
                     continue;
-                if (tower.canPoison()&& !tower.getTimer().hasTimePassed())
+                if (tower.canPoison()&& !tower.getTimer().hasTimePassed() || tower.canPoison()&& tower.getTarget() == null)
                     continue;
             }
                 
