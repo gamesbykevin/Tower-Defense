@@ -2,9 +2,14 @@ package com.gamesbykevin.towerdefense.entity.tower;
 
 import com.gamesbykevin.framework.util.Timer;
 import com.gamesbykevin.framework.util.Timers;
+
 import com.gamesbykevin.towerdefense.entity.Entity;
 import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
+import com.gamesbykevin.towerdefense.entity.projectile.Projectile;
+import com.gamesbykevin.towerdefense.level.map.Map;
 
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
 
 /**
@@ -13,6 +18,9 @@ import java.awt.Rectangle;
  */
 public final class Tower extends Entity
 {
+    //the timer for how long to wait before attacking
+    private Timer timer;
+    
     public enum Upgrade
     {
         Default, Upgrade1, Upgrade2;
@@ -20,8 +28,11 @@ public final class Tower extends Entity
     
     public enum RangeKey
     {
-        Regular
+        Default, Poision, Freeze
     }
+    
+    private boolean poison = false;
+    private boolean freeze = false;
     
     /**
      * There are 8 different towers to choose from.<br>
@@ -29,14 +40,14 @@ public final class Tower extends Entity
      */
     public enum Type
     {
-        Tower1(1, 1, 3, 04, 10, 0, 0,  (int)WIDTH, (int)HEIGHT), 
-        Tower2(0, 0, 0, 00, 00, 0, 40, (int)WIDTH, (int)HEIGHT), 
-        Tower3(0, 0, 0, 00, 00, 0, 80, (int)WIDTH, (int)HEIGHT), 
-        Tower4(0, 0, 0, 00, 00, 0, 120,(int)WIDTH, (int)HEIGHT), 
-        Tower5(0, 0, 0, 00, 00, 0, 160,(int)WIDTH, (int)HEIGHT), 
-        Tower6(0, 0, 0, 00, 00, 0, 200,(int)WIDTH, (int)HEIGHT), 
-        Tower7(0, 0, 0, 00, 00, 0, 240,(int)WIDTH, (int)HEIGHT), 
-        Tower8(4, 4, 4, 10, 50, 0, 280,(int)WIDTH, (int)HEIGHT);
+        Tower1(1, 1, 3, 4, 10, 0, 0,  (int)WIDTH, (int)HEIGHT, Projectile.Type.Blue3), 
+        Tower2(0, 2, 0, 20, 40, 0, 40, (int)WIDTH, (int)HEIGHT, Projectile.Type.Red3), 
+        Tower3(2, 0, 1, 10, 30, 0, 80, (int)WIDTH, (int)HEIGHT, Projectile.Type.Green3), 
+        Tower4(1, 0, 0, 0, 50, 0, 120,(int)WIDTH, (int)HEIGHT, null), 
+        Tower5(1, 0, 0, 0, 50, 0, 160,(int)WIDTH, (int)HEIGHT, null), 
+        Tower6(0, 0, 4, 7, 25, 0, 200,(int)WIDTH, (int)HEIGHT, Projectile.Type.Green4), 
+        Tower7(1, 1, 2, 15, 35, 0, 240,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red4), 
+        Tower8(4, 4, 4, 0, 250, 0, 280,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red1);
         
         //index for the 3 attributes
         private final int levelRange, levelDamage, levelRate;
@@ -47,14 +58,19 @@ public final class Tower extends Entity
         //the initial location of the animation
         private final Rectangle location;
         
+        //the type of projectile the tower shoots
+        private final Projectile.Type projectileType;
+        
         private Type(
                 final int levelRange, 
                 final int levelDamage, 
                 final int levelRate, 
                 final int upgrade, 
                 final int purchase,
-                final int x, final int y, final int w, final int h)
+                final int x, final int y, final int w, final int h,
+                final Projectile.Type projectileType)
         {
+            this.projectileType = projectileType;
             this.levelDamage = levelDamage;
             this.levelRange = levelRange;
             this.levelRate = levelRate;
@@ -62,6 +78,11 @@ public final class Tower extends Entity
             this.upgrade = upgrade;
             this.purchase = purchase;
             this.location = new Rectangle(x, y, w, h);
+        }
+        
+        public Projectile.Type getProjectileType()
+        {
+            return this.projectileType;
         }
         
         public int getCostSell()
@@ -154,7 +175,7 @@ public final class Tower extends Entity
      */
     public enum Rate
     {
-        Rate1(Timers.toNanoSeconds(1750L)),
+        Rate1(Timers.toNanoSeconds(3000L)),
         Rate2(Timers.toNanoSeconds(1500L)),
         Rate3(Timers.toNanoSeconds(1250L)),
         Rate4(Timers.toNanoSeconds(1000L)),
@@ -172,9 +193,6 @@ public final class Tower extends Entity
             return this.rate;
         }
     }
-    
-    //timer to determine when the tower can shoot
-    private Timer timer;
     
     //current index for each variable
     private int indexRange = 0;
@@ -232,7 +250,7 @@ public final class Tower extends Entity
         //assign the type of tower
         this.type = type;
         
-        //create empty timer
+        //create timer
         this.timer = new Timer();
         
         //set the upgrade and sell costs
@@ -265,11 +283,13 @@ public final class Tower extends Entity
                 break;
                 
             case Tower4:
+                this.freeze = true;
                 super.addAnimation(40.0, 120.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
                 super.addAnimation(80.0, 120.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
                 break;
                 
             case Tower5:
+                this.poison = true;
                 super.addAnimation(40.0, 160.0, WIDTH, HEIGHT, Upgrade.Upgrade1);
                 super.addAnimation(80.0, 160.0, WIDTH, HEIGHT, Upgrade.Upgrade2);
                 break;
@@ -292,11 +312,31 @@ public final class Tower extends Entity
                 throw new Exception("Tower type not setup here " + type.toString());
         }
         
-        //add range animation
-        super.addAnimation(0, 320, 400, 400, RangeKey.Regular);
-        
+        //add range animation(s)
+        super.addAnimation(0,   320, 400, 400, RangeKey.Default);
+        super.addAnimation(400, 320, 400, 400, RangeKey.Poision);
+        super.addAnimation(800, 320, 400, 400, RangeKey.Freeze);
+
         //assign default animation
         super.setAnimation(Upgrade.Default);
+    }
+    
+    /**
+     * Can this tower slow down the enemy
+     * @return true=yes, false=no
+     */
+    public boolean canFreeze()
+    {
+        return this.freeze;
+    }
+    
+    /**
+     * Can this tower poison the enemy
+     * @return true=yes, false=no
+     */
+    public boolean canPoison()
+    {
+        return this.poison;
     }
     
     public void setTagret(final Enemy enemy)
@@ -395,15 +435,7 @@ public final class Tower extends Entity
         //assign value
         this.indexRate = level;
         
-        //update the timer reset value
-        updateTimer();
-    }
-    
-    /**
-     * Update the timer length to the current rate setting
-     */
-    private void updateTimer()
-    {
+        //Update the timer length to the current rate setting
         getTimer().setReset(Rate.values()[indexRate].getRate());
     }
     
@@ -472,13 +504,31 @@ public final class Tower extends Entity
     }
     
     /**
+     * Can we upgrade the tower?<br>
+     * Some towers are not allowed to upgrade
+     * @return true=yes upgrades can be bought, false=no they cannot :)
+     */
+    public boolean isUpgradable()
+    {
+        switch (getType())
+        {
+            case Tower4:
+            case Tower5:
+            case Tower8:
+                return false;
+                
+            default:
+                return true;
+        }
+    }
+    
+    /**
      * Upgrade the tower.<br>
-     * Tower8 is the only tower that cannot be upgraded
      */
     public void upgrade()
     {
-        //this is the only tower that can't be upgraded
-        if (getType() == Tower.Type.Tower8)
+        //if we can't upgrade this tower
+        if (!isUpgradable())
             return;
         
         //if we have already reached the limit, don't continue
@@ -492,17 +542,17 @@ public final class Tower extends Entity
         super.setAnimation(Upgrade.values()[getIndexUpgrade()]);
         
         //increase the level of each attribute
-        indexRange++;
-        indexDamage++;
-        indexRate++;
+        setLevelDamage(getIndexDamage() + 1);
+        setLevelRange(getIndexRange() + 1);
+        setLevelRate(getIndexRate() + 1);
         
         //make sure we don't exceed the maximum
-        if (indexRange > UPGRADE_MAXIMUM_LEVEL)
-            indexRange = UPGRADE_MAXIMUM_LEVEL;
-        if (indexRate > UPGRADE_MAXIMUM_LEVEL)
-            indexRate = UPGRADE_MAXIMUM_LEVEL;
-        if (indexDamage > UPGRADE_MAXIMUM_LEVEL)
-            indexDamage = UPGRADE_MAXIMUM_LEVEL;
+        if (getIndexRange() > UPGRADE_MAXIMUM_LEVEL)
+            setLevelRange(UPGRADE_MAXIMUM_LEVEL);
+        if (getIndexRate() > UPGRADE_MAXIMUM_LEVEL)
+            setLevelRate(UPGRADE_MAXIMUM_LEVEL);
+        if (getIndexDamage() > UPGRADE_MAXIMUM_LEVEL)
+            setLevelDamage(UPGRADE_MAXIMUM_LEVEL);
         
         //increase the sell value and upgrade cost
         this.sell = getCostSell() + (int)Math.round(getCostSell() * SELL_INCREASE_RATIO);
@@ -525,5 +575,57 @@ public final class Tower extends Entity
         
         this.timer.dispose();
         this.timer = null;
+    }
+    
+    /**
+     * Draw the towers range animation
+     * @param graphics Object used to create final Image
+     * @param image Image containing animations
+     */
+    protected void renderRange(final Graphics graphics, final Image image)
+    {
+        //store the tower information
+        final double x = getX();
+        final double y = getY();
+        final double w = getWidth();
+        final double h = getHeight();
+        final Object key = getSpriteSheet().getCurrent();
+
+        //the x,y location of the tower's center
+        final int x1 = (int)Map.getStartX(getCol());
+        final int y1 = (int)Map.getStartY(getRow());
+
+        //the reach of the range
+        final int w1 = (int)(getRange() * Map.WIDTH) * 2;
+        
+        //assign tower coordinates and dimensions
+        setX(x1 - (w1 / 2));
+        setY(y1 - (w1 / 2));
+
+        //assign size of animation
+        setWidth(w1);
+        setHeight(w1);
+
+        //set the appropriate animation
+        if (canFreeze())
+        {
+            setAnimation(Tower.RangeKey.Freeze);
+        }
+        else if (canPoison())
+        {
+            setAnimation(Tower.RangeKey.Poision);
+        }
+        else
+        {
+            setAnimation(Tower.RangeKey.Default);
+        }
+
+        //draw the range
+        draw(graphics, image);
+
+        //now restore the tower info
+        setLocation(x, y);
+        setDimensions(w, h);
+        setAnimation(key);
     }
 }

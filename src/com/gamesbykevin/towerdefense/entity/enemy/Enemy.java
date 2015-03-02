@@ -2,8 +2,10 @@ package com.gamesbykevin.towerdefense.entity.enemy;
 
 import com.gamesbykevin.framework.base.Animation;
 import com.gamesbykevin.framework.base.Cell;
+import com.gamesbykevin.framework.util.Timer;
 import com.gamesbykevin.framework.util.Timers;
 
+import com.gamesbykevin.towerdefense.entity.effects.Effect;
 import com.gamesbykevin.towerdefense.entity.Entity;
 
 /**
@@ -12,52 +14,20 @@ import com.gamesbykevin.towerdefense.entity.Entity;
  */
 public final class Enemy extends Entity
 {
-    //the pixel dimensions of the enemy
-    public static final double WIDTH = 46.0;
-    public static final double HEIGHT = 46.0;
-    
-    /**
-     * The minimum allowed health
-     */
-    private static final int HEALTH_MIN = 0;
-    
-    /**
-     * The max start health for the enemy
-     */
-    private int maxHealth = 100;
-    
-    /**
-     * The enemy's current health
-     */
-    private int health = 100;
-    
-    /**
-     * How fast does the enemy move from column to column, etc.....
-     */
-    private double speed = .01;
-    
-    //where the enemy is heading
-    private Cell destination;
-    
-    //the previous postion
-    private Cell previous;
-    
     public enum Type
     {
-        Blue1(.015, 1),
-        Blue2(.015, 1),
-        Blue3(.015, 1),
-        Green1(.015, 1),
-        Green2(.015, 1),
-        Green3(.015, 1),
-        Red1(.015, 1),
-        Red2(.015, 1),
-        Red3(.015, 1),
-        Yellow1(.015, 1),
-        Yellow2(.015, 1),
-        Yellow3(.015, 1);
-        //Boss1(.015),
-        //Boss2(.015);
+        Blue1(.015, 1, Effect.Type.Explosion2, 10),
+        Blue2(.015, 1, Effect.Type.Explosion3, 15),
+        Blue3(.015, 1, Effect.Type.Explosion4, 20),
+        Green1(.015, 1, Effect.Type.Explosion5, 10),
+        Green2(.015, 1, Effect.Type.Explosion6, 15),
+        Green3(.015, 1, Effect.Type.Explosion7, 20),
+        Red1(.015, 1, Effect.Type.Explosion8, 10),
+        Red2(.015, 1, Effect.Type.Explosion9, 15),
+        Red3(.015, 1, Effect.Type.Explosion10, 20),
+        Yellow1(.015, 1, Effect.Type.Explosion11, 10),
+        Yellow2(.015, 1, Effect.Type.Explosion12, 15),
+        Yellow3(.015, 1, Effect.Type.Explosion12, 20);
         
         //the speed of the type of enemy
         private final double speed;
@@ -65,13 +35,35 @@ public final class Enemy extends Entity
         //the reward for destroying the enemy
         private final int reward;
         
-        private Type(final double speed, final int reward)
+        //the type of explosion upon being destroyed
+        private final Effect.Type effectType;
+        
+        //the starting health
+        private final int startHealth;
+        
+        private Type(final double speed, final int reward, final Effect.Type effectType, final int startHealth)
         {
+            //assign the starting health
+            this.startHealth = startHealth;
+            
             //assign the speed
             this.speed = speed;
             
             //assign the reward
             this.reward = reward;
+            
+            //assign the effect type
+            this.effectType = effectType;
+        }
+        
+        public int getStartHealth()
+        {
+            return this.startHealth;
+        }
+        
+        public Effect.Type getEffectType()
+        {
+            return this.effectType;
         }
         
         protected double getSpeed()
@@ -84,6 +76,66 @@ public final class Enemy extends Entity
             return this.reward;
         }
     }
+    
+    //different facing directions for the enemies
+    private static double NORTH = Math.toRadians(270);
+    private static double SOUTH = Math.toRadians(90);
+    private static double EAST = Math.toRadians(0);
+    private static double WEST = Math.toRadians(180);
+    
+    //the pixel dimensions of the enemy
+    public static final double WIDTH = 46.0;
+    public static final double HEIGHT = 46.0;
+    
+    /**
+     * The minimum allowed health
+     */
+    private static final int HEALTH_MIN = 0;
+    
+    /**
+     * The max start health for the enemy
+     */
+    private int maxHealth = 10;
+    
+    /**
+     * The enemy's current health
+     */
+    private double health = 10;
+    
+    /**
+     * How fast does the enemy move from column to column, etc.....
+     */
+    private double speed = .01;
+    
+    //where the enemy is heading
+    private Cell destination;
+    
+    //where the enemy previously was
+    private Cell previous;
+    
+    //is the enemy poisoned
+    private boolean poison = false;
+    
+    //does the enemy move slower
+    private boolean frozen = false;
+    
+    //track the duration of posion and frozen
+    private Timers timers;
+    
+    //the different timers we will be tracking
+    public enum TimerKey
+    {
+        Frozen, Poison
+    }
+    
+    //how long the posion will be in effect for
+    private static final long DURATION_POISON = Timers.toNanoSeconds(5000L);
+    
+    //how long the enemy will be frozen for
+    private static final long DURATION_FROZEN = Timers.toNanoSeconds(5000L);
+    
+    //the amount of damage per update when poisoned
+    public static final double POISON_DAMAGE = .1;
     
     //the type of enemy
     private final Type type;
@@ -102,10 +154,13 @@ public final class Enemy extends Entity
         //all enemy animations will loop 
         animation.setLoop(true);
         
-        //set the enemy speed
-        this.setSpeed(type.getSpeed());
+        //set the start health
+        this.setStartHealth(getType().getStartHealth() * 10);
         
-        switch (type)
+        //set the enemy speed
+        this.setSpeed(getType().getSpeed());
+        
+        switch (getType())
         {
             case Blue1:
                 animation.add((int)(WIDTH * 0), (int)(HEIGHT * 0), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
@@ -199,26 +254,49 @@ public final class Enemy extends Entity
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 11), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 break;
                 
-            /*
-            case Boss1:
-                animation.add(0,   (int)(HEIGHT * 12), 118, 118, Timers.toNanoSeconds(250L));
-                animation.add(118, (int)(HEIGHT * 12), 118, 118, Timers.toNanoSeconds(250L));
-                animation.add(236, (int)(HEIGHT * 12), 118, 118, Timers.toNanoSeconds(250L));
-                break;
-            
-            case Boss2:
-                animation.add(0,   670, 64, 64, Timers.toNanoSeconds(333L));
-                animation.add(64,  670, 64, 64, Timers.toNanoSeconds(333L));
-                animation.add(128, 670, 64, 64, Timers.toNanoSeconds(333L));
-                animation.add(192, 670, 64, 64, Timers.toNanoSeconds(333L));
-                break;
-            */
             default:
                 throw new Exception("Type not setup here = " + type.toString());
         }
         
         //add animation
         super.addAnimation(animation);
+    }
+    
+    public void createTimers(final long time)
+    {
+        this.timers = new Timers(time);
+        this.timers.add(TimerKey.Frozen, DURATION_FROZEN);
+        this.timers.add(TimerKey.Poison, DURATION_POISON);
+    }
+    
+    public Timer getTimerPoison()
+    {
+        return timers.getTimer(TimerKey.Poison);
+    }
+    
+    public Timer getTimerFrozen()
+    {
+        return timers.getTimer(TimerKey.Frozen);
+    }
+    
+    public void setPoison(final boolean poison)
+    {
+        this.poison = poison;
+    }
+    
+    public boolean isPoisoned()
+    {
+        return this.poison;
+    }
+    
+    public void setFrozen(final boolean frozen)
+    {
+        this.frozen = frozen;
+    }
+    
+    public boolean isFrozen()
+    {
+        return this.frozen;
     }
     
     /**
@@ -239,9 +317,9 @@ public final class Enemy extends Entity
         return this.previous;
     }
     
-    public void setPrevious(final Cell destination)
+    public void setPrevious(final Cell previous)
     {
-        setPrevious(destination.getCol(), destination.getRow());
+        setPrevious(previous.getCol(), previous.getRow());
     }
     
     public void setPrevious(final double col, final double row)
@@ -258,7 +336,7 @@ public final class Enemy extends Entity
      * Get the location where the enemy is headed
      * @return The column, row
      */
-    public Cell getDestination()
+    private Cell getDestination()
     {
         return this.destination;
     }
@@ -279,6 +357,15 @@ public final class Enemy extends Entity
     }
     
     /**
+     * Is the enemy at the destination
+     * @return true=yes, false=no
+     */
+    public boolean hasReachedDestination()
+    {
+        return getDestination().equals(this);
+    }
+    
+    /**
      * Set the speed of the enemy
      * @param speed The rate at which the enemy can move
      */
@@ -288,11 +375,15 @@ public final class Enemy extends Entity
     }
     
     /**
-     * Get the speed
+     * Get the speed.<br>
+     * If the enemy is frozen the speed will be 50%
      * @return The rate at which the enemy can move
      */
     public final double getSpeed()
     {
+        if (isFrozen())
+            return (this.speed / 2);
+        
         return this.speed;
     }
     
@@ -312,7 +403,7 @@ public final class Enemy extends Entity
      * Assign the current health 
      * @param health The current health we want to assign to the enemy
      */
-    public void setHealth(final int health)
+    public void setHealth(final double health)
     {
         this.health = health;
         
@@ -343,9 +434,78 @@ public final class Enemy extends Entity
      * Get the enemy's current health
      * @return The current health
      */
-    public int getHealth()
+    public double getHealth()
     {
         return this.health;
+    }
+    
+    /**
+     * Make sure the enemy is heading towards the destination
+     */
+    public void manageLocation()
+    {
+        //determine which direction we are to move in
+        if (getCol() < getDestination().getCol())
+        {
+            //set velocity
+            setVelocityX(getSpeed());
+
+            //set facing angle
+            setAngle(EAST);
+            
+            //if the next move will pass the destination
+            if (getCol() + getSpeed() >= getDestination().getCol())
+            {
+                //set at destination
+                setCol(getDestination().getCol());
+            }
+        }
+        else if (getCol() > getDestination().getCol())
+        {
+            //set velocity
+            setVelocityX(-getSpeed());
+            
+            //set facing angle
+            setAngle(WEST);
+
+            //if the next move will pass the destination
+            if (getCol() - getSpeed() <= getDestination().getCol())
+            {
+                //set at destination
+                setCol(getDestination().getCol());
+            }
+        }
+
+        if (getRow() < getDestination().getRow())
+        {
+            //set velocity
+            setVelocityY(getSpeed());
+
+            //set facing angle
+            setAngle(SOUTH);
+            
+            //if the next move will pass the destination
+            if (getRow() + getSpeed() >= getDestination().getRow())
+            {
+                //set at destination
+                setRow(getDestination().getRow());
+            }
+        }
+        else if (getRow() > getDestination().getRow())
+        {
+            //set velocity
+            setVelocityY(-getSpeed());
+
+            //set facing angle
+            setAngle(NORTH);
+            
+            //if the next move will pass the destination
+            if (getRow() - getSpeed() <= getDestination().getRow())
+            {
+                //set at destination
+                setRow(getDestination().getRow());
+            }
+        }
     }
     
     /**

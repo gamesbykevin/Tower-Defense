@@ -14,7 +14,8 @@ public final class Effect extends Entity
 {
     public enum Type
     {
-        Explosion1, Explosion2, Explosion3, Explosion4, 
+        //Explosion1, 
+        Explosion2, Explosion3, Explosion4, 
         Explosion5, Explosion6, Explosion7, Explosion8, 
         Explosion9, Explosion10, Explosion11, Explosion12, 
     }
@@ -46,6 +47,7 @@ public final class Effect extends Entity
         
         switch (type)
         {
+            /*
             case Explosion1:
                 x = 0;
                 y = 0;
@@ -54,7 +56,8 @@ public final class Effect extends Entity
                 cols = 8;
                 rows = 8;
                 break;
-           
+            */
+            
             case Explosion2:
                 x = 0;
                 y = 1024;

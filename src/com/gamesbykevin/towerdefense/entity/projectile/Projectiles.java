@@ -1,14 +1,14 @@
 package com.gamesbykevin.towerdefense.entity.projectile;
 
-import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.resources.Disposable;
 
+import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.Entities;
+import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Image;
-import java.util.Random;
 
 /**
  * This class will contain all projectiles in play
@@ -23,36 +23,19 @@ public final class Projectiles extends Entities  implements Disposable, IElement
     
     /**
      * Add projectile
-     * @param random Object used to pick a random projectile type
-     * @param start Start
-     * @param goal Goal 
-     * @param angle facing angle
+     * @param tower The projectile source
      * @throws Exception 
      */
-    public void add(final Random random, final Cell start, final Cell goal, final double angle) throws Exception
-    {
-        add(Projectile.Type.values()[random.nextInt(Projectile.Type.values().length)], start, goal, angle);
-    }
-    
-    /**
-     * Add projectile
-     * @param type The type of animation
-     * @param start Start
-     * @param goal Goal 
-     * @param angle facing angle
-     * @throws Exception 
-     */
-    public void add(final Projectile.Type type, final Cell start, final Cell goal, final double angle) throws Exception
+    public void add(final Tower tower) throws Exception
     {
         //create a new tower
-        Projectile projectile = new Projectile(type, goal);
+        Projectile projectile = new Projectile(tower.getType().getProjectileType(), tower.getDamage(), tower.getTarget().getId());
         
-        //set position
-        projectile.setCol(start);
-        projectile.setRow(start);
+        //set start position
+        projectile.setStart(tower);
         
         //set the facing angle
-        projectile.setAngle(angle);
+        projectile.setAngle(tower.getAngle());
         
         //add to list
         add(projectile);
@@ -70,6 +53,29 @@ public final class Projectiles extends Entities  implements Disposable, IElement
             //update the current projectile
             Projectile projectile = (Projectile)getEntities().get(i);
             
+            //get the targeted enemy
+            final Enemy enemy = engine.getManager().getEnemies().getEnemy(projectile.getTargetId());
+            
+            //if the projectile timer has finished, or if the enemy no longer exists
+            if (projectile.getTimer().hasTimePassed() || enemy == null)
+            {
+                if (enemy != null)
+                {
+                    //deduct damage from enemy
+                    enemy.setHealth(enemy.getHealth() - projectile.getDamage());
+                }
+                
+                //remove from list
+                remove(projectile);
+                
+                //reduce the index count
+                i--;
+            }
+            else
+            {
+                //update the location based on the timer progress
+                projectile.updateLocation(engine.getMain().getTime(), enemy);
+            }
         }
     }
 }

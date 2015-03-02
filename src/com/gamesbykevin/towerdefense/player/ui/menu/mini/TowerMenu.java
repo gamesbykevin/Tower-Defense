@@ -151,27 +151,27 @@ public final class TowerMenu extends MiniMenu implements Disposable
         if (tower != null)
         {
             //check if menu should be placed on west or east side
-            if (tower.getX() < (Map.COLS / 2) * Map.WIDTH)
+            if (tower.getX() < Map.START_X + (Map.COLS / 2) * Map.WIDTH)
             {
                 //add menu to right side
-                super.setX(tower.getX() + Map.WIDTH);
+                super.setX(tower.getX() + (Map.WIDTH / 2));
             }
             else
             {
                 //add menu to left side
-                super.setX(tower.getX() - WIDTH);
+                super.setX(tower.getX() - WIDTH - (Map.WIDTH / 2));
             }
             
             //check if menu should be placed on north or south side
-            if (tower.getY() < (Map.ROWS / 2) * Map.HEIGHT)
+            if (tower.getY() < Map.START_Y + (Map.ROWS / 2) * Map.HEIGHT)
             {
                 //add menu to south side
-                super.setY(tower.getY() + Map.HEIGHT);
+                super.setY(tower.getY() + (Map.HEIGHT / 2));
             }
             else
             {
                 //add menu to north side
-                super.setY(tower.getY() - HEIGHT);
+                super.setY(tower.getY() - HEIGHT - (Map.HEIGHT / 2));
             }
         }
     }
@@ -199,8 +199,8 @@ public final class TowerMenu extends MiniMenu implements Disposable
         //sell price
         getGraphics2D().drawString("Sell $" + tower.getCostSell(), DESCRIPTION1_X, DESCRIPTION1_Y + (int)(DESCRIPTION_OFFSET_Y * 3.25));
         
-        //if reached the limit or are a tower we can't upgrade
-        if (tower.hasUpgradeMax() || tower.getType() == Tower.Type.Tower8)
+        //if reached the limit or are a tower that is upgradable
+        if (tower.hasUpgradeMax() || !tower.isUpgradable())
         {
             //upgrade cost
             getGraphics2D().drawString("Upgrade: N/A", DESCRIPTION1_X, DESCRIPTION1_Y + (int)(DESCRIPTION_OFFSET_Y * 4.75));

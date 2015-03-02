@@ -6,7 +6,6 @@ import com.gamesbykevin.framework.resources.Disposable;
 import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.entity.Entities;
-import com.gamesbykevin.towerdefense.entity.projectile.Projectile;
 import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
@@ -29,6 +28,14 @@ public final class Towers extends Entities implements Disposable, IElement
     
     /**
      * Add tower
+     */
+    /**
+     * Add tower to our collection
+     * @param type The type of tower
+     * @param col Column
+     * @param row Row
+     * @param time Time (nano-seconds) per update
+     * @throws Exception 
      */
     public void add(final Tower.Type type, final double col, final double row) throws Exception
     {
@@ -104,6 +111,15 @@ public final class Towers extends Entities implements Disposable, IElement
         this.id = (tower != null) ? tower.getId() : 0;
     }
     
+    /**
+     * Get the tower id selection
+     * @return The unique id of the tower the user selected
+     */
+    public long getTowerIdSelection()
+    {
+        return this.id;
+    }
+    
     public Tower getTower(final int index)
     {
         return (Tower)getEntities().get(index);
@@ -119,7 +135,7 @@ public final class Towers extends Entities implements Disposable, IElement
         for (int i = 0; i < getEntities().size(); i++)
         {
             //update the current tower
-            Tower tower = (Tower)getEntities().get(i);
+            Tower tower = getTower(i);
             
             //check if there is an enemy to target
             Enemy enemy = engine.getManager().getEnemies().getEnemy(tower);
@@ -127,56 +143,65 @@ public final class Towers extends Entities implements Disposable, IElement
             //check if there is an enemy to target
             tower.setTagret(enemy);
             
-            //if there is a target within range, aim at target
-            if (tower.getTarget() != null)
-            {
-                //calculate the slope
-                final double slope = (enemy.getRow() - tower.getRow()) / (enemy.getCol() - tower.getCol());
-                
-                //calculat the facing angle
-                double angle = Math.atan(slope);
-                
-                //if the difference is negative adjust
-                if (enemy.getCol() - tower.getCol() < 0)
-                    angle += Math.PI;
-                
-                //adjust due to the default facing east direction of the animation
-                angle += Math.toRadians(90);
-                
-                //make sure radians stay within range
-                if (angle > (2 * Math.PI))
-                    angle -= (2 * Math.PI);
-                if (angle < 0)
-                    angle += (2 * Math.PI);
-                
-                //now set the final angle
-                tower.setAngle(angle);
-            }
+            //don't continue if there is no enemy to interact with
+            if (tower.getTarget() == null)
+                continue;
+            
+            //calculate the slope
+            final double slope = (enemy.getRow() - tower.getRow()) / (enemy.getCol() - tower.getCol());
+
+            //calculat the facing angle
+            double angle = Math.atan(slope);
+
+            //if the difference is negative adjust
+            if (enemy.getCol() - tower.getCol() < 0)
+                angle += Math.PI;
+
+            //adjust due to the default facing east direction of the animation
+            angle += Math.toRadians(90);
+
+            //make sure radians stay within range
+            if (angle > (2 * Math.PI))
+                angle -= (2 * Math.PI);
+            if (angle < 0)
+                angle += (2 * Math.PI);
+
+            //now set the final angle
+            tower.setAngle(angle);
             
             //check to see if time has passed to attack
             if (tower.getTimer().hasTimePassed())
             {
-                //make sure the tower has a target
-                if (tower.getTarget() != null)
+                //time has passed reset timer
+                tower.getTimer().reset();
+                
+                //we will handle the enemies different here without 
+                if (tower.canFreeze() || tower.canPoison())
                 {
-                    //time has passed reset timer
-                    tower.getTimer().reset();
-
-                    //fire projectile at enemy
-                    engine.getManager().getProjectiles().add(engine.getRandom(), tower, tower.getTarget(), tower.getAngle());
-
-                    //play projectile sound effect??
-                    
-                    
-                    //deduct damage from enemy
-                    enemy.setHealth(enemy.getHealth() - tower.getDamage());
-                    
-                    //if enemy is dead, we should add funds to the player
-                    if (enemy.isDead())
+                    if (tower.canFreeze())
                     {
-                        //add funds to player
-                        engine.getManager().getPlayer().getUIMenu().addReward(enemy);
+                        //play sound effect?
                         
+                        //freeze nearby enemies
+                        engine.getManager().getEnemies().freezeEnemies(tower);
+                    }
+                    else if (tower.canPoison())
+                    {
+                        //play sound effect?
+                        
+                        //poison nearby enemies
+                        engine.getManager().getEnemies().poisonEnemies(tower);
+                    }
+                }
+                else
+                {
+                    //make sure the tower has a target
+                    if (tower.getTarget() != null)
+                    {
+                        //fire projectile at enemy
+                        engine.getManager().getProjectiles().add(tower);
+                        
+                        //play projectile sound effect??
                         
                     }
                 }
@@ -196,44 +221,23 @@ public final class Towers extends Entities implements Disposable, IElement
         for (int i = 0; i < getEntities().size(); i++)
         {
             //get the current tower
-            Tower tower = (Tower)getEntities().get(i);
+            Tower tower = getTower(i);
         
-            //we only want the matching tower
-            if (tower.getId() != id)
+            //if tower can't freeze and can't poison and is not the current selection
+            if (!tower.canFreeze() && !tower.canPoison() && tower.getId() != getTowerIdSelection())
                 continue;
             
-            //store the tower information
-            final double x = tower.getX();
-            final double y = tower.getY();
-            final double w = tower.getWidth();
-            final double h = tower.getHeight();
-            final Object key = tower.getSpriteSheet().getCurrent();
-            
-            //the x,y location of the tower's center
-            final int x1 = (int)Map.getStartX(tower.getCol());
-            final int y1 = (int)Map.getStartY(tower.getRow());
-            
-            //the reach of the range
-            final int w1 = (int)(tower.getRange() * Map.WIDTH) * 2;
-            
-            //assign tower coordinates and dimensions
-            tower.setX(x1 - (w1 / 2));
-            tower.setY(y1 - (w1 / 2));
-            
-            //assign size of animation
-            tower.setWidth(w1);
-            tower.setHeight(w1);
-            
-            //set animation
-            tower.setAnimation(Tower.RangeKey.Regular);
-            
+            if (tower.getId() != getTowerIdSelection())
+            {
+                //only draw the range right when the time passes
+                if (tower.canFreeze() && !tower.getTimer().hasTimePassed())
+                    continue;
+                if (tower.canPoison()&& !tower.getTimer().hasTimePassed())
+                    continue;
+            }
+                
             //draw the range
-            tower.draw(graphics, getImage());
-            
-            //now restore the tower info
-            tower.setLocation(x, y);
-            tower.setDimensions(w, h);
-            tower.setAnimation(key);
+            tower.renderRange(graphics, getImage());
         }
         
         //then draw the towers

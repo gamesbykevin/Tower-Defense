@@ -116,8 +116,8 @@ public final class Player extends Sprite implements Disposable, IElement
                         //make sure the player has enough funds
                         if (getUIMenu().getFunds() >= getTowerMenu().getTower().getCostUpgrade())
                         {
-                            //only tower that can't be upgraded is Tower8
-                            if (getTowerMenu().getTower().getType() != Tower.Type.Tower8)
+                            //only upgrade the tower if it is upgradable
+                            if (getTowerMenu().getTower().isUpgradable())
                             {
                                 //subtract from our funds
                                 getUIMenu().setFunds(getUIMenu().getFunds() - getTowerMenu().getTower().getCostUpgrade());
@@ -174,8 +174,8 @@ public final class Player extends Sprite implements Disposable, IElement
 
                         if (getUIMenu().getFunds() >= getTowerMenu().getTower().getCostUpgrade())
                         {
-                            //only tower8 can't be upgraded
-                            getTowerMenu().setActiveUpgradeIcon(getTowerMenu().getTower().getType() != Tower.Type.Tower8);
+                            //only allow upgrades if upgradable
+                            getTowerMenu().setActiveUpgradeIcon(getTowerMenu().getTower().isUpgradable());
                         }
                         else
                         {
@@ -224,7 +224,7 @@ public final class Player extends Sprite implements Disposable, IElement
                         }
                         else if (getUIMenu().performSpeedSelection(x, y))
                         {
-                            engine.getManager().getEnemies().add(engine.getRandom(), engine.getManager().getMap().getStart());
+                            engine.getManager().getEnemies().add(engine.getRandom(), engine.getManager().getMap().getStart(), engine.getMain().getTime());
                             
                             //set correct icon
                             getUIMenu().setSpeedEnabled(!getUIMenu().hasSpeedEnabled());

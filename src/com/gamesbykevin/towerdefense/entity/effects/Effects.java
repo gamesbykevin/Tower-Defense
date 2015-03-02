@@ -33,7 +33,18 @@ public final class Effects extends Entities implements Disposable, IElement
     }
     
     /**
-     * Add enemy
+     * Add effect 
+     * @param type The type of effect to add
+     * @param start Location
+     * @throws Exception 
+     */
+    public void add(final Effect.Type type, final Cell start) throws Exception
+    {
+        add(type, start.getCol(), start.getRow());
+    }
+    
+    /**
+     * Add effect
      */
     public void add(final Effect.Type type, final double col, final double row) throws Exception
     {

@@ -38,7 +38,8 @@ public final class EnemyMenu extends MiniMenu implements Disposable
     private long enemyId;
     
     //the current and start health of our targeted enemy
-    private double currentHealth, startingHealth;
+    private double currentHealth;
+    private int startingHealth;
     
     public enum Key
     {
@@ -142,10 +143,10 @@ public final class EnemyMenu extends MiniMenu implements Disposable
         getGraphics2D().setColor(Color.BLACK);
         
         //draw text description
-        getGraphics2D().drawString("Enemy Health: " + this.currentHealth, HEALTH_DESC_X, HEALTH_DESC_Y);
+        getGraphics2D().drawString("Enemy Health: " + (int)this.currentHealth, HEALTH_DESC_X, HEALTH_DESC_Y);
         
         //get the health ratio
-        final double ratio = this.currentHealth / this.startingHealth;
+        final double ratio = (double)this.currentHealth / (double)this.startingHealth;
         
         //set location
         super.setX(HEALTH_START_X);

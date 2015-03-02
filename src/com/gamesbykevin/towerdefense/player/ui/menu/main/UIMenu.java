@@ -91,7 +91,7 @@ public final class UIMenu extends MainMenu implements Disposable
     private static final int RIGHT_X = 96;
     
     //how much money the player has
-    private int funds = 100;
+    private int funds = 10000;
     
     //the number of lives the player has
     private int lives = 100;

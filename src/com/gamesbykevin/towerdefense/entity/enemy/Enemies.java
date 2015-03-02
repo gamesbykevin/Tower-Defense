@@ -18,12 +18,6 @@ import java.util.Random;
  */
 public final class Enemies extends Entities implements Disposable, IElement
 {
-    //different facing directions for the enemies
-    private static double NORTH = Math.toRadians(270);
-    private static double SOUTH = Math.toRadians(90);
-    private static double EAST = Math.toRadians(0);
-    private static double WEST = Math.toRadians(180);
-    
     public Enemies(final Image image)
     {
         super.setImage(image);
@@ -33,21 +27,23 @@ public final class Enemies extends Entities implements Disposable, IElement
      * Add random enemy type
      * @param random Object used to make random decisions
      * @param location The column, row of the enemy
+     * @param time The amount of time per each update (nano-seconds)
      * @throws Exception 
      */
-    public void add(final Random random, final Cell location) throws Exception
+    public void add(final Random random, final Cell location, final long time) throws Exception
     {
-        add(Enemy.Type.values()[random.nextInt(Enemy.Type.values().length)], location);
+        add(Enemy.Type.values()[random.nextInt(Enemy.Type.values().length)], location, time);
     }
     
     /**
      * Add enemy
      * @param type The type of enemy
      * @param location The column, row of the enemy
+     * @param time The amount of time per each update (nano-seconds)
      */
-    public void add(final Enemy.Type type, final Cell location) throws Exception
+    public void add(final Enemy.Type type, final Cell location, final long time) throws Exception
     {
-        add(type, location.getCol(), location.getRow());
+        add(type, location.getCol(), location.getRow(), time);
     }
     
     /**
@@ -55,15 +51,22 @@ public final class Enemies extends Entities implements Disposable, IElement
      * @param type The type of enemy
      * @param col The column of the enemy
      * @param row The row of the enemy
+     * @param time The amount of time per each update (nano-seconds)
      */
-    public void add(final Enemy.Type type, final double col, final double row) throws Exception
+    public void add(final Enemy.Type type, final double col, final double row, final long time) throws Exception
     {
         //create a new enemy
         Enemy enemy = new Enemy(type);
         
+        //create timers
+        enemy.createTimers(time);
+        
         //set position, which will be 1 column each of the specified location
         enemy.setCol(col + 1);
         enemy.setRow(row);
+        
+        //set the previous location
+        enemy.setPrevious(enemy);
         
         //set x, y coordinates
         enemy.update();
@@ -130,6 +133,54 @@ public final class Enemies extends Entities implements Disposable, IElement
     }
     
     /**
+     * Poison all enemies within the tower range
+     * @param tower The tower looking for enemy targets
+     */
+    public void poisonEnemies(final Tower tower)
+    {
+        //check all enemies
+        for (int i = 0; i < getEntities().size(); i++)
+        {
+            //get the current enemy
+            Enemy enemy = getEnemy(i);
+            
+            //make sure the enemy is within the range of the tower
+            if (Cell.getDistance(enemy, tower) <= tower.getRange())
+            {
+                //set poison to true
+                enemy.setPoison(true);
+                
+                //reset timer
+                enemy.getTimerPoison().reset();
+            }
+        }
+    }
+    
+    /**
+     * Slow down all enemies within the tower range
+     * @param tower The tower looking for enemy targets
+     */
+    public void freezeEnemies(final Tower tower)
+    {
+        //check all enemies
+        for (int i = 0; i < getEntities().size(); i++)
+        {
+            //get the current enemy
+            Enemy enemy = getEnemy(i);
+            
+            //make sure the enemy is within the range of the tower
+            if (Cell.getDistance(enemy, tower) <= tower.getRange())
+            {
+                //set frozen to true
+                enemy.setFrozen(true);
+                
+                //reset timer
+                enemy.getTimerFrozen().reset();
+            }
+        }
+    }
+    
+    /**
      * Get the enemy within the range of the Tower
      * @param tower The tower looking for an enemy target
      * @return The enemy closest to the tower, if none are found, null is returned
@@ -179,43 +230,14 @@ public final class Enemies extends Entities implements Disposable, IElement
             //update the current enemy
             Enemy enemy = (Enemy)getEntities().get(i);
             
-            //if the enemy is at the destination
-            if (enemy.getDestination().equals(enemy))
-            {
-                if (enemy.getCol() > 0)
-                {
-                    //pick the next destination for the enemy
-                    enemy.setDestination(engine.getManager().getMap().getNextDestination(enemy, engine.getRandom()));
-
-                    //set the destination as now the previous
-                    enemy.setPrevious(enemy.getDestination());
-                }
-                else
-                {
-                    //remove from list
-                    super.remove(enemy);
-                    
-                    //move index back 1
-                    i--;
-                    
-                    //enemy has passed goal, deduct 1 life from player
-                    engine.getManager().getPlayer().getUIMenu().deductLife();
-                    
-                    
-                    //play sound effect?
-                }
-            }
-            else
-            {
-                //check the location and velocity
-                manageEnemyLocation(enemy);
-            }
-            
-            //also check if enemies are dead
+            //check if enemy is dead
             if (enemy.isDead())
             {
+                //add funds to player
+                engine.getManager().getPlayer().getUIMenu().addReward(enemy);
+                
                 //add explosion effect here
-                engine.getManager().getEffects().add(engine.getRandom(), enemy);
+                engine.getManager().getEffects().add(enemy.getType().getEffectType(), enemy);
                 
                 //play sound effect
                 
@@ -226,88 +248,77 @@ public final class Enemies extends Entities implements Disposable, IElement
                 //move index back 1
                 i--;
                 
+                //no need to continue for a dead enemy
+                continue;
             }
-        }
-    }
-    
-    /**
-     * Manage the enemy location and velocity
-     * @param enemy The enemy
-     */
-    private void manageEnemyLocation(final Enemy enemy)
-    {
-        //determine which direction we are to move in
-        if (enemy.getCol() < enemy.getDestination().getCol())
-        {
-            //set velocity
-            enemy.setVelocityX(enemy.getSpeed());
-
-            //set facing angle
-            enemy.setAngle(EAST);
             
-            //if the next move will pass the destination
-            if (enemy.getCol() + enemy.getSpeed() >= enemy.getDestination().getCol())
+            //if enemy is frozen check timer
+            if (enemy.isFrozen())
             {
-                //stop movement
-                enemy.resetVelocityX();
+                //update frozen timer
+                enemy.getTimerFrozen().update(engine.getMain().getTime());
                 
-                //set at destination
-                enemy.setCol(enemy.getDestination().getCol());
+                //if the timer has finished
+                if (enemy.getTimerFrozen().hasTimePassed())
+                {
+                    //no longer frozen
+                    enemy.setFrozen(false);
+                    
+                    //reset timer
+                    enemy.getTimerFrozen().reset();
+                }
             }
-        }
-        else if (enemy.getCol() > enemy.getDestination().getCol())
-        {
-            //set velocity
-            enemy.setVelocityX(-enemy.getSpeed());
             
-            //set facing angle
-            enemy.setAngle(WEST);
-
-            //if the next move will pass the destination
-            if (enemy.getCol() - enemy.getSpeed() <= enemy.getDestination().getCol())
+            //if enemy is poisoned check
+            if (enemy.isPoisoned())
             {
-                //stop movement
-                enemy.resetVelocityX();
+                enemy.setHealth(enemy.getHealth() - Enemy.POISON_DAMAGE);
                 
-                //set at destination
-                enemy.setCol(enemy.getDestination().getCol());
+                //update posioned timer
+                enemy.getTimerPoison().update(engine.getMain().getTime());
+                
+                //if the timer has finished
+                if (enemy.getTimerPoison().hasTimePassed())
+                {
+                    //no longer poisoned
+                    enemy.setPoison(false);
+                    
+                    //reset timer
+                    enemy.getTimerPoison().reset();
+                }
             }
-        }
-
-        if (enemy.getRow() < enemy.getDestination().getRow())
-        {
-            //set velocity
-            enemy.setVelocityY(enemy.getSpeed());
-
-            //set facing angle
-            enemy.setAngle(SOUTH);
             
-            //if the next move will pass the destination
-            if (enemy.getRow() + enemy.getSpeed() >= enemy.getDestination().getRow())
-            {
-                //stop movement
-                enemy.resetVelocityY();
+            //make sure we are heading towards destination
+            enemy.manageLocation();
                 
-                //set at destination
-                enemy.setRow(enemy.getDestination().getRow());
-            }
-        }
-        else if (enemy.getRow() > enemy.getDestination().getRow())
-        {
-            //set velocity
-            enemy.setVelocityY(-enemy.getSpeed());
+            //if the enemy is at the destination
+            if (enemy.hasReachedDestination())
+            {
+                if (enemy.getCol() > 0)
+                {
+                    //pick the next destination for the enemy
+                    enemy.setDestination(engine.getManager().getMap().getNextDestination(enemy, engine.getRandom()));
 
-            //set facing angle
-            enemy.setAngle(NORTH);
-            
-            //if the next move will pass the destination
-            if (enemy.getRow() - enemy.getSpeed() <= enemy.getDestination().getRow())
-            {
-                //stop movement
-                enemy.resetVelocityY();
-                
-                //set at destination
-                enemy.setRow(enemy.getDestination().getRow());
+                    //set the current as the previous location
+                    enemy.setPrevious(enemy);
+                    
+                    //new destination set, stop moving the enemy
+                    enemy.resetVelocity();
+                }
+                else
+                {
+                    //remove from list
+                    super.remove(enemy);
+
+                    //move index back 1
+                    i--;
+
+                    //enemy has passed goal, deduct 1 life from player
+                    engine.getManager().getPlayer().getUIMenu().deductLife();
+
+                    //play sound effect?
+                    
+                }
             }
         }
     }

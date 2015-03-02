@@ -8,105 +8,147 @@ import com.gamesbykevin.towerdefense.level.object.LevelObject;
  */
 public final class Tile extends LevelObject
 {
-    //the cost from the start
-    private final int cost;
-    
     public enum Type
     {
-        ES,
-        WES,
-        WS,
-        NES,
-        NESW,
-        NSW,
-        NE,
-        WEN,
+        Horizontal,
+        Vertical,
+        Center,
         NW,
-        NS,
-        EW,
-        OPEN
+        NE,
+        SW,
+        SE
     }
     
+    //the type of tile
     private final Type type;
     
-    protected Tile(final Type type, final int cost) throws Exception
+    //each tile is 46px width/height
+    private static final int DIMENSIONS = 46;
+    
+    protected Tile(final Type type) throws Exception
     {
         //assign tile type
         this.type = type;
         
-        //assign the cost
-        this.cost = cost;
-        
-        switch (type)
+        switch (getType())
         {
-            case ES:
-                super.addAnimation(0, 0, Map.WIDTH, Map.HEIGHT);
+            case Horizontal:
+                super.addAnimation(46, 0, DIMENSIONS, DIMENSIONS);
                 break;
-                
-            case WES:
-                super.addAnimation(64, 0, Map.WIDTH, Map.HEIGHT);
+
+            case Vertical:
+                super.addAnimation(0, 46, DIMENSIONS, DIMENSIONS);
                 break;
-                
-            case WS:
-                super.addAnimation(128, 0, Map.WIDTH, Map.HEIGHT);
+
+            case Center:
+                super.addAnimation(46, 46, DIMENSIONS, DIMENSIONS);
                 break;
-                
-            case NES:
-                super.addAnimation(0, 64, Map.WIDTH, Map.HEIGHT);
-                break;
-                
-            case NESW:
-                super.addAnimation(64, 64, Map.WIDTH, Map.HEIGHT);
-                break;
-                
-            case NSW:
-                super.addAnimation(128, 64, Map.WIDTH, Map.HEIGHT);
-                break;
-                
-            case NE:
-                super.addAnimation(0, 128, Map.WIDTH, Map.HEIGHT);
-                break;
-                
-            case WEN:
-                super.addAnimation(64, 128, Map.WIDTH, Map.HEIGHT);
-                break;
-                
+
             case NW:
-                super.addAnimation(128, 128, Map.WIDTH, Map.HEIGHT);
+                super.addAnimation(0, 0, DIMENSIONS, DIMENSIONS);
                 break;
-                
-            case NS:
-                super.addAnimation(0, 192, Map.WIDTH, Map.HEIGHT);
+
+            case NE:
+                super.addAnimation(92, 0, DIMENSIONS, DIMENSIONS);
                 break;
-                
-            case EW:
-                super.addAnimation(64, 192, Map.WIDTH, Map.HEIGHT);
+
+            case SW:
+                super.addAnimation(0, 92, DIMENSIONS, DIMENSIONS);
                 break;
-                
-            case OPEN:
-                super.addAnimation(128, 192, Map.WIDTH, Map.HEIGHT);
+
+            case SE:
+                super.addAnimation(92, 92, DIMENSIONS, DIMENSIONS);
                 break;
 
             default:
                 throw new Exception("Type not setup here = " + type.toString());
         }
+        
+        //set the dimentions
+        super.setDimensions(Map.WIDTH, Map.HEIGHT);
     }
     
     /**
-     * Get the cost.<br>
-     * The farther away from the start location, the higher the cost
-     * @return The total number of moves from the start location
+     * Can the enemy move in this direction?
+     * @return true=yes, false=no
      */
-    public int getCost()
+    public boolean isSouthAvailable()
     {
-        return this.cost;
+        switch (getType())
+        {
+            case Center:
+            case Vertical:
+            case NW:
+            case NE:
+                return true;
+                
+            default:
+                return false;
+        }
+    }
+    
+    /**
+     * Can the enemy move in this direction?
+     * @return true=yes, false=no
+     */
+    public boolean isNorthAvailable()
+    {
+        switch (getType())
+        {
+            case Center:
+            case Vertical:
+            case SW:
+            case SE:
+                return true;
+                
+            default:
+                return false;
+        }
+    }
+    
+    /**
+     * Can the enemy move in this direction?
+     * @return true=yes, false=no
+     */
+    public boolean isEastAvailable()
+    {
+        switch (getType())
+        {
+            case Center:
+            case Horizontal:
+            case NW:
+            case SW:
+                return true;
+                
+            default:
+                return false;
+        }
+    }
+    
+    /**
+     * Can the enemy move in this direction?
+     * @return true=yes, false=no
+     */
+    public boolean isWestAvailable()
+    {
+        switch (getType())
+        {
+            case Center:
+            case Horizontal:
+            case NE:
+            case SE:
+                return true;
+                
+            default:
+                return false;
+        }
     }
     
     /**
      * Get the type
      * @return The tile type
      */
-    public Type getType()
+    public final Type getType()
     {
         return this.type;
     }
