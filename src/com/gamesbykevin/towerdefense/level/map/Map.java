@@ -46,12 +46,18 @@ public final class Map extends Sprite implements Disposable, IElement
     //the location of the start and finish
     private Cell start, finish;
     
-    public Map(final Image road)
+    //the background
+    private Image background;
+    
+    public Map(final Image road, final Image background)
     {
         super.setImage(road);
         
         //set the bounds
         super.setBounds(0, COLS - 1, 0, ROWS - 1);
+        
+        //set the background image
+        this.background = background;
     }
     
     /**
@@ -79,14 +85,23 @@ public final class Map extends Sprite implements Disposable, IElement
     {
         super.dispose();
         
+        if (background != null)
+        {
+            background.flush();
+            background = null;
+        }
+        
         if (tiles != null)
         {
             for (int row = 0; row < tiles.length; row++)
             {
                 for (int col = 0; col < tiles[0].length; col++)
                 {
-                    tiles[row][col].dispose();
-                    tiles[row][col] = null;
+                    if (tiles[row][col] != null)
+                    {
+                        tiles[row][col].dispose();
+                        tiles[row][col] = null;
+                    }
                 }
             }
             
@@ -296,6 +311,9 @@ public final class Map extends Sprite implements Disposable, IElement
     @Override
     public void render(final Graphics graphics)
     {
+        //first draw the background
+        graphics.drawImage(background, (int)START_X, (int)START_Y, (int)(COLS * WIDTH), (int)(ROWS * HEIGHT), null);
+        
         if (tiles != null)
         {
             for (int row = 0; row < tiles.length; row++)

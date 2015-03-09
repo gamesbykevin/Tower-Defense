@@ -1,6 +1,9 @@
 package com.gamesbykevin.towerdefense.player.ui.menu.main;
 
 import com.gamesbykevin.framework.resources.Disposable;
+import com.gamesbykevin.framework.util.Timer;
+import com.gamesbykevin.framework.util.Timers;
+
 import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
@@ -23,7 +26,6 @@ public final class UIMenu extends MainMenu implements Disposable
         AudioUnmute(50, 0, 48, 48), 
         AudioMute(50, 48, 48, 48), 
         Play(50, 96, 48, 48), 
-        Fast(50, 144, 48, 48),
         Menu(50, 240, 48, 48),
         Money(50, 288, 48, 48),
         Lives(50, 336, 48, 48);
@@ -97,7 +99,10 @@ public final class UIMenu extends MainMenu implements Disposable
     private int lives = 100;
     
     //the current wave
-    private int wave = 1;
+    private int wave = 0;
+    
+    //how many enemies are left in the wave
+    private int left = 0;
     
     //where the lives icon will be drawn
     private static final Point LOCATION_LIVES = new Point(LEFT_X, 5);
@@ -112,7 +117,7 @@ public final class UIMenu extends MainMenu implements Disposable
     private static final Point LOCATION_AUDIO = new Point(LEFT_X, 130);
     
     //where we display the speed icon
-    private static final Point LOCATION_SPEED = new Point(LEFT_X, 230);
+    private static final Point LOCATION_START = new Point(LEFT_X, 230);
     
     //where we display the menu icon
     private static final Point LOCATION_MENU = new Point(LEFT_X, 180);
@@ -123,12 +128,54 @@ public final class UIMenu extends MainMenu implements Disposable
     //is audio enabled
     private boolean audioEnabled = true;
     
-    //is the speed enabled
-    private boolean speedEnabled = false;
+    //our timer
+    private Timer timer;
+    
+    //time until next wave
+    private static final long DURATION_NEXT_WAVE = Timers.toNanoSeconds(20000L);
+    
+    //should the game start
+    private boolean start = false;
     
     public UIMenu()
     {
         super(WIDTH, HEIGHT);
+        
+        //create new timer
+        this.timer = new Timer(DURATION_NEXT_WAVE);
+        this.timer.setRemaining(Timers.NANO_SECONDS_PER_SECOND);
+    }
+    
+    /**
+     * Set the number of enemies left
+     * @param left The number of enemies left in the wave
+     */
+    public void setLeft(final int setLeft)
+    {
+        //flag change
+        if (setLeft != this.left)
+            setChange(true);
+        
+        this.left = setLeft;
+    }
+    
+    public boolean hasStarted()
+    {
+        return this.start;
+    }
+    
+    /**
+     * Is the game starting
+     * @param start true=yes, false=no
+     */
+    public void setStart(final boolean start)
+    {
+        this.start = start;
+    }
+    
+    public Timer getTimer()
+    {
+        return this.timer;
     }
     
     public void setAudioEnabled(final boolean enabled)
@@ -138,20 +185,6 @@ public final class UIMenu extends MainMenu implements Disposable
             setChange(true);
         
         this.audioEnabled = enabled;
-    }
-    
-    public boolean hasSpeedEnabled()
-    {
-        return this.speedEnabled;
-    }
-    
-    public void setSpeedEnabled(final boolean enabled)
-    {
-        //if setting changed, flag change
-        if (this.speedEnabled != enabled)
-            setChange(true);
-        
-        this.speedEnabled = enabled;
     }
     
     public boolean performAudioSelection(final double x, final double y)
@@ -168,13 +201,23 @@ public final class UIMenu extends MainMenu implements Disposable
         return false;
     }
     
-    public boolean performSpeedSelection(final double x, final double y)
+    /**
+     * Check if the location is within the play button
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return true if within, false if not or if we already clicked  star
+     */
+    public boolean hasStartSelection(final double x, final double y)
     {
+        //if already started return false
+        if (hasStarted())
+            return false;
+        
         //make sure within x coordinates
-        if (x >= getX() + LOCATION_SPEED.x && x <= getX() + LOCATION_SPEED.x + Tower.WIDTH)
+        if (x >= getX() + LOCATION_START.x && x <= getX() + LOCATION_START.x + Tower.WIDTH)
         {
             //make sure within y coordinates
-            if (y >= getY() + LOCATION_SPEED.y && y <= getY() + LOCATION_SPEED.y + Tower.HEIGHT)
+            if (y >= getY() + LOCATION_START.y && y <= getY() + LOCATION_START.y + Tower.HEIGHT)
                 return true;
         }
         
@@ -264,23 +307,25 @@ public final class UIMenu extends MainMenu implements Disposable
     }
     
     /**
-     * Set the wave
-     * @param num The assigned wave #
+     * Move to the next wave index
      */
-    public void setWave(final int num)
+    public void increaseWaveIndex()
     {
         //flag change
-        if (this.wave != num)
-            setChange(true);
+        setChange(true);
         
-        this.wave = num;
+        //reset timer
+        getTimer().reset();
+        
+        //increase wave
+        this.wave++;
     }
     
     /**
      * Get the wave
      * @return The current wave we are on
      */
-    public int getWave()
+    public int getWaveIndex()
     {
         return this.wave;
     }
@@ -334,7 +379,7 @@ public final class UIMenu extends MainMenu implements Disposable
      */
     public void addReward(final Enemy enemy)
     {
-        this.setFunds(getFunds() + (enemy.getReward() * getWave()));
+        this.setFunds(getFunds() + (enemy.getReward() * (getWaveIndex() + 1)));
     }
     
     /**
@@ -410,11 +455,20 @@ public final class UIMenu extends MainMenu implements Disposable
         //draw wave info
         drawWaveInfo();
         
+        //draw the number of enemies left
+        drawEnemiesLeftInfo();
+        
         //draw audio info
         drawAudioInfo();
         
-        //draw speed info
-        drawSpeedInfo();
+        if (!hasStarted())
+        {
+            //draw play button
+            drawStartButton();
+        }
+        
+        //draw timer info
+        drawTimerInfo();
         
         //draw menu info
         drawMenuInfo();
@@ -439,11 +493,32 @@ public final class UIMenu extends MainMenu implements Disposable
         draw(getGraphics2D(), getImage(), Key.Menu.getLocation());
     }
     
-    private void drawSpeedInfo()
+    private void drawStartButton()
     {
-        //draw speed icon
-        setLocation(LOCATION_SPEED);
-        draw(getGraphics2D(), getImage(), (speedEnabled) ? Key.Fast.getLocation() : Key.Play.getLocation());
+        //draw play icon
+        setLocation(LOCATION_START);
+        draw(getGraphics2D(), getImage(), Key.Play.getLocation());
+    }
+    
+    private void drawTimerInfo()
+    {
+        //set the location
+        super.setLocation(LOCATION_START);
+        
+        //draw info
+        getGraphics2D().drawString("Next Wave: " + getTimer().getDescRemaining(Timers.FORMAT_5), (int)(getX() + getWidth()) + 10, (int)(getY() + (getHeight() / 2)));
+    }
+    
+    private void drawEnemiesLeftInfo()
+    {
+        //set the location
+        super.setLocation(LOCATION_START);
+        
+        //move north
+        super.setY(getY() - getHeight());
+        
+        //draw info
+        getGraphics2D().drawString("Enemies: " + left, (int)(getX() + getWidth()) + 10, (int)(getY() + (getHeight() / 2)));
     }
     
     private void drawAudioInfo()
@@ -464,7 +539,7 @@ public final class UIMenu extends MainMenu implements Disposable
     private void drawWaveInfo()
     {
         //draw wave info
-        getGraphics2D().drawString("Wave :" + getWave(), LOCATION_WAVE.x, LOCATION_WAVE.y);
+        getGraphics2D().drawString("Wave :" + getWaveIndex(), LOCATION_WAVE.x, LOCATION_WAVE.y);
     }
     
     @Override

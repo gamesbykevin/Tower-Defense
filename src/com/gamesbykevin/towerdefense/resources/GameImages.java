@@ -22,7 +22,8 @@ public final class GameImages extends ImageManager
         Projectiles, 
         Effects, 
         MiniMenu,
-        MainMenu
+        MainMenu,
+        MapBackground
     }
     
     public GameImages() throws Exception

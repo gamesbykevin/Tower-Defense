@@ -84,6 +84,10 @@ public final class Player extends Sprite implements Disposable, IElement
     @Override
     public void update(final Engine engine) throws Exception
     {
+        //don't continue if no more waves
+        if (!engine.getManager().getEnemies().hasMoreWaves(getUIMenu().getWaveIndex()))
+            return;
+        
         if (engine.getMouse().isMouseReleased())
         {
             //get the location of the mouse
@@ -222,12 +226,13 @@ public final class Player extends Sprite implements Disposable, IElement
                             //set correct icon
                             getUIMenu().setAudioEnabled(engine.getResources().isAudioEnabled());
                         }
-                        else if (getUIMenu().performSpeedSelection(x, y))
+                        else if (getUIMenu().hasStartSelection(x, y))
                         {
-                            engine.getManager().getEnemies().add(engine.getRandom(), engine.getManager().getMap().getStart(), engine.getMain().getTime());
-                            
-                            //set correct icon
-                            getUIMenu().setSpeedEnabled(!getUIMenu().hasSpeedEnabled());
+                            //if we haven't already started
+                            if (!getUIMenu().hasStarted())
+                            {
+                                getUIMenu().setStart(true);
+                            }
                         }
                         else if (getUIMenu().performMenuSelection(x, y))
                         {
@@ -237,14 +242,26 @@ public final class Player extends Sprite implements Disposable, IElement
                     }
                     else
                     {
-                        //we have a selection, lets see if it can be placed
+                        //we have a selection, lets see if it can be placed in terms of the map
                         if (engine.getManager().getMap().isValid(col, row))
                         {
-                            //add tower at location
-                            engine.getManager().getTowers().add(getUIMenu().getTowerSelection().getTowerType(), col, row);
-                            
-                            //complete transaction
-                            getUIMenu().completeTransaction();
+                            //now lets see if it does not conflict with the other towers
+                            if (engine.getManager().getTowers().isValid(col, row))
+                            {
+                                //add tower at location
+                                engine.getManager().getTowers().add(getUIMenu().getTowerSelection().getTowerType(), col, row);
+
+                                //complete transaction
+                                getUIMenu().completeTransaction();
+                                
+                                //play placement sound effect
+                                
+                            }
+                            else
+                            {
+                                //play invalid sound effect
+                                
+                            }
                         }
                         else
                         {
@@ -274,12 +291,12 @@ public final class Player extends Sprite implements Disposable, IElement
             //determine our position
             final double col = (x - Map.START_X) / Map.WIDTH;
             final double row = (y - Map.START_Y) / Map.HEIGHT;
-                
+
             if (getUIMenu().hasTowerSelection())
             {
                 //set the new position
                 getUIMenu().getTowerSelection().setLocation(x, y);
-                getUIMenu().getTowerSelection().setValid(engine.getManager().getMap().isValid(col, row));
+                getUIMenu().getTowerSelection().setValid(engine.getManager().getMap().isValid(col, row) && engine.getManager().getTowers().isValid(col, row));
             }
         }
         
@@ -298,6 +315,30 @@ public final class Player extends Sprite implements Disposable, IElement
             {
                 //if the enemy was not found, we should not display the menu
                 getEnemyMenu().setVisible(false);
+            }
+        }
+        
+        //if the player has started
+        if (getUIMenu().hasStarted())
+        {
+            //check if timer has not yet passed
+            if (!getUIMenu().getTimer().hasTimePassed())
+            {
+                //update timer
+                getUIMenu().getTimer().update(engine.getMain().getTime());
+
+                //flag change
+                getUIMenu().setChange(true);
+                
+                //set time to 0 if time has passed
+                if (getUIMenu().getTimer().hasTimePassed())
+                {
+                    //set time left to 0
+                    getUIMenu().getTimer().setRemaining(0);
+                    
+                    //flag wave to start
+                    engine.getManager().getEnemies().setStart(true);
+                }
             }
         }
     }

@@ -18,6 +18,9 @@ import java.awt.Rectangle;
  */
 public final class Tower extends Entity
 {
+    //when freezing or poison, how many enemies can be affected at once
+    public static final int AFFECTED_ENEMY_COUNT = 5;
+    
     //the timer for how long to wait before attacking
     private Timer timer;
     
@@ -40,14 +43,17 @@ public final class Tower extends Entity
      */
     public enum Type
     {
-        Tower1(1, 1, 3, 4, 10, 0, 0,  (int)WIDTH, (int)HEIGHT, Projectile.Type.Blue3), 
-        Tower2(0, 2, 0, 20, 40, 0, 40, (int)WIDTH, (int)HEIGHT, Projectile.Type.Red3), 
-        Tower3(2, 0, 1, 10, 30, 0, 80, (int)WIDTH, (int)HEIGHT, Projectile.Type.Green3), 
-        Tower4(1, 0, 0, 0, 50, 0, 120,(int)WIDTH, (int)HEIGHT, null), 
-        Tower5(1, 0, 0, 0, 50, 0, 160,(int)WIDTH, (int)HEIGHT, null), 
-        Tower6(0, 0, 4, 7, 25, 0, 200,(int)WIDTH, (int)HEIGHT, Projectile.Type.Green4), 
-        Tower7(1, 1, 2, 15, 35, 0, 240,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red4), 
-        Tower8(4, 4, 4, 0, 250, 0, 280,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red1);
+        Tower1(0, 0, 0, 4,  10,  0, 0,   (int)WIDTH, (int)HEIGHT, Projectile.Type.Blue3), 
+        Tower2(0, 2, 0, 5,  20,  0, 40, (int)WIDTH, (int)HEIGHT, Projectile.Type.Red3), 
+        Tower3(2, 0, 1, 10, 30,  0, 80, (int)WIDTH, (int)HEIGHT, Projectile.Type.Green3), 
+        
+        //freeze and poison towers
+        Tower4(1, 0, 0, 0,  100,  0, 120, (int)WIDTH, (int)HEIGHT, null), 
+        Tower5(1, 0, 0, 0,  100,  0, 160, (int)WIDTH, (int)HEIGHT, null), 
+        
+        Tower6(0, 0, 4, 7,  25,  0, 200,(int)WIDTH, (int)HEIGHT, Projectile.Type.Green4), 
+        Tower7(1, 1, 2, 15, 35,  0, 240,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red4), 
+        Tower8(4, 4, 4, 0,  300, 0, 280,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red1);
         
         //index for the 3 attributes
         private final int levelRange, levelDamage, levelRate;
@@ -126,11 +132,11 @@ public final class Tower extends Entity
      */
     public enum Damage
     {
-        Damage1(1),
-        Damage2(2),
-        Damage3(4),
+        Damage1(2),
+        Damage2(4),
+        Damage3(6),
         Damage4(8),
-        Damage5(16);
+        Damage5(10);
         
         private final int damage;
         
@@ -152,10 +158,10 @@ public final class Tower extends Entity
     public enum Range
     {
         Range1(1.0),
-        Range2(2.0),
-        Range3(3.0),
-        Range4(4.0),
-        Range5(6.0);
+        Range2(1.5),
+        Range3(2.0),
+        Range4(2.5),
+        Range5(3.0);
         
         private final double range;
         
@@ -175,10 +181,10 @@ public final class Tower extends Entity
      */
     public enum Rate
     {
-        Rate1(Timers.toNanoSeconds(3000L)),
+        Rate1(Timers.toNanoSeconds(5000L)),
         Rate2(Timers.toNanoSeconds(1500L)),
-        Rate3(Timers.toNanoSeconds(1250L)),
-        Rate4(Timers.toNanoSeconds(1000L)),
+        Rate3(Timers.toNanoSeconds(1000L)),
+        Rate4(Timers.toNanoSeconds(750L)),
         Rate5(Timers.toNanoSeconds(250L));
         
         private final long rate;

@@ -7,4 +7,5 @@
     <image id="Effects">resources/images/game/explosions.png</image>
     <image id="MiniMenu">resources/images/game/minimenu.png</image>
     <image id="MainMenu">resources/images/game/mainmenu.png</image>
+    <image id="MapBackground">resources/images/game/mapbackground.png</image>
 </images>

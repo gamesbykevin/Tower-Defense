@@ -21,6 +21,9 @@ public final class Towers extends Entities implements Disposable, IElement
     //the id of the selected tower
     private long id;
     
+    //the minimum distance allowed between 2 towers
+    private static final double TOWER_MIN_DISTANCE = 0.5;
+    
     public Towers(final Image image)
     {
         super.setImage(image);
@@ -123,6 +126,29 @@ public final class Towers extends Entities implements Disposable, IElement
     public Tower getTower(final int index)
     {
         return (Tower)getEntities().get(index);
+    }
+    
+    /**
+     * Is this location valid to place a tower?<br>
+     * Here we want to prevent towers from being placed too close together
+     * @param col Column
+     * @param row Row
+     * @return true=yes, false=no
+     */
+    public boolean isValid(final double col, final double row)
+    {
+        for (int i = 0; i < getEntities().size(); i++)
+        {
+            //update the current tower
+            Tower tower = getTower(i);
+            
+            //if too close, this is not valid
+            if (Cell.getDistance(tower.getCol(), tower.getRow(), col, row) < TOWER_MIN_DISTANCE)
+                return false;
+        }
+        
+        //nothing was too close so this is valid
+        return true;
     }
     
     @Override

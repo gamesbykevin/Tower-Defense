@@ -71,7 +71,8 @@ public final class Manager implements IManager
     public void reset(final Engine engine) throws Exception
     {
         if (this.map == null)
-            this.map = new Map(engine.getResources().getGameImage(GameImages.Keys.Road));
+            this.map = new Map(engine.getResources().getGameImage(GameImages.Keys.Road),
+                    engine.getResources().getGameImage(GameImages.Keys.MapBackground));
         
         if (this.enemies == null)
             this.enemies = new Enemies(engine.getResources().getGameImage(GameImages.Keys.Enemies));

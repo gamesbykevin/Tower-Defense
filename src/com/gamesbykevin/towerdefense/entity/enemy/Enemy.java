@@ -14,20 +14,27 @@ import com.gamesbykevin.towerdefense.entity.Entity;
  */
 public final class Enemy extends Entity
 {
+    private static final double SPEED_SLOW = .010;
+    private static final double SPEED_MED = .015;
+    private static final double SPEED_FAST = .020;
+    
     public enum Type
     {
-        Blue1(.015, 1, Effect.Type.Explosion2, 10),
-        Blue2(.015, 1, Effect.Type.Explosion3, 15),
-        Blue3(.015, 1, Effect.Type.Explosion4, 20),
-        Green1(.015, 1, Effect.Type.Explosion5, 10),
-        Green2(.015, 1, Effect.Type.Explosion6, 15),
-        Green3(.015, 1, Effect.Type.Explosion7, 20),
-        Red1(.015, 1, Effect.Type.Explosion8, 10),
-        Red2(.015, 1, Effect.Type.Explosion9, 15),
-        Red3(.015, 1, Effect.Type.Explosion10, 20),
-        Yellow1(.015, 1, Effect.Type.Explosion11, 10),
-        Yellow2(.015, 1, Effect.Type.Explosion12, 15),
-        Yellow3(.015, 1, Effect.Type.Explosion12, 20);
+        Blue1(SPEED_SLOW, 2, Effect.Type.Explosion2, 5),
+        Blue2(SPEED_MED, 4, Effect.Type.Explosion3, 10),
+        Blue3(SPEED_FAST, 6, Effect.Type.Explosion4, 15),
+        
+        Green1(SPEED_SLOW, 1, Effect.Type.Explosion5, 5),
+        Green2(SPEED_MED, 3, Effect.Type.Explosion6, 10),
+        Green3(SPEED_FAST, 5, Effect.Type.Explosion7, 15),
+        
+        Red1(SPEED_SLOW, 2, Effect.Type.Explosion8, 5),
+        Red2(SPEED_MED, 4, Effect.Type.Explosion9, 10),
+        Red3(SPEED_FAST, 6, Effect.Type.Explosion10, 15),
+        
+        Yellow1(SPEED_SLOW, 1, Effect.Type.Explosion11, 5),
+        Yellow2(SPEED_MED, 3, Effect.Type.Explosion12, 10),
+        Yellow3(SPEED_FAST, 5, Effect.Type.Explosion12, 15);
         
         //the speed of the type of enemy
         private final double speed;
@@ -155,7 +162,7 @@ public final class Enemy extends Entity
         animation.setLoop(true);
         
         //set the start health
-        this.setStartHealth(getType().getStartHealth() * 10);
+        this.setStartHealth(getType().getStartHealth());
         
         //set the enemy speed
         this.setSpeed(getType().getSpeed());
