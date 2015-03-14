@@ -35,7 +35,7 @@ public final class Projectile extends Entity
     private Timer timer;
     
     //the amount of time until the projectile reaches the destination
-    private static final long DEFAULT_DELAY = Timers.toNanoSeconds(200L);
+    private static final long DEFAULT_DELAY = Timers.toNanoSeconds(125L);
     
     //the amount of damage the projectile will cause
     private final double damage;

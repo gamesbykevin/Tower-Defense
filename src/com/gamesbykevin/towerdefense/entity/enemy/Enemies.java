@@ -20,59 +20,26 @@ import java.util.Random;
  */
 public final class Enemies extends Entities implements Disposable, IElement
 {
-    public enum Wave
-    {
-        Wave1(10,   625L),
-        Wave2(20,   600L),
-        Wave3(30,   575L),
-        Wave4(40,   550L),
-        Wave5(50,   525L),
-        Wave6(60,   500L),
-        Wave7(70,   475L),
-        Wave8(80,   450L),
-        Wave9(90,   425L),
-        Wave10(100,  400L),
-        Wave11(110,  375L),
-        Wave12(120,  350L),
-        Wave13(130,  325L),
-        Wave14(140,  300L),
-        Wave15(150,  275L),
-        Wave16(160,  250L),
-        Wave17(170,  225L),
-        Wave18(180,  200L),
-        Wave19(190,  175L),
-        Wave20(200, 150L);
-        
-        //the total number of enemies for the wave
-        private final int total;
-        
-        //the amount of time to wait before spawning enemies
-        private final long rate;
-        
-        private Wave(final int total, final long rate)
-        {
-            this.total = total;
-            this.rate = Timers.toNanoSeconds(rate);
-        }
-        
-        /**
-         * Get the total
-         * @return The number of enemies to add in this wave
-         */
-        public int getTotal()
-        {
-            return this.total;
-        }
-        
-        /**
-         * Get the rate
-         * @return the number of nanoseconds between each enemy spawn
-         */
-        public long getRate()
-        {
-            return this.rate;
-        }
-    }
+    //the number of enemies to spawn
+    private static final int ENEMY_COUNT_MIN = 5;
+    
+    //the number of enemies to increase with each wave
+    private static final int ENEMY_RATE_INCREASE = 5;
+    
+    //the max to wait to spawn enemies
+    private static final long RATE_MAX = 750L;
+    
+    //the min to wait to spawn enemies
+    private static final long RATE_MIN = 250L;
+    
+    //the rate of decrease
+    private static final long RATE_DECREASE = 25L;
+    
+    //the total number of waves in the game
+    public static final int WAVE_TOTAL = 20;
+    
+    //the enemy health will increase by this amount every wave
+    private static final double HEALTH_INCREASE = .15;
     
     //the timer that determines how long to wait between spawning enemies
     private Timer timer;
@@ -108,6 +75,10 @@ public final class Enemies extends Entities implements Disposable, IElement
         setStart(false);
     }
     
+    /**
+     * Get the current count of enemies created
+     * @return The total number of enemies created for the current wave
+     */
     private int getCount()
     {
         return this.count;
@@ -137,13 +108,31 @@ public final class Enemies extends Entities implements Disposable, IElement
     }
     
     /**
-     * Get the wave
-     * @param index The wave we want
-     * @return The specified wave
+     * Get the rate at which to spawn enemies
+     * @param index The progress in the wave
+     * @return The rate (nanoseconds) at which to spawn enemies
      */
-    private Wave getWave(final int index)
+    public long getRate(final int index)
     {
-        return Wave.values()[index];
+        //get the delay
+        long delay = RATE_MAX - (index * RATE_DECREASE);
+        
+        //keep within minimum
+        if (delay < RATE_MIN)
+            delay = RATE_MIN;
+        
+        //return nanoseconds
+        return Timers.toNanoSeconds(delay);
+    }
+    
+    /**
+     * Get the total number of enemies
+     * @param index The wave index
+     * @return The total number of enemies to create for the given wave index
+     */
+    public int getTotal(final int index)
+    {
+        return ENEMY_COUNT_MIN + (index * ENEMY_RATE_INCREASE);
     }
     
     /**
@@ -153,10 +142,10 @@ public final class Enemies extends Entities implements Disposable, IElement
     private void setupTimer(final int index)
     {
         if (getTimer() == null)
-            timer = new Timer(getWave(index).getRate());
+            timer = new Timer(getRate(index));
         
         //set reset value
-        timer.setReset(getWave(index).getRate());
+        timer.setReset(getRate(index));
         
         //reset timer
         timer.reset();
@@ -172,11 +161,12 @@ public final class Enemies extends Entities implements Disposable, IElement
      * @param random Object used to make random decisions
      * @param location The column, row of the enemy
      * @param time The amount of time per each update (nano-seconds)
+     * @param waveIndex The current wave
      * @throws Exception 
      */
-    private void add(final Random random, final Cell location, final long time) throws Exception
+    private void add(final Random random, final Cell location, final long time, final int waveIndex) throws Exception
     {
-        add(Enemy.Type.values()[random.nextInt(Enemy.Type.values().length)], location, time);
+        add(Enemy.Type.values()[random.nextInt(Enemy.Type.values().length)], location, time, waveIndex);
     }
     
     /**
@@ -184,10 +174,11 @@ public final class Enemies extends Entities implements Disposable, IElement
      * @param type The type of enemy
      * @param location The column, row of the enemy
      * @param time The amount of time per each update (nanoseconds)
+     * @param waveIndex The current wave
      */
-    private void add(final Enemy.Type type, final Cell location, final long time) throws Exception
+    private void add(final Enemy.Type type, final Cell location, final long time, final int waveIndex) throws Exception
     {
-        add(type, location.getCol(), location.getRow(), time);
+        add(type, location.getCol(), location.getRow(), time, waveIndex);
     }
     
     /**
@@ -196,8 +187,9 @@ public final class Enemies extends Entities implements Disposable, IElement
      * @param col The column of the enemy
      * @param row The row of the enemy
      * @param time The amount of time per each update (nanoseconds)
+     * @param waveIndex The current wave
      */
-    private void add(final Enemy.Type type, final double col, final double row, final long time) throws Exception
+    private void add(final Enemy.Type type, final double col, final double row, final long time, final int waveIndex) throws Exception
     {
         //create a new enemy
         Enemy enemy = new Enemy(type);
@@ -217,6 +209,9 @@ public final class Enemies extends Entities implements Disposable, IElement
         
         //set next destination
         enemy.setDestination(col, row);
+        
+        //now increase the health based on the current wave
+        enemy.setStartHealth(enemy.getHealth() + ((enemy.getHealth() * HEALTH_INCREASE) * waveIndex));
         
         //add to list
         add(enemy);
@@ -285,7 +280,7 @@ public final class Enemies extends Entities implements Disposable, IElement
      */
     public void poisonEnemies(final Tower tower)
     {
-        int count = 0;
+        int tmpCount = 0;
         
         //check all enemies
         for (int i = 0; i < getEntities().size(); i++)
@@ -303,10 +298,10 @@ public final class Enemies extends Entities implements Disposable, IElement
                 enemy.getTimerPoison().reset();
                 
                 //increase count
-                count++;
+                tmpCount++;
                 
                 //exit if we reached the limit
-                if (count >= Tower.AFFECTED_ENEMY_COUNT)
+                if (tmpCount >= Tower.AFFECTED_ENEMY_COUNT)
                     break;
             }
         }
@@ -318,7 +313,7 @@ public final class Enemies extends Entities implements Disposable, IElement
      */
     public void freezeEnemies(final Tower tower)
     {
-        int count = 0;
+        int tmpCount = 0;
         
         //check all enemies
         for (int i = 0; i < getEntities().size(); i++)
@@ -336,10 +331,10 @@ public final class Enemies extends Entities implements Disposable, IElement
                 enemy.getTimerFrozen().reset();
                 
                 //increase count
-                count++;
+                tmpCount++;
                 
                 //exit if we reached the limit
-                if (count >= Tower.AFFECTED_ENEMY_COUNT)
+                if (tmpCount >= Tower.AFFECTED_ENEMY_COUNT)
                     break;
             }
         }
@@ -348,15 +343,15 @@ public final class Enemies extends Entities implements Disposable, IElement
     /**
      * Get the enemy within the range of the Tower
      * @param tower The tower looking for an enemy target
-     * @return The enemy closest to the tower, if none are found, null is returned
+     * @return The enemy that has traveled the farthest within the range of the tower, null is returned if no enemies found
      */
     public Enemy getEnemy(final Tower tower)
     {
         //the enemy we are looking for
         Enemy enemy = null;
         
-        //the distance to beat
-        double distance = 0;
+        //the distance the enemy has traveled
+        double distanceTraveled = 0;
         
         for (int i = 0; i < getEntities().size(); i++)
         {
@@ -366,11 +361,11 @@ public final class Enemies extends Entities implements Disposable, IElement
             //make sure the enemy is within the range of the tower
             if (Cell.getDistance(tmp, tower) <= tower.getRange())
             {
-                //if enemy does not exist yet or we beat the previous distance
-                if (enemy == null || Cell.getDistance(tmp, tower) < distance)
+                //if we have no target yet, or if we beat our previous target
+                if (enemy == null || tmp.getDistanceTraveled() > distanceTraveled)
                 {
                     //assign the new distance to beat
-                    distance = Cell.getDistance(tmp, tower);
+                    distanceTraveled = tmp.getDistanceTraveled();
                     
                     //this is our current enemy target
                     enemy = tmp;
@@ -389,7 +384,7 @@ public final class Enemies extends Entities implements Disposable, IElement
      */
     public boolean hasMoreWaves(final int index)
     {
-        return (index <= Wave.values().length - 1);
+        return (index <= WAVE_TOTAL - 1);
     }
     
     @Override
@@ -412,13 +407,18 @@ public final class Enemies extends Entities implements Disposable, IElement
                 getTimer().reset();
                 
                 //total number of enemies allowed
-                final int total = getWave(engine.getManager().getPlayer().getUIMenu().getWaveIndex()).getTotal(); 
+                final int total = getTotal(engine.getManager().getPlayer().getUIMenu().getWaveIndex());
                 
                 //only add enemy if we have not yet reached the total
                 if (getCount() < total)
                 {
                     //add an enemy
-                    add(engine.getRandom(), engine.getManager().getMap().getStart(), engine.getMain().getTime());
+                    add(
+                        engine.getRandom(), 
+                        engine.getManager().getMap().getStart(), 
+                        engine.getMain().getTime(),
+                        engine.getManager().getPlayer().getUIMenu().getWaveIndex()
+                    );
                     
                     //update display for user
                     engine.getManager().getPlayer().getUIMenu().setLeft(total - getCount());
@@ -461,6 +461,9 @@ public final class Enemies extends Entities implements Disposable, IElement
                 //no need to continue for a dead enemy
                 continue;
             }
+            
+            //update the distance traveled
+            enemy.updateDistanceTraveled();
             
             //if enemy is frozen check timer
             if (enemy.isFrozen())
@@ -535,8 +538,11 @@ public final class Enemies extends Entities implements Disposable, IElement
         //if we had enemies, but no longer do
         if (hasEnemies && getEntities().isEmpty())
         {
+            //make sure enemy menu is not showing
+            engine.getManager().getPlayer().getEnemyMenu().setVisible(false);
+            
             //the total number of enemies to spawn in the wave
-            final int total = getWave(engine.getManager().getPlayer().getUIMenu().getWaveIndex()).getTotal();
+            final int total = getTotal(engine.getManager().getPlayer().getUIMenu().getWaveIndex());
             
             //make sure we spawned the number of enemies for this wave
             if (getCount() >= total)

@@ -39,7 +39,7 @@ public final class EnemyMenu extends MiniMenu implements Disposable
     
     //the current and start health of our targeted enemy
     private double currentHealth;
-    private int startingHealth;
+    private double startingHealth;
     
     public enum Key
     {
@@ -73,6 +73,16 @@ public final class EnemyMenu extends MiniMenu implements Disposable
      */
     public void updateEnemyStats(final Enemy enemy)
     {
+        //if the enemy does not exist
+        if (enemy == null)
+        {
+            //hide the menu
+            super.setVisible(false);
+            
+            //do not continue
+            return;
+        }
+        
         //flag change if the enemy health is different
         if (enemy.getHealth() != this.currentHealth)
             setChange(true);
@@ -134,7 +144,7 @@ public final class EnemyMenu extends MiniMenu implements Disposable
     }
     
     @Override
-    protected void renderImage()
+    protected void renderImage() throws Exception
     {
         //draw background first
         draw(getGraphics2D(), getImage(), Key.Background.getLocation());
@@ -143,7 +153,7 @@ public final class EnemyMenu extends MiniMenu implements Disposable
         getGraphics2D().setColor(Color.BLACK);
         
         //draw text description
-        getGraphics2D().drawString("Enemy Health: " + (int)this.currentHealth, HEALTH_DESC_X, HEALTH_DESC_Y);
+        getGraphics2D().drawString("Enemy Health", HEALTH_DESC_X, HEALTH_DESC_Y);
         
         //get the health ratio
         final double ratio = (double)this.currentHealth / (double)this.startingHealth;

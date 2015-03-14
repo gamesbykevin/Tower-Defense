@@ -183,7 +183,7 @@ public final class TowerMenu extends MiniMenu implements Disposable
     }
     
     @Override
-    protected void renderImage()
+    protected void renderImage() throws Exception
     {
         //draw background first
         draw(getGraphics2D(), getImage(), Key.Background.getLocation());

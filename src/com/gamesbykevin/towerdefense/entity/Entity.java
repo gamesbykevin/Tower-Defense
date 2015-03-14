@@ -86,8 +86,9 @@ public abstract class Entity extends LevelObject
      * Here we render the entity applying the direction the entity should be facing
      * @param graphics Object used to draw image
      * @param image Image containing animation
+     * @throws Exception if issue with render
      */
-    public void render(final Graphics graphics, final Image image)
+    public void render(final Graphics graphics, final Image image) throws Exception
     {
         //cetner location
         this.positionCenter();

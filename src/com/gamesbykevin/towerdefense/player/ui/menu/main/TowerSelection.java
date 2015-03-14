@@ -34,7 +34,7 @@ public final class TowerSelection extends CustomImage
         return this.key.getType();
     }
     
-    public void setValid(final boolean isValid)
+    public void setValid(final boolean isValid) throws Exception
     {
         //if there was a change, render a new image
         if (this.valid != isValid)
@@ -52,7 +52,7 @@ public final class TowerSelection extends CustomImage
     }
     
     @Override
-    public void renderImage()
+    public void renderImage() throws Exception
     {
         //clear image
         super.clear();

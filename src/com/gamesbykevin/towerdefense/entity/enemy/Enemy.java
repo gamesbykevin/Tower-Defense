@@ -14,27 +14,42 @@ import com.gamesbykevin.towerdefense.entity.Entity;
  */
 public final class Enemy extends Entity
 {
+    //different speed
     private static final double SPEED_SLOW = .010;
     private static final double SPEED_MED = .015;
     private static final double SPEED_FAST = .020;
     
+    //different health
+    private static final int HEALTH_1 = 20;
+    private static final int HEALTH_2 = 30;
+    private static final int HEALTH_3 = 40;
+    
+    //different rewards
+    private static final int REWARD_1 = 1;
+    private static final int REWARD_2 = 2;
+    private static final int REWARD_3 = 3;
+    
+    private static final int REWARD_4 = 1;
+    private static final int REWARD_5 = 2;
+    private static final int REWARD_6 = 3;
+    
     public enum Type
     {
-        Blue1(SPEED_SLOW, 2, Effect.Type.Explosion2, 5),
-        Blue2(SPEED_MED, 4, Effect.Type.Explosion3, 10),
-        Blue3(SPEED_FAST, 6, Effect.Type.Explosion4, 15),
+        Blue1(SPEED_SLOW, REWARD_2, Effect.Type.Explosion2, HEALTH_1),
+        Blue2(SPEED_MED,  REWARD_4, Effect.Type.Explosion3, HEALTH_2),
+        Blue3(SPEED_FAST, REWARD_6, Effect.Type.Explosion4, HEALTH_3),
         
-        Green1(SPEED_SLOW, 1, Effect.Type.Explosion5, 5),
-        Green2(SPEED_MED, 3, Effect.Type.Explosion6, 10),
-        Green3(SPEED_FAST, 5, Effect.Type.Explosion7, 15),
+        Green1(SPEED_SLOW, REWARD_1, Effect.Type.Explosion5, HEALTH_1),
+        Green2(SPEED_MED,  REWARD_3, Effect.Type.Explosion6, HEALTH_2),
+        Green3(SPEED_FAST, REWARD_5, Effect.Type.Explosion7, HEALTH_3),
         
-        Red1(SPEED_SLOW, 2, Effect.Type.Explosion8, 5),
-        Red2(SPEED_MED, 4, Effect.Type.Explosion9, 10),
-        Red3(SPEED_FAST, 6, Effect.Type.Explosion10, 15),
+        Red1(SPEED_SLOW, REWARD_2, Effect.Type.Explosion8,  HEALTH_1),
+        Red2(SPEED_MED,  REWARD_4, Effect.Type.Explosion9,  HEALTH_2),
+        Red3(SPEED_FAST, REWARD_6, Effect.Type.Explosion10, HEALTH_3),
         
-        Yellow1(SPEED_SLOW, 1, Effect.Type.Explosion11, 5),
-        Yellow2(SPEED_MED, 3, Effect.Type.Explosion12, 10),
-        Yellow3(SPEED_FAST, 5, Effect.Type.Explosion12, 15);
+        Yellow1(SPEED_SLOW, REWARD_1, Effect.Type.Explosion11, HEALTH_1),
+        Yellow2(SPEED_MED,  REWARD_3, Effect.Type.Explosion12, HEALTH_2),
+        Yellow3(SPEED_FAST, REWARD_5, Effect.Type.Explosion12, HEALTH_3);
         
         //the speed of the type of enemy
         private final double speed;
@@ -46,7 +61,7 @@ public final class Enemy extends Entity
         private final Effect.Type effectType;
         
         //the starting health
-        private final int startHealth;
+        private final double startHealth;
         
         private Type(final double speed, final int reward, final Effect.Type effectType, final int startHealth)
         {
@@ -63,7 +78,7 @@ public final class Enemy extends Entity
             this.effectType = effectType;
         }
         
-        public int getStartHealth()
+        public double getStartHealth()
         {
             return this.startHealth;
         }
@@ -102,7 +117,7 @@ public final class Enemy extends Entity
     /**
      * The max start health for the enemy
      */
-    private int maxHealth = 10;
+    private double maxHealth = 10;
     
     /**
      * The enemy's current health
@@ -146,6 +161,9 @@ public final class Enemy extends Entity
     
     //the type of enemy
     private final Type type;
+    
+    //the distance the enemy has traveled, will be used so towers can target furthest traveled enemies within their range
+    private double traveled = 0.0;
     
     protected Enemy(final Type type) throws Exception
     {
@@ -395,10 +413,27 @@ public final class Enemy extends Entity
     }
     
     /**
+     * Update the distance this enemy has traveled
+     */
+    public void updateDistanceTraveled()
+    {
+        this.traveled += (getSpeed());
+    }
+    
+    /**
+     * Get the total distance traveled
+     * @return The total distance traveled
+     */
+    public double getDistanceTraveled()
+    {
+        return this.traveled;
+    }
+    
+    /**
      * Set the starting and current health of the enemy
      * @param health The max health we want to assign to the enemy
      */
-    public void setStartHealth(final int health)
+    public void setStartHealth(final double health)
     {
         this.maxHealth = health;
         
@@ -432,7 +467,7 @@ public final class Enemy extends Entity
      * Get the enemy's starting health upon creation
      * @return The max starting health
      */
-    public int getStartHealth()
+    public double getStartHealth()
     {
         return this.maxHealth;
     }

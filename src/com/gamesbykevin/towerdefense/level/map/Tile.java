@@ -20,13 +20,25 @@ public final class Tile extends LevelObject
     }
     
     //the type of tile
-    private final Type type;
+    private Type type;
     
     //each tile is 46px width/height
     private static final int DIMENSIONS = 46;
     
-    protected Tile(final Type type) throws Exception
+    protected Tile()
     {
+    }
+    
+    /**
+     * Set the tile type so we know which animation to use
+     * @param type The type of tile
+     * @throws Exception Exception if type has already been set
+     */
+    public void setType(final Type type) throws Exception
+    {
+        if (this.type != null)
+            throw new Exception("Tile type has already been set");
+        
         //assign tile type
         this.type = type;
         

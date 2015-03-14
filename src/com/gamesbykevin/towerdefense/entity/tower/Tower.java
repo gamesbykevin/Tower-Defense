@@ -43,17 +43,17 @@ public final class Tower extends Entity
      */
     public enum Type
     {
-        Tower1(0, 0, 0, 4,  10,  0, 0,   (int)WIDTH, (int)HEIGHT, Projectile.Type.Blue3), 
-        Tower2(0, 2, 0, 5,  20,  0, 40, (int)WIDTH, (int)HEIGHT, Projectile.Type.Red3), 
+        Tower1(0, 0, 0, 1,  5,  0, 0,  (int)WIDTH, (int)HEIGHT, Projectile.Type.Blue3), 
+        Tower2(0, 2, 0, 10, 20,  0, 40, (int)WIDTH, (int)HEIGHT, Projectile.Type.Red3), 
         Tower3(2, 0, 1, 10, 30,  0, 80, (int)WIDTH, (int)HEIGHT, Projectile.Type.Green3), 
         
         //freeze and poison towers
         Tower4(1, 0, 0, 0,  100,  0, 120, (int)WIDTH, (int)HEIGHT, null), 
         Tower5(1, 0, 0, 0,  100,  0, 160, (int)WIDTH, (int)HEIGHT, null), 
         
-        Tower6(0, 0, 4, 7,  25,  0, 200,(int)WIDTH, (int)HEIGHT, Projectile.Type.Green4), 
-        Tower7(1, 1, 2, 15, 35,  0, 240,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red4), 
-        Tower8(4, 4, 4, 0,  300, 0, 280,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red1);
+        Tower6(0, 0, 4, 10, 25,  0, 200,(int)WIDTH, (int)HEIGHT, Projectile.Type.Green4), 
+        Tower7(1, 1, 2, 40, 40,  0, 240,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red4), 
+        Tower8(4, 4, 4, 0,  200, 0, 280,(int)WIDTH, (int)HEIGHT, Projectile.Type.Red1);
         
         //index for the 3 attributes
         private final int levelRange, levelDamage, levelRate;
@@ -132,11 +132,11 @@ public final class Tower extends Entity
      */
     public enum Damage
     {
-        Damage1(2),
-        Damage2(4),
-        Damage3(6),
-        Damage4(8),
-        Damage5(10);
+        Damage1(4),
+        Damage2(6),
+        Damage3(8),
+        Damage4(10),
+        Damage5(12);
         
         private final int damage;
         
@@ -587,8 +587,9 @@ public final class Tower extends Entity
      * Draw the towers range animation
      * @param graphics Object used to create final Image
      * @param image Image containing animations
+     * @throws Exception if issue with render
      */
-    protected void renderRange(final Graphics graphics, final Image image)
+    protected void renderRange(final Graphics graphics, final Image image) throws Exception
     {
         //store the tower information
         final double x = getX();

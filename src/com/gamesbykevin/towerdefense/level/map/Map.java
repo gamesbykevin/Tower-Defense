@@ -6,14 +6,14 @@ import com.gamesbykevin.framework.resources.Disposable;
 
 import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
+import com.gamesbykevin.towerdefense.menu.CustomMenu.LayerKey;
+import com.gamesbykevin.towerdefense.menu.CustomMenu.OptionKey;
 import com.gamesbykevin.towerdefense.level.object.LevelObject;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Graphics;
 import java.awt.Image;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -28,6 +28,11 @@ public final class Map extends Sprite implements Disposable, IElement
     //dimensions for the map
     public static final int ROWS = 8;
     public static final int COLS = 11;
+    
+    //the different track options
+    public static final int TRACK1 = 0;
+    public static final int TRACK2 = 1;
+    public static final int TRACK3 = 2;
     
     /**
      * The dimensions of each cell in the map
@@ -111,19 +116,125 @@ public final class Map extends Sprite implements Disposable, IElement
     
     /**
      * Create the map
-     * @param random Object used to make random decisions
      * @throws Exception if an error occurs creating tile
      */
-    private void createMap(final Random random) throws Exception
+    private void createMap(final int trackIndex) throws Exception
     {
-        //store start locaton
-        this.start = new Cell();
-        this.start.setCol(tiles[0].length - 1 + 0.5);
-        this.start.setRow((tiles.length / 2) + .5);
+        //create array for the map
+        this.tiles = new LevelObject[ROWS][COLS];
         
-        //store finish locaton
+        //save start locaton
+        this.start = new Cell();
+        
+        //start will always be on the far east
+        this.start.setCol(tiles[0].length - 1 + 0.5);
+        
+        //save finish locaton
         this.finish = new Cell();
+        
+        //finish will always be on the far west
         this.finish.setCol(.5);
+        
+        //create the track
+        switch (trackIndex)
+        {
+            case TRACK1:
+                createLongVerticalTrack();
+                break;
+                
+            case TRACK2:
+                createLongHorizontalTrack();
+                break;
+                
+            case TRACK3:
+                createHorizontalTrack();
+                break;
+                
+            default:
+                throw new Exception("Track is not setup here");
+        }
+        
+        //assign the tile types
+        assignTiles();
+    }
+    
+    /**
+     * Create longer track stretching the length of the screen
+     */
+    private void createLongHorizontalTrack()
+    {
+        //set the start and finish row
+        this.start.setRow(0.5);
+        this.finish.setRow(tiles.length - 2 + 0.5);
+        
+        for (int row = 0; row < tiles.length; row++)
+        {
+            for (int col = 0; col < tiles[0].length; col++)
+            {
+                //tiles will always be every 3 rows
+                if (row % 3 == 0)
+                {
+                    createTile(col, row);
+                }
+                else
+                {
+                    if (col == 0)
+                    {
+                        if (row == 1 || row == 2)
+                            createTile(col, row);
+                    }
+                    else if (col == tiles[0].length - 1)
+                    {
+                        if (row == 4 || row == 5)
+                            createTile(col, row);
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Create longer track stretching the length of the screen
+     */
+    private void createLongVerticalTrack()
+    {
+        //set the start and finish row
+        this.start.setRow(tiles.length - 1 + 0.5);
+        this.finish.setRow(tiles.length - 1 + 0.5);
+        
+        for (int row = 0; row < tiles.length; row++)
+        {
+            for (int col = 0; col < tiles[0].length; col++)
+            {
+                //tiles will be every other column
+                if (col % 2 == 0)
+                {
+                    createTile(col, row);
+                }
+                else
+                {
+                    if (col == 1 || col == 5 || col == 9)
+                    {
+                        if (row == 0)
+                            createTile(col, row);
+                    }
+                    else if (col == 3 || col == 7)
+                    {
+                        if (row == tiles.length - 1)
+                            createTile(col, row);
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Create a direct horizontal track from start to finish
+     */
+    private void createHorizontalTrack()
+    {
+        //set the start and finish row
+        this.start.setRow((tiles.length / 2) + .5);
         this.finish.setRow((tiles.length / 2) + .5);
         
         for (int col = 0; col < tiles[0].length; col++)
@@ -132,7 +243,72 @@ public final class Map extends Sprite implements Disposable, IElement
             {
                 if (row == tiles.length / 2)
                 {
-                    createTile(col, row, Tile.Type.Horizontal);
+                    createTile(col, row);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Assign the tile type for the created tiles
+     * @throws Exception will be thrown if type already set or another issue
+     */
+    private void assignTiles() throws Exception
+    {
+        //now set the appropriate tile type
+        for (int col = 0; col < tiles[0].length; col++)
+        {
+            for (int row = 0; row < tiles.length; row++)
+            {
+                //skip if not exists
+                if (getTile(col, row) == null)
+                    continue;
+                
+                //do tiles exist in these directions
+                boolean north = false, south = false, east = false, west = false;
+                
+                if (getTile(col + 1, row) != null)
+                    east = true;
+                if (getTile(col - 1, row) != null)
+                    west = true;
+                if (getTile(col, row - 1) != null)
+                    north = true;
+                if (getTile(col, row + 1) != null)
+                    south = true;
+                if ((int)start.getCol() == col && (int)start.getRow() == row)
+                    east = true;
+                if ((int)finish.getCol() == col && (int)finish.getRow() == row)
+                    west = true;
+
+                if (north && east)
+                {
+                    getTile(col, row).setType(Tile.Type.SW);
+                }
+                else if (north && west)
+                {
+                    getTile(col, row).setType(Tile.Type.SE);
+                }
+                else if (north && south)
+                {
+                    getTile(col, row).setType(Tile.Type.Vertical);
+                }
+                else if (east && west)
+                {
+                    getTile(col, row).setType(Tile.Type.Horizontal);
+                }
+                else if (south && west)
+                {
+                    getTile(col, row).setType(Tile.Type.NE);
+                }
+                else if (south && east)
+                {
+                    getTile(col, row).setType(Tile.Type.NW);
+                }
+                else
+                {
+                    System.out.println("north=" + north + ",south=" + south + ",west=" + west + ",east=" + east);
+                    System.out.println("col=" + col + ", row=" + row);
+                    throw new Exception("Tile not created");
                 }
             }
         }
@@ -143,12 +319,11 @@ public final class Map extends Sprite implements Disposable, IElement
      * @param col Column
      * @param row Row
      * @param type Type of tile
-     * @exception Will be thrown if the Tile type is not setup in Tile constructor
      */
-    private void createTile(final int col, final int row, final Tile.Type type) throws Exception
+    private void createTile(final int col, final int row)
     {
         //create new tile
-        tiles[row][col] = new Tile(type);
+        tiles[row][col] = new Tile();
 
         //assign location
         tiles[row][col].setX(Map.getStartX(col));
@@ -296,11 +471,8 @@ public final class Map extends Sprite implements Disposable, IElement
     {
         if (tiles == null)
         {
-            //create array for the map
-            this.tiles = new LevelObject[ROWS][COLS];
-            
             //create map
-            createMap(engine.getRandom());
+            createMap(engine.getMenu().getOptionSelectionIndex(LayerKey.Options, OptionKey.Track));
         }
         else
         {
@@ -309,7 +481,7 @@ public final class Map extends Sprite implements Disposable, IElement
     }
     
     @Override
-    public void render(final Graphics graphics)
+    public void render(final Graphics graphics) throws Exception
     {
         //first draw the background
         graphics.drawImage(background, (int)START_X, (int)START_Y, (int)(COLS * WIDTH), (int)(ROWS * HEIGHT), null);
@@ -320,8 +492,15 @@ public final class Map extends Sprite implements Disposable, IElement
             {
                 for (int col = 0; col < tiles[0].length; col++)
                 {
-                    if (getTile(col, row) != null)
-                        getTile(col, row).draw(graphics, getImage());
+                    try
+                    {
+                        if (getTile(col, row) != null)
+                            getTile(col, row).draw(graphics, getImage());
+                    }
+                    catch (Exception e)
+                    {
+                        ;
+                    }
                 }
             }
         }

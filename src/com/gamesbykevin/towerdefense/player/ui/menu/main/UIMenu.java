@@ -93,10 +93,10 @@ public final class UIMenu extends MainMenu implements Disposable
     private static final int RIGHT_X = 96;
     
     //how much money the player has
-    private int funds = 10000;
+    private int funds = 100;
     
     //the number of lives the player has
-    private int lives = 100;
+    private int lives = 50;
     
     //the current wave
     private int wave = 0;
@@ -132,7 +132,7 @@ public final class UIMenu extends MainMenu implements Disposable
     private Timer timer;
     
     //time until next wave
-    private static final long DURATION_NEXT_WAVE = Timers.toNanoSeconds(20000L);
+    private static final long DURATION_NEXT_WAVE = Timers.toNanoSeconds(10000L);
     
     //should the game start
     private boolean start = false;
@@ -260,7 +260,7 @@ public final class UIMenu extends MainMenu implements Disposable
      * @param y y-coordinate
      * @return true if the location was inside a tower, false otherwise
      */
-    public boolean performTowerSelection(final double x, final double y)
+    public boolean performTowerSelection(final double x, final double y) throws Exception
     {
         //check each tower to see if a selection was made
         for (int i = 0; i < PlaceKey.values().length; i++)
@@ -374,12 +374,11 @@ public final class UIMenu extends MainMenu implements Disposable
     
     /**
      * Add the reward.<br>
-     * The reward will increase with every wave completed
      * @param enemy The enemy destroyed that we are adding the reward to
      */
     public void addReward(final Enemy enemy)
     {
-        this.setFunds(getFunds() + (enemy.getReward() * (getWaveIndex() + 1)));
+        this.setFunds(getFunds() + (enemy.getReward()));// * (getWaveIndex() + 1)));
     }
     
     /**
@@ -416,7 +415,7 @@ public final class UIMenu extends MainMenu implements Disposable
     }
     
     @Override
-    public void renderImage()
+    public void renderImage() throws Exception
     {
         //set background color
         getGraphics2D().setColor(Color.BLACK);
@@ -474,7 +473,7 @@ public final class UIMenu extends MainMenu implements Disposable
         drawMenuInfo();
     }
     
-    private void drawLivesInfo()
+    private void drawLivesInfo() throws Exception
     {
         //the the location and dimension
         super.setLocation(LOCATION_LIVES);
@@ -486,14 +485,14 @@ public final class UIMenu extends MainMenu implements Disposable
         getGraphics2D().drawString("" + getLives(), (int)(getX() + getWidth()) + 5, (int)(getY() + (getHeight() / 2)));
     }
     
-    private void drawMenuInfo()
+    private void drawMenuInfo() throws Exception
     {
         //draw menu icon
         setLocation(LOCATION_MENU);
         draw(getGraphics2D(), getImage(), Key.Menu.getLocation());
     }
     
-    private void drawStartButton()
+    private void drawStartButton() throws Exception
     {
         //draw play icon
         setLocation(LOCATION_START);
@@ -521,14 +520,14 @@ public final class UIMenu extends MainMenu implements Disposable
         getGraphics2D().drawString("Enemies: " + left, (int)(getX() + getWidth()) + 10, (int)(getY() + (getHeight() / 2)));
     }
     
-    private void drawAudioInfo()
+    private void drawAudioInfo() throws Exception
     {
         //draw audio icon
         setLocation(LOCATION_AUDIO);
         draw(getGraphics2D(), getImage(), (audioEnabled) ? Key.AudioUnmute.getLocation() : Key.AudioMute.getLocation());
     }
     
-    private void drawMoneyInfo()
+    private void drawMoneyInfo() throws Exception
     {
         //draw the funds
         setLocation(LOCATION_MONEY);
@@ -539,7 +538,7 @@ public final class UIMenu extends MainMenu implements Disposable
     private void drawWaveInfo()
     {
         //draw wave info
-        getGraphics2D().drawString("Wave :" + getWaveIndex(), LOCATION_WAVE.x, LOCATION_WAVE.y);
+        getGraphics2D().drawString("Wave :" + (getWaveIndex() + 1), LOCATION_WAVE.x, LOCATION_WAVE.y);
     }
     
     @Override
