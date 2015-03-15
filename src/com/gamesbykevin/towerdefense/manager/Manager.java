@@ -53,6 +53,9 @@ public final class Manager implements IManager
     //the user controlling the game
     private Player player;
     
+    //images for win or lose
+    private Image gameover, victory;
+    
     /**
      * Constructor for Manager, this is the point where we load any menu option configurations
      * @param engine Engine for our game that contains all objects needed
@@ -65,6 +68,10 @@ public final class Manager implements IManager
         
         //set the game window where game play will occur
         setWindow(engine.getMain().getScreen());
+        
+        //store the images
+        this.gameover = engine.getResources().getGameImage(GameImages.Keys.GameOver);
+        this.victory = engine.getResources().getGameImage(GameImages.Keys.Victory);
     }
     
     @Override
@@ -95,25 +102,42 @@ public final class Manager implements IManager
             );
         }
         
+        //set the appropriate amount of funds
+        switch (engine.getMenu().getOptionSelectionIndex(LayerKey.Options, OptionKey.Funds))
+        {
+            case 0:
+                getPlayer().getUIMenu().setFunds(100);
+                break;
+                
+            case 1:
+                getPlayer().getUIMenu().setFunds(500);
+                break;
+                
+            case 2:
+            default:
+                getPlayer().getUIMenu().setFunds(1000);
+                break;
+        }
+        
+        //set the appropriate number of lives
+        switch (engine.getMenu().getOptionSelectionIndex(LayerKey.Options, OptionKey.Lives))
+        {
+            case 0:
+                getPlayer().getUIMenu().setLives(50);
+                break;
+                
+            case 1:
+                getPlayer().getUIMenu().setLives(100);
+                break;
+                
+            case 2:
+            default:
+                getPlayer().getUIMenu().setLives(500);
+                break;
+        }
+        
         //make sure audio icon matches audio menu setting
-        //getPlayer().getUIMenu().setAudioEnabled(engine.getResources().isAudioEnabled());
-        
-        //add default tower for testing
-        //getTowers().add(Tower.Type.Tower1, .5, .5);
-        
-        //add default tower for testing
-        //getTowers().add(Tower.Type.Tower1, 4.5, 3.5);
-        
-        //getEnemies().add(com.gamesbykevin.towerdefense.entity.enemy.Enemy.Type.Boss1, 5, 5);
-        
-        /*
-        getTowers().add(Tower.Type.Tower2, 0.5, 0.5);
-        getTowers().add(Tower.Type.Tower3, 4.5, 0.5);
-        getTowers().add(Tower.Type.Tower4, 2.5, 5.5);
-        getTowers().add(Tower.Type.Tower5, 8.5, 6.5);
-        getTowers().add(Tower.Type.Tower6, 5.65, 07.5);
-        getTowers().add(Tower.Type.Tower7, 5.5, 3.5);
-        */
+        getPlayer().getUIMenu().setAudioEnabled(engine.getResources().isAudioEnabled());
     }
     
     public Player getPlayer()
@@ -197,6 +221,18 @@ public final class Manager implements IManager
             player = null;
         }
         
+        if (gameover != null)
+        {
+            gameover.flush();
+            gameover = null;
+        }
+        
+        if (victory != null)
+        {
+            victory.flush();
+            victory = null;
+        }
+        
         try
         {
             //recycle objects
@@ -216,15 +252,6 @@ public final class Manager implements IManager
     @Override
     public void update(final Engine engine) throws Exception
     {
-        if (getMap() != null)
-            getMap().update(engine);
-        
-        if (getTowers() != null)
-            getTowers().update(engine);
-        
-        if (getEnemies() != null)
-            getEnemies().update(engine);
-        
         if (getProjectiles() != null)
             getProjectiles().update(engine);
         
@@ -233,6 +260,19 @@ public final class Manager implements IManager
         
         if (getPlayer() != null)
             getPlayer().update(engine);
+        
+        //if the player still has lives we will continue to update the towers and enemies
+        if (getPlayer().getUIMenu().hasLives())
+        {
+            if (getMap() != null)
+                getMap().update(engine);
+        
+            if (getTowers() != null)
+                getTowers().update(engine);
+            
+            if (getEnemies() != null)
+                getEnemies().update(engine);
+        }
     }
     
     /**
@@ -259,5 +299,17 @@ public final class Manager implements IManager
         
         if (getPlayer() != null)
             getPlayer().render(graphics);
+        
+        //if there are no more waves, draw victory screen
+        if (!getEnemies().hasMoreWaves(getPlayer()))
+        {
+            //all waves complete show victory
+            graphics.drawImage(victory, 0, 0, null);
+        }
+        else if (!getPlayer().getUIMenu().hasLives())
+        {
+            //no more lives, show game over screen
+            graphics.drawImage(gameover, 0, 0, null);
+        }
     }
 }

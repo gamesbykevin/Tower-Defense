@@ -84,10 +84,6 @@ public final class Player extends Sprite implements Disposable, IElement
     @Override
     public void update(final Engine engine) throws Exception
     {
-        //don't continue if no more waves
-        if (!engine.getManager().getEnemies().hasMoreWaves(getUIMenu().getWaveIndex()))
-            return;
-        
         if (engine.getMouse().isMouseReleased())
         {
             //get the location of the mouse

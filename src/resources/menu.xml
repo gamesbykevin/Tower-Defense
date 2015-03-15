@@ -23,11 +23,11 @@
         <image>resources/images/menu/credit.png</image>
     </layer>
     <layer id="MainTitle">
-        <transition>NONE</transition>
+        <transition>SCROLL_HORIZONTAL_WEST_REPEAT</transition>
         <force>false</force>
         <pause>true</pause>
-        <duration>15000</duration>
-        <image>resources/images/menu/background.jpg</image>
+        <duration>10000</duration>
+        <image>resources/images/menu/background.png</image>
         <optionContainerRatio>0.5</optionContainerRatio>
         <optionBorderThickness>5</optionBorderThickness>
         <title>Tower Defense</title>
@@ -35,7 +35,7 @@
         <optionSoundLocation>resources/audio/menu/sound/selection.wav</optionSoundLocation>
         <options name="Start Game" next="GameStart" id="GameStart"></options>
         <options name="Options" next="Options" id="Options"></options>
-        <options name="Controls" next="Controls" id="Controls"></options>
+        <options name="Controls" next="Controls1" id="Controls"></options>
         <options name="Instructions" next="Instructions1" id="Instructions"></options>
         <options name="Credits" next="StaticCredits" id="Credits"></options>
     </layer>
@@ -47,11 +47,11 @@
         <image>resources/images/menu/credit.png</image>
     </layer>
     <layer id="Options">
-        <transition>NONE</transition>
+        <transition>SCROLL_HORIZONTAL_WEST_REPEAT</transition>
         <force>false</force>
         <pause>true</pause>
         <duration>10000</duration>
-        <image>resources/images/menu/background.jpg</image>
+        <image>resources/images/menu/background.png</image>
         <optionContainerRatio>0.5</optionContainerRatio>
         <optionBorderThickness>5</optionBorderThickness>
         <title>Options</title>
@@ -61,6 +61,16 @@
             <option>Track 1</option>
             <option>Track 2</option>
             <option>Track 3</option>
+        </options>
+        <options name="Starting Funds - " id="Funds">
+            <option>100</option>
+            <option>500</option>
+            <option>1000</option>
+        </options>
+        <options name="Lives - " id="Lives">
+            <option>50</option>
+            <option>100</option>
+            <option>500</option>
         </options>
         <options name="All Sound: " id="Sound">
             <option>On</option>
@@ -72,33 +82,47 @@
         </options>
         <options name="Go Back" next="MainTitle" id="MainTitle"></options>
     </layer>
-    <layer id="Controls" next="MainTitle">
+    <layer id="Controls1" next="Controls2">
         <transition>NONE</transition>
         <force>false</force>
         <pause>true</pause>
         <duration></duration>
-        <image>resources/images/menu/control.png</image>
+        <image>resources/images/menu/Controls1.png</image>
+    </layer>
+    <layer id="Controls2" next="Controls3">
+        <transition>NONE</transition>
+        <force>false</force>
+        <pause>true</pause>
+        <duration></duration>
+        <image>resources/images/menu/Controls2.png</image>
+    </layer>
+    <layer id="Controls3" next="MainTitle">
+        <transition>NONE</transition>
+        <force>false</force>
+        <pause>true</pause>
+        <duration></duration>
+        <image>resources/images/menu/Controls3.png</image>
     </layer>
     <layer id="Instructions1" next="Instructions2">
         <transition>NONE</transition>
         <force>false</force>
         <pause>true</pause>
         <duration></duration>
-        <image>resources/images/menu/instructions1.png</image>
+        <image>resources/images/menu/Instructions1.png</image>
     </layer>
     <layer id="Instructions2" next="Instructions3">
         <transition>NONE</transition>
         <force>false</force>
         <pause>true</pause>
         <duration></duration>
-        <image>resources/images/menu/instructions2.png</image>
+        <image>resources/images/menu/Instructions2.png</image>
     </layer>
     <layer id="Instructions3" next="MainTitle">
         <transition>NONE</transition>
         <force>false</force>
         <pause>true</pause>
         <duration></duration>
-        <image>resources/images/menu/instructions3.png</image>
+        <image>resources/images/menu/Instructions3.png</image>
     </layer>
     <layer id="GameStart">
         <!-- THIS LAYER IS INTENTIONALLY LEFT BLANK, THIS IS WHERE MAIN GAMEPLAY WILL START -->

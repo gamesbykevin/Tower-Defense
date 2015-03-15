@@ -9,6 +9,7 @@ import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.Entities;
 import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
+import com.gamesbykevin.towerdefense.player.Player;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Image;
@@ -379,12 +380,12 @@ public final class Enemies extends Entities implements Disposable, IElement
     
     /**
      * Are there more waves?
-     * @param index The wave we want
+     * @param player The player in the game
      * @return true if there are more waves, false otherwise
      */
-    public boolean hasMoreWaves(final int index)
+    public boolean hasMoreWaves(final Player player)
     {
-        return (index <= WAVE_TOTAL - 1);
+        return (player.getUIMenu().getWaveIndex() <= WAVE_TOTAL - 1);
     }
     
     @Override
@@ -394,7 +395,7 @@ public final class Enemies extends Entities implements Disposable, IElement
         super.updateEntities(engine.getMain().getTime());
         
         //no need to continue if there are no more waves
-        if (!hasMoreWaves(engine.getManager().getPlayer().getUIMenu().getWaveIndex()))
+        if (!hasMoreWaves(engine.getManager().getPlayer()))
             return;
         
         //check if the wave has started
@@ -550,7 +551,7 @@ public final class Enemies extends Entities implements Disposable, IElement
                 //move to the next wave in the menu
                 engine.getManager().getPlayer().getUIMenu().increaseWaveIndex();
 
-                if (hasMoreWaves(engine.getManager().getPlayer().getUIMenu().getWaveIndex()))
+                if (hasMoreWaves(engine.getManager().getPlayer()))
                 {
                     //setup next wave
                     setupNextWave(engine.getManager().getPlayer().getUIMenu().getWaveIndex());

@@ -1,6 +1,27 @@
 <?xml version="1.0"?>
 <sounds>
-    <!--
-    <sound id="Music">resources/audio/game/music.mp3</sound>
-    -->
+    <sound id="Explosion1">resources/audio/game/explosion1.wav</sound>
+    <sound id="Explosion2">resources/audio/game/explosion2.wav</sound>
+    <sound id="Explosion3">resources/audio/game/explosion3.wav</sound>
+    <sound id="Explosion4">resources/audio/game/explosion4.wav</sound>
+    <sound id="Explosion5">resources/audio/game/explosion5.wav</sound>
+    <sound id="Explosion6">resources/audio/game/explosion6.wav</sound>
+    <sound id="Explosion7">resources/audio/game/explosion7.wav</sound>
+    
+    <sound id="Shoot1">resources/audio/game/shoot1.wav</sound>
+    <sound id="Shoot2">resources/audio/game/shoot2.wav</sound>
+    <sound id="Shoot3">resources/audio/game/shoot3.wav</sound>
+    <sound id="Shoot4">resources/audio/game/shoot4.wav</sound>
+    <sound id="Shoot5">resources/audio/game/shoot5.wav</sound>
+    <sound id="Shoot6">resources/audio/game/shoot6.wav</sound>
+    <sound id="Shoot7">resources/audio/game/shoot7.wav</sound>
+    <sound id="Shoot8">resources/audio/game/shoot8.wav</sound>
+    
+    <sound id="Upgrade">resources/audio/game/upgrade.wav</sound>
+    <sound id="Sell">resources/audio/game/sell.wav</sound>
+    <sound id="Gameover">resources/audio/game/gameover.wav</sound>
+    <sound id="LoseLife">resources/audio/game/lose_life.wav</sound>
+    <sound id="Ready">resources/audio/game/ready.wav</sound>
+    <sound id="TowerPlaceInvalid">resources/audio/game/tower_place_invalid.wav</sound>
+    <sound id="TowerPlaceValid">resources/audio/game/tower_place_valid.wav</sound>
 </sounds>

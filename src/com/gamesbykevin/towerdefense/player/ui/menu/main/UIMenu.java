@@ -147,6 +147,15 @@ public final class UIMenu extends MainMenu implements Disposable
     }
     
     /**
+     * Do we have lives?
+     * @return true if at least 1 life exists, false otherwise
+     */
+    public boolean hasLives()
+    {
+        return (this.getLives() > 0);
+    }
+    
+    /**
      * Set the number of enemies left
      * @param left The number of enemies left in the wave
      */
