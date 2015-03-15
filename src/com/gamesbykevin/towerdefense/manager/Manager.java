@@ -1,11 +1,6 @@
 package com.gamesbykevin.towerdefense.manager;
 
-import com.gamesbykevin.framework.input.Keyboard;
-import com.gamesbykevin.framework.menu.Menu;
-import com.gamesbykevin.framework.util.*;
-
 import com.gamesbykevin.towerdefense.engine.Engine;
-import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.entity.effects.Effects;
 import com.gamesbykevin.towerdefense.entity.enemy.Enemies;
@@ -18,13 +13,9 @@ import com.gamesbykevin.towerdefense.resources.GameAudio;
 import com.gamesbykevin.towerdefense.resources.GameFont;
 import com.gamesbykevin.towerdefense.resources.GameImages;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The class that contains all of the game elements
@@ -272,6 +263,10 @@ public final class Manager implements IManager
             
             if (getEnemies() != null)
                 getEnemies().update(engine);
+            
+            //if we had lives, but no longer do, play sound effect
+            if (!getPlayer().getUIMenu().hasLives())
+                engine.getResources().playGameAudio(GameAudio.Keys.Gameover);
         }
     }
     

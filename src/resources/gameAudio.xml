@@ -20,6 +20,7 @@
     <sound id="Upgrade">resources/audio/game/upgrade.wav</sound>
     <sound id="Sell">resources/audio/game/sell.wav</sound>
     <sound id="Gameover">resources/audio/game/gameover.wav</sound>
+    <sound id="Victory">resources/audio/game/victory.mp3</sound>
     <sound id="LoseLife">resources/audio/game/lose_life.wav</sound>
     <sound id="Ready">resources/audio/game/ready.wav</sound>
     <sound id="TowerPlaceInvalid">resources/audio/game/tower_place_invalid.wav</sound>

@@ -11,6 +11,7 @@ import com.gamesbykevin.towerdefense.menu.CustomMenu;
 import com.gamesbykevin.towerdefense.player.ui.menu.main.UIMenu;
 import com.gamesbykevin.towerdefense.player.ui.menu.mini.EnemyMenu;
 import com.gamesbykevin.towerdefense.player.ui.menu.mini.TowerMenu;
+import com.gamesbykevin.towerdefense.resources.GameAudio.Keys;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Font;
@@ -101,6 +102,9 @@ public final class Player extends Sprite implements Disposable, IElement
                         //sell the tower
                         getUIMenu().setFunds(getUIMenu().getFunds() + getTowerMenu().getTower().getCostSell());
                         
+                        //play sound effect
+                        engine.getResources().playGameAudio(Keys.Sell);
+                        
                         //remove the tower
                         engine.getManager().getTowers().remove(getTowerMenu().getTower());
                         
@@ -119,6 +123,9 @@ public final class Player extends Sprite implements Disposable, IElement
                             //only upgrade the tower if it is upgradable
                             if (getTowerMenu().getTower().isUpgradable())
                             {
+                                //play sound effect
+                                engine.getResources().playGameAudio(Keys.Upgrade);
+                                
                                 //subtract from our funds
                                 getUIMenu().setFunds(getUIMenu().getFunds() - getTowerMenu().getTower().getCostUpgrade());
 
@@ -227,6 +234,10 @@ public final class Player extends Sprite implements Disposable, IElement
                             //if we haven't already started
                             if (!getUIMenu().hasStarted())
                             {
+                                //play sound effect
+                                engine.getResources().playGameAudio(Keys.Ready);
+                                
+                                //set start to true
                                 getUIMenu().setStart(true);
                             }
                         }
@@ -251,16 +262,19 @@ public final class Player extends Sprite implements Disposable, IElement
                                 getUIMenu().completeTransaction();
                                 
                                 //play placement sound effect
-                                
+                                engine.getResources().playGameAudio(Keys.TowerPlaceValid);
                             }
                             else
                             {
                                 //play invalid sound effect
-                                
+                                engine.getResources().playGameAudio(Keys.TowerPlaceInvalid);
                             }
                         }
                         else
                         {
+                            //play invalid sound effect
+                            engine.getResources().playGameAudio(Keys.TowerPlaceInvalid);
+                            
                             //if we have a tower selection and the mouse was released over the menu
                             if (getUIMenu().getRectangle().contains(x, y))
                             {

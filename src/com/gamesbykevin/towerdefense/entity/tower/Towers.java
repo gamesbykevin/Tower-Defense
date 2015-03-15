@@ -7,6 +7,7 @@ import com.gamesbykevin.towerdefense.engine.Engine;
 import com.gamesbykevin.towerdefense.entity.enemy.Enemy;
 import com.gamesbykevin.towerdefense.entity.Entities;
 import com.gamesbykevin.towerdefense.level.map.Map;
+import com.gamesbykevin.towerdefense.resources.GameAudio.Keys;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Graphics;
@@ -206,14 +207,16 @@ public final class Towers extends Entities implements Disposable, IElement
                 {
                     if (tower.canFreeze())
                     {
-                        //play sound effect?
+                        //play sound effect
+                        engine.getResources().playGameAudio(Keys.Shoot4);
                         
                         //freeze nearby enemies
                         engine.getManager().getEnemies().freezeEnemies(tower);
                     }
                     else if (tower.canPoison())
                     {
-                        //play sound effect?
+                        //play sound effect
+                        engine.getResources().playGameAudio(Keys.Shoot5);
                         
                         //poison nearby enemies
                         engine.getManager().getEnemies().poisonEnemies(tower);
@@ -228,7 +231,33 @@ public final class Towers extends Entities implements Disposable, IElement
                         engine.getManager().getProjectiles().add(tower);
                         
                         //play projectile sound effect??
-                        
+                        switch (tower.getType())
+                        {
+                            case Tower1:
+                                engine.getResources().playGameAudio(Keys.Shoot1);
+                                break;
+                                
+                            case Tower2:
+                                engine.getResources().playGameAudio(Keys.Shoot2);
+                                break;
+                                
+                            case Tower3:
+                                engine.getResources().playGameAudio(Keys.Shoot3);
+                                break;
+                                
+                            case Tower6:
+                                engine.getResources().playGameAudio(Keys.Shoot6);
+                                break;
+                                
+                            case Tower7:
+                                engine.getResources().playGameAudio(Keys.Shoot7);
+                                break;
+                                
+                            case Tower8:
+                            default:
+                                engine.getResources().playGameAudio(Keys.Shoot8);
+                                break;
+                        }
                     }
                 }
             }

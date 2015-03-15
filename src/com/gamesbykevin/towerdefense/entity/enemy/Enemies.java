@@ -10,6 +10,7 @@ import com.gamesbykevin.towerdefense.entity.Entities;
 import com.gamesbykevin.towerdefense.entity.tower.Tower;
 import com.gamesbykevin.towerdefense.level.map.Map;
 import com.gamesbykevin.towerdefense.player.Player;
+import com.gamesbykevin.towerdefense.resources.GameAudio.Keys;
 import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Image;
@@ -451,7 +452,42 @@ public final class Enemies extends Entities implements Disposable, IElement
                 engine.getManager().getEffects().add(enemy.getType().getEffectType(), enemy);
                 
                 //play sound effect
-                
+                switch (enemy.getType())
+                {
+                    case Blue1:
+                    case Blue2:
+                        engine.getResources().playGameAudio(Keys.Explosion1);
+                        break;
+                        
+                    case Blue3:
+                    case Green1:
+                        engine.getResources().playGameAudio(Keys.Explosion2);
+                        break;
+                        
+                    case Green2:
+                    case Green3:
+                        engine.getResources().playGameAudio(Keys.Explosion3);
+                        break;
+                        
+                    case Yellow1:
+                    case Yellow2:
+                        engine.getResources().playGameAudio(Keys.Explosion4);
+                        break;
+                        
+                    case Yellow3:
+                    case Red1:
+                        engine.getResources().playGameAudio(Keys.Explosion5);
+                        break;
+                        
+                    case Red2:
+                        engine.getResources().playGameAudio(Keys.Explosion6);
+                        break;
+                        
+                    case Red3:
+                    default:
+                        engine.getResources().playGameAudio(Keys.Explosion7);
+                        break;
+                }
                 
                 //remove from list
                 super.remove(enemy);
@@ -530,8 +566,8 @@ public final class Enemies extends Entities implements Disposable, IElement
                     //enemy has passed goal, deduct 1 life from player
                     engine.getManager().getPlayer().getUIMenu().deductLife();
 
-                    //play sound effect?
-                    
+                    //play sound effect
+                    engine.getResources().playGameAudio(Keys.LoseLife);
                 }
             }
         }
@@ -558,6 +594,11 @@ public final class Enemies extends Entities implements Disposable, IElement
 
                     //update display for user
                     engine.getManager().getPlayer().getUIMenu().setLeft(total - getCount());
+                }
+                else
+                {
+                    //play victorious music
+                    engine.getResources().playGameAudio(Keys.Victory, true);
                 }
             }
         }
