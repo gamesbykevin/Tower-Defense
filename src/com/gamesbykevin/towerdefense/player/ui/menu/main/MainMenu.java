@@ -85,7 +85,7 @@ public abstract class MainMenu extends CustomImage
             super.setY(0);
             
             //render new image
-            renderImage();
+            render();
             
             //restore location
             super.setX(x);

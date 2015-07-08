@@ -6,6 +6,8 @@ import com.gamesbykevin.framework.util.Timers;
 
 import com.gamesbykevin.towerdefense.entity.Entity;
 
+import java.util.UUID;
+
 /**
  * The projectile fired by a tower
  * @author GOD
@@ -29,7 +31,7 @@ public final class Projectile extends Entity
     private Cell start;
     
     //the obect we are heading towards
-    private final long targetId;
+    private final UUID targetId;
     
     //the time until the projectile reaches the goal
     private Timer timer;
@@ -40,7 +42,7 @@ public final class Projectile extends Entity
     //the amount of damage the projectile will cause
     private final double damage;
     
-    protected Projectile(final Type type, final double damage, final long targetId) throws Exception
+    protected Projectile(final Type type, final double damage, final UUID targetId) throws Exception
     {
         //call parent
         super();
@@ -201,7 +203,7 @@ public final class Projectile extends Entity
         this.goal.setRow(row);
     }
     
-    public long getTargetId()
+    public UUID getTargetId()
     {
         return this.targetId;
     }

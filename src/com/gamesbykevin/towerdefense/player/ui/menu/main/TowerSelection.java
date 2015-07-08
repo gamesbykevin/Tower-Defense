@@ -43,7 +43,7 @@ public final class TowerSelection extends CustomImage
             this.valid = isValid;
             
             //render new image
-            renderImage();
+            render();
         }
         else
         {
@@ -52,7 +52,7 @@ public final class TowerSelection extends CustomImage
     }
     
     @Override
-    public void renderImage() throws Exception
+    public void render() throws Exception
     {
         //clear image
         super.clear();

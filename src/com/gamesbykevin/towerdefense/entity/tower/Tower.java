@@ -531,7 +531,7 @@ public final class Tower extends Entity
     /**
      * Upgrade the tower.<br>
      */
-    public void upgrade()
+    public void upgrade() throws Exception
     {
         //if we can't upgrade this tower
         if (!isUpgradable())

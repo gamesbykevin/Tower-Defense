@@ -174,10 +174,7 @@ public final class Enemy extends Entity
         this.type = type;
         
         //create default animation
-        Animation animation = new Animation();
-        
-        //all enemy animations will loop 
-        animation.setLoop(true);
+        Animation animation = null;
         
         //set the start health
         this.setStartHealth(getType().getStartHealth());
@@ -188,7 +185,8 @@ public final class Enemy extends Entity
         switch (getType())
         {
             case Blue1:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 0), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 0), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 0), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 0), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 0), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(100L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 0), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
@@ -197,21 +195,24 @@ public final class Enemy extends Entity
                 break;
             
             case Blue2:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 1), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 1), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 1), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 1), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 1), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 1), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(600L));
                 break;
             
             case Blue3:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 2), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 2), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 2), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 2), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 2), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 2), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 break;
             
             case Green1:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 3), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 3), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 3), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 3), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 3), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(100L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 3), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
@@ -220,21 +221,24 @@ public final class Enemy extends Entity
                 break;
             
             case Green2:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 4), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 4), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 4), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 4), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 4), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 4), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(600L));
                 break;
             
             case Green3:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 5), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 5), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 5), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 5), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 5), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 5), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 break;
             
             case Red1:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 6), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 6), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 6), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 6), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 6), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(100L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 6), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
@@ -243,21 +247,24 @@ public final class Enemy extends Entity
                 break;
             
             case Red2:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 7), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 7), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 7), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 7), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 7), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 7), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(600L));
                 break;
             
             case Red3:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 8), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 8), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 8), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 8), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 8), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 8), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 break;
             
             case Yellow1:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 9), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 9), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 9), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 9), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 9), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(100L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 9), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
@@ -266,14 +273,16 @@ public final class Enemy extends Entity
                 break;
             
             case Yellow2:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 10), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 10), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 10), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 10), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 10), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 10), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(600L));
                 break;
             
             case Yellow3:
-                animation.add((int)(WIDTH * 0), (int)(HEIGHT * 11), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                animation = new Animation((int)(WIDTH * 0), (int)(HEIGHT * 11), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
+                //animation.add((int)(WIDTH * 0), (int)(HEIGHT * 11), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(1000L));
                 animation.add((int)(WIDTH * 1), (int)(HEIGHT * 11), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 2), (int)(HEIGHT * 11), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
                 animation.add((int)(WIDTH * 3), (int)(HEIGHT * 11), (int)WIDTH, (int)HEIGHT, Timers.toNanoSeconds(200L));
@@ -282,6 +291,9 @@ public final class Enemy extends Entity
             default:
                 throw new Exception("Type not setup here = " + type.toString());
         }
+        
+        //all enemy animations will loop 
+        animation.setLoop(true);
         
         //add animation
         super.addAnimation(animation);

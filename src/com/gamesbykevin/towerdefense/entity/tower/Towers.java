@@ -12,6 +12,7 @@ import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.UUID;
 
 /**
  * This class will manage all towers in the game
@@ -20,7 +21,7 @@ import java.awt.Image;
 public final class Towers extends Entities implements Disposable, IElement
 {
     //the id of the selected tower
-    private long id;
+    private UUID id;
     
     //the minimum distance allowed between 2 towers
     private static final double TOWER_MIN_DISTANCE = 0.5;
@@ -96,7 +97,7 @@ public final class Towers extends Entities implements Disposable, IElement
      * Upgrade the tower
      * @param tower The tower we want to upgrade
      */
-    public void upgrade(final Tower tower)
+    public void upgrade(final Tower tower) throws Exception
     {
         for (int i = 0; i < getEntities().size(); i++)
         {
@@ -112,14 +113,14 @@ public final class Towers extends Entities implements Disposable, IElement
      */
     public void setAssigned(final Tower tower)
     {
-        this.id = (tower != null) ? tower.getId() : 0;
+        this.id = (tower != null) ? tower.getId() : null;
     }
     
     /**
      * Get the tower id selection
      * @return The unique id of the tower the user selected
      */
-    public long getTowerIdSelection()
+    public UUID getTowerIdSelection()
     {
         return this.id;
     }

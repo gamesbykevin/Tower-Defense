@@ -36,12 +36,6 @@ public final class Effect extends Entity
         //assign the type
         this.type = type;
         
-        //create new animation
-        Animation animation = new Animation();
-        
-        //animations will not loop
-        animation.setLoop(false);
-        
         //the information that will help us retrieve the animation
         int x = 0, y = 0, w = 0, h = 0, cols = 0, rows = 0;
         
@@ -161,13 +155,27 @@ public final class Effect extends Entity
                 throw new Exception("Type not setup here " + type.toString());
         }
         
+        //create new animation
+        Animation animation = null;
+        
+        
         for (int row = 0; row < rows; row++)
         {
             for (int col = 0; col < cols; col++)
             {
-                animation.add(x + (col * w), y + (row * h), w, h, DEFAULT_DELAY);
+                if (animation == null)
+                {
+                    animation = new Animation(x + (col * w), y + (row * h), w, h, DEFAULT_DELAY);
+                }
+                else
+                {
+                    animation.add(x + (col * w), y + (row * h), w, h, DEFAULT_DELAY);
+                }
             }
         }
+        
+        //animations will not loop
+        animation.setLoop(false);
         
         //add animation
         super.addAnimation(animation);

@@ -297,7 +297,7 @@ public final class UIMenu extends MainMenu implements Disposable
                         getTowerSelection().setValid(false);
                         
                         //create image
-                        getTowerSelection().renderImage();
+                        getTowerSelection().render();
 
                         //return true
                         return true;
@@ -424,7 +424,7 @@ public final class UIMenu extends MainMenu implements Disposable
     }
     
     @Override
-    public void renderImage() throws Exception
+    public void render() throws Exception
     {
         //set background color
         getGraphics2D().setColor(Color.BLACK);

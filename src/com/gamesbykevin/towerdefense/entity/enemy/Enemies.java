@@ -15,6 +15,7 @@ import com.gamesbykevin.towerdefense.shared.IElement;
 
 import java.awt.Image;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * This object contains all the enemies in play
@@ -255,11 +256,11 @@ public final class Enemies extends Entities implements Disposable, IElement
      * @param id The unique id all LevelObjects have upon creation
      * @return The enemy containing the id, if not found null is returned
      */
-    public Enemy getEnemy(final long id)
+    public Enemy getEnemy(final UUID id)
     {
         for (int i = 0; i < getEntities().size(); i++)
         {
-            if (getEnemy(i).getId() == id)
+            if (getEnemy(i).hasId(id))
                 return getEnemy(i);
         }
         

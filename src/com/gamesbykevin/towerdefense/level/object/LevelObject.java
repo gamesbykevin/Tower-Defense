@@ -84,8 +84,8 @@ public abstract class LevelObject extends Sprite implements Disposable
      */
     protected void addAnimation(final int x, final int y, final int w, final int h, final Object key) throws Exception
     {
-        Animation animation = new Animation();
-        animation.add(x, y, w, h, NO_DELAY);
+        Animation animation = new Animation(x, y, w, h, NO_DELAY);
+        //animation.add(x, y, w, h, NO_DELAY);
         animation.setLoop(false);
         
         //add animation
@@ -132,7 +132,7 @@ public abstract class LevelObject extends Sprite implements Disposable
      * Assign the current animation
      * @param key Unique key of the animation
      */
-    public void setAnimation(final Object key)
+    public void setAnimation(final Object key) throws Exception
     {
         //set this as the current animation
         super.getSpriteSheet().setCurrent(key);

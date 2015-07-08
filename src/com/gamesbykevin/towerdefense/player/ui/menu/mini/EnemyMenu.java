@@ -9,6 +9,7 @@ import java.awt.Color;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.UUID;
 
 /**
  * The mini-menu to display when the user selects the enemy
@@ -35,7 +36,7 @@ public final class EnemyMenu extends MiniMenu implements Disposable
     private static final int HEALTH_DESC_Y = 30;
     
     //the unique enemy id we are targeting for this menu
-    private long enemyId;
+    private UUID enemyId;
     
     //the current and start health of our targeted enemy
     private double currentHealth;
@@ -95,7 +96,7 @@ public final class EnemyMenu extends MiniMenu implements Disposable
      * The id of the enemy we are targeting
      * @return The unique key of the enemy we want to target
      */
-    public long getEnemyId()
+    public UUID getEnemyId()
     {
         return this.enemyId;
     }
@@ -144,7 +145,7 @@ public final class EnemyMenu extends MiniMenu implements Disposable
     }
     
     @Override
-    protected void renderImage() throws Exception
+    public void render() throws Exception
     {
         //draw background first
         draw(getGraphics2D(), getImage(), Key.Background.getLocation());
