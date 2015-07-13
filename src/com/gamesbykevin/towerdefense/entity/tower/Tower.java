@@ -579,7 +579,6 @@ public final class Tower extends Entity
     {
         super.dispose();
         
-        this.timer.dispose();
         this.timer = null;
     }
     

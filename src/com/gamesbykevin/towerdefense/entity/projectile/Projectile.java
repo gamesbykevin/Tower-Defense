@@ -227,7 +227,6 @@ public final class Projectile extends Entity
     {
         super.dispose();
         
-        this.timer.dispose();
         this.timer = null;
     }
 }
